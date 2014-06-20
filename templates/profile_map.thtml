@@ -1,0 +1,8 @@
+{# begin {templatelocation} #}
+<div style="float:right;">
+  <center>
+    {profile_map}
+  </center>
+</div>
+<div style="clear:both;"></div>
+{# end {templatelocation} #}

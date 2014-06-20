@@ -1,0 +1,48 @@
+{# begin {templatelocation} #}
+{geo_map_js_url}
+<script type="text/javascript">
+    
+    function initializeGMap() {
+      if (GBrowserIsCompatible()) {
+        var map = new GMap2(document.getElementById("map_canvas{canvas_id}"));
+        //var map2 = new GMap2(document.getElementById("map2_canvas"));
+        var point = new GLatLng({lat}, {lng});
+        var marker = new GMarker( point );
+
+        map.setCenter(point, 15);
+        map.addControl(new GSmallMapControl());
+        map.addOverlay(marker);
+        map.addControl(new GMapTypeControl());
+        map.enableScrollWheelZoom();
+
+{!if infowindow_text}
+        GEvent.addListener(marker, 'click', function(){ 
+          marker.openInfoWindowHtml("{infowindow_text}");
+        });
+{!endif}
+
+        /*var directionsPanel = document.getElementById("directions");
+        var directions = new GDirections(map2, directionsPanel);
+        directions.load("from: {origin_addr} to: {lat},{lng}");*/
+      }
+    }
+
+    if( window.addEventListener ) {
+        window.addEventListener( 'load', initializeGMap, false );
+        window.addEventListener( 'unload', GUnload, false );
+    } else if( document.addEventListener ) {
+        document.addEventListener('load' , initializeGMap, false );
+        document.addEventListener( 'unload', GUnload, false );
+    } else if( window.attachEvent ) {
+        window.attachEvent( 'onload', initializeGMap );
+        window.attachEvent( 'onunload', GUnload );
+    } else {
+        if( window.onload ) { window.XTRonload = window.onload; }
+        if( window.onunload ) { window.XTRonunload = window.onunload; }
+        window.onload = initializeGMap;
+        window.onunload = GUnload;
+    }
+
+</script>
+<div id="map_canvas{canvas_id}" style="width: 400px; height: 250px;"></div>
+{# end {templatelocation} #}

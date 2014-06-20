@@ -1,0 +1,66 @@
+<div class="locform">
+<form action="{action_url}" method="post">
+<fieldset><legend>{$LANG_GEO['select_origin']}</legend>
+<label for="origin">{$LANG_GEO['origin']}: </label>
+{!if origin_select}
+  <select name="origin">
+    {origin_select}
+  </select>
+  {!if do_lookup}
+  {$LANG_GEO['or_address']}:
+  {!endif}
+{!endif}
+{!if do_lookup}
+  <input type="text" size="30" maxlength="80" name="address" value="{address}" />
+{!endif}
+  <br />
+  <label for="radius">{$LANG_GEO['radius']}: </label>
+  <input type="text" size="5" name="radius" value="{radius_val}" />&nbsp;
+  <select name="units">
+    <option value="miles" {miles_selected}>{$LANG_GEO['miles']}</option>
+    <option value="km" {km_selected}>km</option>
+  </select>
+  <br />
+  <label for="keywords">{$LANG_GEO['keywords']}: </label>
+  <input type="text" size="40" maxlength="255" name="keywords" value="{keywords}" />
+  <input type="submit" value="{$LANG_ADMIN['submit']}" />
+</fieldset>
+</form>
+</div>
+
+<table width="100%" border="0">
+  <tr>
+{!if show_origin_icon}
+  <th class="admin-list-headerfield"></th>
+{!endif}
+  <th class="admin-list-headerfield">{$LANG_GEO['name']}</th>
+  <th class="admin-list-headerfield">{$LANG_GEO['address']}</th>
+  <th class="admin-list-headerfield" style="text-align:center;">{$LANG_GEO['distance']}&nbsp;({units})</th>
+  </tr>
+  <!-- BEGIN LocRow -->
+  <tr>
+{!if show_origin_icon}
+    <td>
+      {!if loc_url}
+        <a href="{loc_url}">
+      {!endif}
+      <img src="{site_url}/locator/images/{img_origin}" 
+          class="gl_mootip" title="{img_origin_title}" 
+          alt="{img_origin_title}">
+      {!if loc_url}
+        </a>
+      {!endif}
+    </td>
+{!endif}
+    <td><a href="{loc_info_url}">{loc_name}</a></td>
+    <td>{loc_address}</td>
+    <td align="right">{loc_distance}</td>
+  </tr>
+  <!-- END LocRow -->
+</table>
+{!if no_display}
+<span class="note">{no_display}</span>
+{!endif}
+<hr />
+{$LANG_GEO['disclaimer']}
+

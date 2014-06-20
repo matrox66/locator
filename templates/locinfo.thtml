@@ -1,0 +1,107 @@
+{# begin {templatelocation} #}
+{!if admin_options}
+<div style="float:right;">
+{admin_options}
+</div>
+{!endif}
+<p>&nbsp;</p>
+<table border="0" width="90%" align="center">
+<tr>
+  <td width="20%" class="locinfo">
+    <label for="name">{$LANG_GEO['name']}:</label>
+  </td>
+  <td>
+  {name}
+  </td>
+</tr><tr>
+  <td class="locinfo">
+    <label for="address">{$LANG_GEO['address']}:</label>
+  </td>
+  <td>
+  {address}
+  </td>
+</tr><tr>
+  <td class="locinfo">
+    <label for="url">{$LANG_GEO['url']}:</label>
+  </td>
+  <td>
+    {url}
+  </td>
+</tr><tr>
+  <td valign="top" class="locinfo">
+    <label for="description">{$LANG_GEO['description']}:</label>
+  </td>
+  <td>
+    {description}
+  </td>
+</tr>
+<!--<tr>
+  <td class="locinfo">
+   <label for="coord">{$LANG_GEO['coord']}:</label>
+  </td>
+  <td>
+   {lat} / {lng}
+  </td>
+</tr>-->
+</table>
+<p />
+
+{# Check for google api key #}
+{!if show_map}
+{geo_map_js_url}
+<script type="text/javascript">
+    
+    function initializeGMap() {
+        var point = new google.maps.LatLng({lat}, {lng});
+        var gOptions = {
+            zoom:15,
+            center:point,
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+        }
+        var map = new google.maps.Map(document.getElementById("map_canvas{canvas_id}"), gOptions);
+        var marker = new google.maps.Marker( {
+            position: point,
+            map: map
+        } );
+
+    }
+
+    if( window.addEventListener ) {
+        window.addEventListener( 'load', initializeGMap, false );
+    } else if( document.addEventListener ) {
+        document.addEventListener('load' , initializeGMap, false );
+    } else if( window.attachEvent ) {
+        window.attachEvent( 'onload', initializeGMap );
+    } else {
+        if( window.onload ) { window.XTRonload = window.onload; }
+        if( window.onunload ) { window.XTRonunload = window.onunload; }
+        window.onload = initializeGMap;
+    }
+
+</script>
+<center>
+<div id="map_canvas{canvas_id}" style="width: 500px; height: 300px; z-index:20"></div>
+{!if directions}
+<div id="directions">
+  <form action="http://maps.google.com/maps" method="GET" target="_blank">
+    <input onfocus="this.value='';" type="text" size="40" maxlength="40"
+        name="saddr" id="saddr" value="{$LANG_GEO['start_addr']}" />
+    <input value="{$LANG_GEO['get_directions']}" type="submit" />
+    <input type="hidden" name="daddr" value="{lat},{lng}" />
+  </form>
+</div>
+{!endif}
+
+</center>
+{!endif}
+{# End check for google api key #}
+
+{!if weather}
+<div id="weather">
+  {weather}
+</div>
+{!endif}
+
+<hr />
+{$LANG_GEO['disclaimer']}
+{# end {templatelocation} #}

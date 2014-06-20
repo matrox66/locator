@@ -1,0 +1,58 @@
+th.listtitle {
+  text-align:center;
+}
+.markerform label, .locinfo label {
+  width: 8em;
+  float: left;
+  text-align: right;
+  margin-right: 0.5em;
+  display: block
+}
+
+.locinfo label {
+  font-weight:bold;
+}
+
+div.locinfo {
+  margin-bottom:1em;
+}
+
+div.markerform form div {
+  clear: left;
+  display: block;
+  /*width: 354px;*/
+  height: expression('1%');
+  margin: 5px 0 0 0;
+  padding: 1px 3px;
+}
+
+div.markerform submit input button {
+  margin-left: 4.5em;
+}
+
+
+/*div.markerform fieldset {
+  border: 1px solid #781351;
+  width: 20em
+}*/
+
+/*div.markerform legend {
+  color: #781351;
+  background: #fee3ad;
+  color: #000;
+  background: #8D1A1D;
+  border: 1px solid #781351;
+  padding: 2px 6px
+}*/
+
+/*div.markerform formbutton {
+  cursor:pointer;
+  border:outset 1px #ccc;
+  background:#999;
+  color:#666;
+  font-weight:bold;
+  margin-left:3em;
+  padding: 1px 2px;
+  background:url(locator/images/formbg.gif) repeat-x left top;
+}*/
+

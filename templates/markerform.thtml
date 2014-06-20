@@ -1,0 +1,96 @@
+{# begin {templatelocation} #}
+<script type="text/javascript">
+<!--
+window.addEvent('domready',function() {
+    var myValidator = new fValidator("submit");
+});
+-->
+</script>
+<h2>{$LANG_GEO['editmarker']}</h2>
+{$LANG_GEO['coord_instr']}<br />
+{goog_map_instr}
+<p>&nbsp;</p>
+
+<form id="markerform" action="{action_url}" method="POST"
+    class="markerform">
+  <input type="hidden" name="oldid" value="{oldid}" />
+  <input type="hidden" name="type" value="{pi_name}" />
+  <input type="hidden" name="action" value="{action}" />
+
+  <p>
+    <label for="id">{$LANG_GEO['item_id']}:</label>
+    <input name="id" type="text" size="32" value="{id}" />
+  </p>
+
+  <p>
+    <label for="title">{$LANG_GEO['name']}:</label>
+    <input class="fValidate['required']" name="title" type="text" size="32" 
+      value="{title}" />
+  </p>
+
+  <p>
+    <label for="description">{$LANG_GEO['description']}:</label>
+    <textarea name="description" cols="65" rows="3" 
+      wrap="virtual">{description}</textarea>
+  </p>
+
+  <p>
+    <label for="address">{$LANG_GEO['address']}:</label>
+    <input name="address" type="text" size="65" value="{address}" />
+  </p>
+
+  <p>
+    <label for="keywords">{$LANG_GEO['keywords']}:</label>
+    <input name="keywords" type="text" size="65" value="{keywords}" />
+  </p>
+
+  <p>
+    <label for="url">{$LANG_GEO['url']}:</label>
+    <input name="url" type="text" size="65" value="{url}" />
+  </p>
+
+  <p>
+    <label for="is_origin">{$LANG_GEO['is_origin']}?</label>
+    <input name="is_origin" type="checkbox" value="1" {origin_chk} />
+  </p>
+
+  <p>
+    <label for="enabled">{$LANG_GEO['enabled']}?</label>
+    <input name="enabled" type="checkbox" value="1" {enabled_chk} />
+  </p>
+
+  <p>
+    <label for="coord">{$LANG_GEO['coord']}:</label>
+    <input name="lat" type="text" size="12" value="{lat}" />
+    {$LANG_GEO['latitude']}, &nbsp;&nbsp;
+    <input name="lng" type="text" size="12" value="{lng}" />
+    {$LANG_GEO['longitude']}<br />
+  </p>
+
+  <p>
+    <label for="owner">{$LANG_GEO['owner']}:</label>
+    {!if ownerselect}
+      <select name="owner_id">
+        {ownerselect}
+      </select>
+    {!elseif ownername}
+      <input type="hidden" name="owner_id" value="{owner_id}">
+      {ownername}
+    {!endif}
+  </p>
+
+  <p>
+    <label for="group">{$LANG_GEO['group']}:</label>
+    {!if ownerselect}
+      {group_dropdown}
+    {!elseif ownername}
+      <input type="hidden" name="group_id" value="{group_id}">
+      {groupname}
+    {!endif}
+
+  <p>
+    <label for="perms">{$LANG_GEO['perms']}:</label>
+    {permissions_editor}
+  </p>
+
+{# end {templatelocation} #}

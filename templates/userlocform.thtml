@@ -1,0 +1,50 @@
+{# begin {templatelocation} #}
+<script type="text/javascript">
+<!--
+window.addEvent('domready',function() {
+    var myValidator = new fValidator("submit");
+});
+-->
+</script>
+
+<h2>{$LANG_GEO['editmarker']}</h2>
+{$LANG_GEO['coord_instr']}<br />
+{goog_map_instr}
+<p>&nbsp;</p>
+
+<form id="submit" action="{action_url}" method="POST">
+  {hidden_vars}
+  <input type="hidden" name="type" value="{pi_name}" />
+
+  <p>
+    <label for="location">{$LANG_GEO['name']}:</label>
+    <input  class="fValidate['required']" name="location" type="text" 
+        size="32" value="{location}" />
+  </p>
+
+  <p>
+    <label for="coord">{$LANG_GEO['coord']}:</label>
+    <input name="lat" type="text" size="12" value="{lat}" />
+    {$LANG_GEO['latitude']}, &nbsp;&nbsp;
+    <input name="lng" type="text" size="12" value="{lng}" />
+    {$LANG_GEO['longitude']}
+  </p>
+
+  <p align="center">
+    <button name="mode" value="saveuserloc" type="submit" >
+        &nbsp;Submit
+    </button>
+    <button name="reset" type="reset">
+        &nbsp;Reset
+    </button>
+    {!if show_del_btn}
+      <button
+        name="mode" value="deleteuserloc" type="submit"
+        onclick="return confirm('Do you really want to delete this item?');" 
+        >
+        &nbsp;Delete
+      </button>
+    {!endif}
+  </p>
+</form>
+{# end {templatelocation} #}
