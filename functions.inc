@@ -3,7 +3,7 @@
 *   glFusion API functions for the Locator plugin.
 *
 *   @author     Lee Garner <lee@leegarner.com>
-*   @copyright  Copyright (c) 2009 Lee Garner <lee@leegarner.com>
+*   @copyright  Copyright (c) 2009-2014 Lee Garner <lee@leegarner.com>
 *   @package    locator
 *   @version    1.1.0
 *   @license    http://opensource.org/licenses/gpl-2.0.php 
@@ -1039,7 +1039,6 @@ function plugin_getconfigelementhelp_locator($option, $doclang='english')
 *   Looks up coordinates from Google for the given address.
 *
 *   @uses   GEO_file_get_contents()
-*   @uses   GEO_json_decode()
 *   @param  string  $address    Address to look up
 *   @param  float   &$lat       Reference to latitude value
 *   @param  float   &$lng       Reference to longitude value
@@ -1059,7 +1058,7 @@ function GEO_getCoords($address, &$lat, &$lng)
     if ($json == '') {
         return 0;
     }
-    $data = GEO_json_decode($json);
+    $data = json_decode($json, true);
     if (!is_array($data) || $data['status'] != 'OK') {
         return -1;
     }
@@ -1132,45 +1131,6 @@ function GEO_MapJS()
 
     return array($url, $canvas_id);
 }
-
-
-/**
-*   JSON decoding function used in case PHP < 5.2.
-*   This function is always used since the decoding is a little different
-*   between here and PHP's built-in json_decode() function.
-*
-*   @param  string  $json   JSON string to decode
-*   @return array           Array of elements
-*/
-function GEO_json_decode($json) 
-{  
-    // Author: walidator.info 2009 
-    $comment = false; 
-    $out = '$x='; 
-
-    $len = strlen($json);
-    for ($i = 0; $i < $len; $i++) { 
-        if (!$comment) { 
-            if ($json[$i] == '{' || $json[$i] == '[')
-                $out .= ' array('; 
-            elseif ($json[$i] == '}' || $json[$i] == ']')
-                $out .= ')'; 
-            elseif ($json[$i] == ':')
-                $out .= '=>'; 
-            else
-                $out .= $json[$i];            
-        } else{
-            $out .= $json[$i]; 
-        }
-
-        if ($json[$i] == '"')
-            $comment = !$comment; 
-    }
-
-    eval($out . ';');
-
-    return $x; 
-}  
 
 
 /**

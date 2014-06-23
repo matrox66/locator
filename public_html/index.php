@@ -29,12 +29,6 @@ if ($_CONF['loginrequired'] == 1 && COM_isAnonUser()) {
 /** Include plugin-specific functions */
 USES_locator_functions();
 
-// Clean $_POST and $_GET, in case magic_quotes_gpc is set
-if (GVERSION < '1.3.0') {
-    $_POST = GEO_stripslashes($_POST);
-    $_GET = GEO_stripslashes($_GET);
-}
-
 $msg = isset($_GET['msg']) ? $_GET['msg'] : '';
 $display = '';
 

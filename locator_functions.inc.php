@@ -506,27 +506,6 @@ function GEO_getCoordsUserAddress($address, &$lat, &$lng)
 
 
 /**
-*   Strips slashes if magic_quotes_gpc is on.
-*
-*   @since  version 1.0.1
-*   @param  mixed   $var    Value or array of values to strip.
-*   @return mixed           Stripped value or array of values.
-*/
-function GEO_stripslashes($var)
-{
-    if (get_magic_quotes_gpc()) {
-        if (is_array($var)) {
-            return array_map('GEO_stripslashes', $var);
-        } else {
-            return stripslashes($var);
-        }
-    } else {
-        return $var;
-    }
-}
-
-
-/**
 *   Show the site header, with or without left blocks according to config.
 *
 *   @since  version 1.0.1

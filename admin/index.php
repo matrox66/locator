@@ -19,12 +19,6 @@ USES_locator_functions();
 /** Include system admin functions */
 USES_lib_admin();
 
-// Clean $_POST and $_GET, in case magic_quotes_gpc is set
-if (GVERSION < '1.3.0') {
-    $_POST = GEO_stripslashes($_POST);
-    $_GET = GEO_stripslashes($_GET);
-}
-
 /**
 *   Create the admin menu block.
 *   @param  string  $desc_text  Description text to appear in the menu.

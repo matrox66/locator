@@ -3,7 +3,7 @@
 *   Static configuration items for the Locator plugin.
 *
 *   @author     Lee Garner <lee@leegarner.com>
-*   @copyright  Copyright (c) 2009-2011 Lee Garner <lee@leegarner.com>
+*   @copyright  Copyright (c) 2009-2014 Lee Garner <lee@leegarner.com>
 *   @package    locator
 *   @version    1.0.3
 *   @license    http://opensource.org/licenses/gpl-2.0.php 
@@ -33,7 +33,7 @@ $_TABLES['locator_userloc']      = $_GEO_table_prefix . 'locator_userloc';
 $_CONF_GEO['pi_version']        = '1.1.0';
 $_CONF_GEO['pi_name']           = 'locator';
 $_CONF_GEO['pi_display_name']   = 'Geo Locator';
-$_CONF_GEO['gl_version']        = '1.2.0';
+$_CONF_GEO['gl_version']        = '1.3.0';
 $_CONF_GEO['pi_url']            = 'http://www.leegarner.com';
 
 // Define Google URLs, just to have them in one place
