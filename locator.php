@@ -33,7 +33,7 @@ $_TABLES['locator_userloc']      = $_GEO_table_prefix . 'locator_userloc';
 $_CONF_GEO['pi_version']        = '1.1.0';
 $_CONF_GEO['pi_name']           = 'locator';
 $_CONF_GEO['pi_display_name']   = 'Geo Locator';
-$_CONF_GEO['gl_version']        = '1.3.0';
+$_CONF_GEO['gl_version']        = '1.4.0';
 $_CONF_GEO['pi_url']            = 'http://www.leegarner.com';
 
 // Define Google URLs, just to have them in one place

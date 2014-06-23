@@ -331,20 +331,27 @@ class Marker
             $this->id = COM_makeSid();
         }
 
-        if (isset($_CONF['advanced_editor']) && 
-            $_CONF['advanced_editor'] == 1) {
-            $editor_type = '_advanced';
-            $postmode_adv = 'selected="selected"';
-            $postmode_html = '';
-        } else {
-            $editor_type = '';
-            $postmode_adv = '';
-            $postmode_html = 'selected="selected"';
-        }
+        //displays the add quote form for single quotations
+        $T = new Template(LOCATOR_PI_PATH . '/templates');
+        $T->set_file('page', "markerform.thtml");
 
-        // Set up the advanced editor stuff
-        $post_options = "<option value=\"html\" $postmode_html>{$LANG_postmodes['html']}</option>";
-        $post_options .= "<option value=\"adveditor\" $postmode_adv>{$LANG24[86]}</option>";
+        // Set up the wysiwyg editor, if available
+        switch (PLG_getEditorType()) {
+        case 'ckeditor':
+            $T->set_var('show_htmleditor', true);
+            PLG_requestEditor('locator','locator_entry','ckeditor_locator.thtml');
+            PLG_templateSetVars('locator_entry', $T);
+            break;
+        case 'tinymce' :
+            $T->set_var('show_htmleditor',true);
+            PLG_requestEditor('locator','locator_entry','tinymce_locator.thtml');
+            PLG_templateSetVars('locator_entry', $T);
+            break;
+        default :
+            // don't support others right now
+            $T->set_var('show_htmleditor', false);
+            break;
+        }
 
         // Set up the save action
         switch ($mode) {
@@ -355,10 +362,6 @@ class Marker
             $saveaction = 'savemarker';
             break;
         }
-
-        //displays the add quote form for single quotations
-        $T = new Template(LOCATOR_PI_PATH . '/templates');
-        $T->set_file('page', "markerform{$editor_type}.thtml");
 
         $T->set_var(array(
             'id'            => $this->id,
@@ -379,14 +382,6 @@ class Marker
             'pi_name'       => $_CONF_GEO['pi_name'],
             'action'        => $mode,
         ) );
-
-        if ($editor_type == '_advanced') {
-            $T->set_var('show_adveditor','');
-            $T->set_var('show_htmleditor','none');
-        } else {
-            $T->set_var('show_adveditor','none');
-            $T->set_var('show_htmleditor','');
-        }
 
         if ($_CONF_GEO['autofill_coord'] != '') {
             $T->set_var('goog_map_instr', $LANG_GEO['coord_instr2']);
