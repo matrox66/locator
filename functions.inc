@@ -1115,6 +1115,28 @@ function plugin_wsEnabled_locator()
 
 
 /**
+*   Support merging local accounts into remote accounts
+*
+*   @param  integer $origUID    Original (remote) user ID
+*   @param  integer $destUID    Merged (local) user ID
+*/
+function plugin_user_move_locator($origUID, $destUID)
+{
+    global $_TABLES;
+
+    $origUID = (int)$origUID;
+    $destUID = (int)$destUID;
+
+    DB_query("UPDATE {$_TABLES['locator_markers']}
+            SET owner_id = $destUID WHERE owner_id = $origUID", 1);
+    DB_query("UPDATE {$_TABLES['locator_submission']}
+            SET owner_id = $destUID WHERE owner_id = $origUID", 1);
+    DB_query("UPDATE {$_TABLES['locator_userXloc']}
+            SET uid = $destUID WHERE uid = $origUID", 1);
+}
+
+
+/**
 *   Get a map given a pair of coordinates
 *
 *   @param  array   $args       Array of item information
