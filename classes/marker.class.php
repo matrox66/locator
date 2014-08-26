@@ -244,8 +244,7 @@ class Marker
         if ( (empty($lat) == '' || empty($lng))
                 && $this->address != '' 
                 && $_CONF_GEO['autofill_coord'] == true ) {
-            //$this->GetCoords($this->address, &$lat, &$lng);
-            if (GEO_getCoords($this->address, &$lat, &$lng) == 0) {
+            if (GEO_getCoords($this->address, $lat, $lng) == 0) {
                 $this->lat = $lat;
                 $this->lng = $lng;
             }
