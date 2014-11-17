@@ -56,3 +56,7 @@ div.markerform submit input button {
   background:url(locator/images/formbg.gif) repeat-x left top;
 }*/
 
+#directions {
+  z-index: 100;
+}
+
