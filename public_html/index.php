@@ -15,7 +15,10 @@
 require_once '../lib-common.php';
 
 // If plugin is installed but not enabled, display an error and exit
-if (!in_array('locator', $_PLUGINS) || $_GEO_CONF['api_only'] == 1) {
+// Also exit if the plugin is enabled for API use only and not guest-facing
+if (!in_array('locator', $_PLUGINS) ||
+    (isset($_GEO_CONF['api_only']) && $_GEO_CONF['api_only'] == 1)
+) {
     COM_404();
     exit;
 }
