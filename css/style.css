@@ -9,8 +9,27 @@ th.listtitle {
   display: block
 }
 
-.locinfo label {
+label {
   font-weight:bold;
+}
+
+.locform legend {
+  font-size: 125%;
+  margin-bottom: 1rem;
+  padding-top: 1rem;
+}
+
+.locform label {
+  width: 8rem;
+  float: left;
+  text-align: right;
+  margin-right: 0.5em;
+  display: inline;
+  white-space: nowrap;
+}
+
+.locDisclaimer {
+  font-style: italic;
 }
 
 div.locinfo {

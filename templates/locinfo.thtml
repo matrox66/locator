@@ -103,5 +103,5 @@
 {!endif}
 
 <hr />
-{$LANG_GEO['disclaimer']}
+<span class="locDisclaimer">{$LANG_GEO['disclaimer']}</span>
 {# end {templatelocation} #}
