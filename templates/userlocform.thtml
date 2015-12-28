@@ -1,4 +1,5 @@
 {# begin {templatelocation} #}
+{!if mootools}
 <script type="text/javascript">
 <!--
 window.addEvent('domready',function() {
@@ -6,14 +7,14 @@ window.addEvent('domready',function() {
 });
 -->
 </script>
-
+{!endif}
 <h2>{$LANG_GEO['editmarker']}</h2>
 {$LANG_GEO['coord_instr']}<br />
 {goog_map_instr}
 <p>&nbsp;</p>
 
-<form id="submit" action="{action_url}" method="POST">
-  {hidden_vars}
+<form id="submit" action="{action_url}" method="post">
+  <input type="hidden" name="id" value="{frm_id}" />
   <input type="hidden" name="type" value="{pi_name}" />
 
   <p>

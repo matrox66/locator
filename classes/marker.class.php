@@ -323,7 +323,7 @@ class Marker
     */
     public function Edit($id = '', $mode='submit')
     {
-        global $_CONF_GEO, $_TABLES, $_CONF, $LANG24, $LANG_postmodes;
+        global $_CONF_GEO, $_TABLES, $_CONF, $LANG24, $LANG_postmodes, $_SYSTEM;
 
         if ($id != '') {
             $this->Read($id);
@@ -381,6 +381,7 @@ class Marker
                             $this->perm_members, $this->perm_anon),
             'pi_name'       => $_CONF_GEO['pi_name'],
             'action'        => $mode,
+            'mootools' => $_SYSTEM['disable_mootools'] ? '' : 'true',
         ) );
 
         if ($_CONF_GEO['autofill_coord'] != '') {

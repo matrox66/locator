@@ -20,7 +20,7 @@
 */
 function GEO_userlocForm($A='')
 {
-    global $_TABLES, $_CONF, $_USER, $LANG_GEO, $_CONF_GEO;
+    global $_TABLES, $_CONF, $_USER, $LANG_GEO, $_CONF_GEO, $_SYSTEM;
 
     $retval = '';
     if ($A == '') $A = array();
@@ -44,29 +44,21 @@ function GEO_userlocForm($A='')
         $A['latlng'] = '';
     }
 
-    $T->set_var('location', $A['location']);
-    $T->set_var('lat', $A['lat']);
-    $T->set_var('lng', $A['lng']);
-    $T->set_var('latlng', $latlng);
-    $T->set_var('hidden_vars',
-            '<input type="hidden" name="id" value="'. $A['id'] . '">');
-
-    if ($_CONF_GEO['autofill_coord'] != '') {
-        $T->set_var('goog_map_instr', $LANG_GEO['coord_instr2']);
-    }
-
-    $T->set_var('action_url', $_CONF['site_admin_url']. '/plugins/'. 
-                $_CONF_GEO['pi_name']. '/index.php');
-
-    $T->set_var('site_url', $_CONF['site_url']);
-    $T->set_var('pi_name', $_CONF_GEO['pi_name']);
-    $T->set_var('action', 'saveuserloc');
-
-    if (!empty($A['id'])) {
-        $T->set_var('show_del_btn', 'true');
-    } else {
-        $T->set_var('show_del_btn', '');
-    }
+    $T->set_var(array(
+        'location'  => $A['location'],
+        'lat'       => $A['lat'],
+        'lng'       => $A['lng'],
+        'latlng'    => $latlng,
+        'frm_id'    => $A['id'],
+        'goog_map_instr' => $_CONF_GEO['autofill_coord'] != '' ? 
+                    $LANG_GEO['coord_instr2'] : '',
+        'action_url' => $_CONF['site_admin_url']. '/plugins/'. 
+                $_CONF_GEO['pi_name']. '/index.php',
+        'pi_name'   => $_CONF_GEO['pi_name'],
+        'action'    => 'saveuserloc',
+        'show_del_btn' => !empty($A['id']) ? 'true' : '',
+        'mootools' => $_SYSTEM['disable_mootools'] ? '' : 'true',
+    ) );
     $T->parse('output','page');
     $retval .= $T->finish($T->get_var('output'));
 

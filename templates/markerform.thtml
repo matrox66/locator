@@ -1,4 +1,5 @@
 {# begin {templatelocation} #}
+{!if mootools}
 <script type="text/javascript">
 <!--
 window.addEvent('domready',function() {
@@ -6,6 +7,7 @@ window.addEvent('domready',function() {
 });
 -->
 </script>
+{!endif}
 {!if show_htmleditor}
 {wysiwyg}
 {!endif}
@@ -14,7 +16,7 @@ window.addEvent('domready',function() {
 {goog_map_instr}
 <p>&nbsp;</p>
 
-<form id="markerform" action="{action_url}" method="POST"
+<form id="markerform" action="{action_url}" method="post"
     class="markerform">
   <input type="hidden" name="oldid" value="{oldid}" />
   <input type="hidden" name="type" value="{pi_name}" />
@@ -27,11 +29,12 @@ window.addEvent('domready',function() {
 
   <p>
     <label for="title">{$LANG_GEO['name']}:</label>
-    <input class="fValidate['required']" name="title" type="text" size="32" 
+    <input required class="fValidate['required']" name="title" type="text" size="32" 
       value="{title}" />
   </p>
 
   <p>
+    <label for="description">{$LANG_GEO['description']}:</label>
     <textarea name="description" cols="65" rows="3"
       wrap="virtual">{description}</textarea>
   </p>
