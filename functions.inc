@@ -206,7 +206,11 @@ function plugin_autouninstall_locator()
 function plugin_ismoderator_locator() 
 {
     global $_CONF_GEO;
-    return SEC_hasRights($_CONF_GEO['pi_name'] . '.admin');
+    static $isMod = NULL;
+    if ($isMod === NULL) {
+        $isMod = SEC_hasRights($_CONF_GEO['pi_name'] . '.admin');
+    }
+    return $isMod;
 }
 
 

@@ -33,7 +33,7 @@ class UserLoc
     *   @param  integer $location   Location ID to read from DB (optional)
     *   @param  integer $type       Type of record. 0=user profile, 1=ad-hoc
     */
-    function __construct($location='', $type=0)
+    public function __construct($location='', $type=0)
     {
         $this->location = $location;
         $this->id = 0;
@@ -60,7 +60,7 @@ class UserLoc
     *   @param  string  $key    Name of property to store
     *   @param  mixed   $value  Value to save for property
     */
-    function __set($key, $value)
+    public function __set($key, $value)
     {
         switch ($key) {
         case 'id':
@@ -88,7 +88,7 @@ class UserLoc
     *   @param  string  $key    Name of property to return
     *   @return mixed           Value of named property, or NULL if undefined
     */
-    function __get($key)
+    public function __get($key)
     {
         if (array_key_exists($key, $this->properties)) {
             return $this->properties[$key];
@@ -103,7 +103,7 @@ class UserLoc
     *
     *   @return boolean     True on success, False on failure or not found
     */
-    function readFromDB()
+    public function readFromDB()
     {
         global $_TABLES;
 
@@ -129,7 +129,7 @@ class UserLoc
     *   The update portion is here for completeness and future use,
     *   but should not currently be needed as there is no editing function.
     */
-    function saveToDB()
+    public function saveToDB()
     {
         global $_TABLES;
 
@@ -164,7 +164,7 @@ class UserLoc
     *   @uses   GEO_getCoords()
     *   @return integer Google return code, or false for failure.
     */
-    function getCoords()
+    public function getCoords()
     {
         global $_CONF_GEO;
 
@@ -196,7 +196,7 @@ class UserOrigin extends UserLoc
      *  Constructor
      *  Calls the parent constructor and sets the record type to '1'
      */
-    function __construct($location='')
+    public function __construct($location='')
     {
         parent::__construct($location, 1);
     }

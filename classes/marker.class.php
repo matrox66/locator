@@ -26,7 +26,7 @@ class Marker
     *
     *   @param  string  $id     Optional ID of a location to load
     */
-    function __construct($id = '')
+    public function __construct($id = '')
     {
         global $_CONF_GEO, $_USER;
 
@@ -50,7 +50,8 @@ class Marker
             $this->owner_id = $_USER['uid'];
         }
 
-        $this->isAdmin = SEC_hasRights('locator.admin') ? true : false;
+        // Get the admin status from the plugin function since it's cached.
+        $this->isAdmin = plugin_ismoderator_locator();
     }
 
 
@@ -60,7 +61,7 @@ class Marker
     *   @param  string  $key    Name of variable to set
     *   @param  mixed   $value  Value to set
     */
-    function __set($key, $value)
+    public function __set($key, $value)
     {
         global $_CONF_GEO;
 
@@ -118,7 +119,7 @@ class Marker
     *   @param  string  $key    Name of variable to get
     *   @return mixed           Value of $key, if set, or NULL
     */
-    function __get($key)
+    public function __get($key)
     {
         if (array_key_exists($key, $this->properties)) {
             return $this->properties[$key];
@@ -133,7 +134,7 @@ class Marker
     *
     *   @param  string  $id     Optional ID of marker, or current is used
     */
-    function Read($id = '')
+    public function Read($id = '')
     {
         global $_TABLES;
 
@@ -153,7 +154,7 @@ class Marker
     *   @param  array   $A      Array of name=>value pairs
     *   @param  boolean $fromDB TRUE if $A is from the DB, FALSE if a form
     */
-    function SetVars($A, $fromDB=false)
+    public function SetVars($A, $fromDB=false)
     {
         if (empty($A) || !is_array($A)) return false;
 
@@ -199,7 +200,7 @@ class Marker
     *
     *   @param  array   $id ID of marker to delete
     */
-    function Delete($id, $table='locator_markers')
+    public function Delete($id, $table='locator_markers')
     {
         global $_TABLES;
 
@@ -220,7 +221,7 @@ class Marker
     *   @param  array   $A      Form data
     *   @param  string  $table  Table to update
     */
-    function Save($A, $table='locator_markers')
+    public function Save($A, $table='locator_markers')
     {
         global $_TABLES, $_USER, $_CONF_GEO;
 
@@ -320,7 +321,7 @@ class Marker
     *   @param  string  $id     Optional ID to load & edit, current if empty
     *   @param  string  $mode   Optional mode indicator to set form action
     */
-    function Edit($id = '', $mode='submit')
+    public function Edit($id = '', $mode='submit')
     {
         global $_CONF_GEO, $_TABLES, $_CONF, $LANG24, $LANG_postmodes;
 
@@ -430,7 +431,7 @@ class Marker
     *
     *   @param  string  $id     Optional marker ID, current marker if empty
     */
-    function Hit($id = '')
+    public function Hit($id = '')
     {
         global $_TABLES;
 
@@ -453,7 +454,7 @@ class Marker
     *   @param  string  $origin Optional origin ID, used to create directions
     *   @return string  HTML displaying location with map
     */
-    function Detail($origin='')
+    public function Detail($origin='')
     {
         global $_CONF, $_CONF_GEO;
 
