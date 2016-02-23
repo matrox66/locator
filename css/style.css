@@ -75,6 +75,9 @@ div.markerform submit input button {
   background:url(locator/images/formbg.gif) repeat-x left top;
 }*/
 
+#evlistMapOuter{
+    z-index: 100;
+}
 #directions {
   z-index: 100;
 }
