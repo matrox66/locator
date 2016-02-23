@@ -30,7 +30,7 @@ global $_CONF_GEO;
 $_GEO_DEFAULT['default_radius'] = 30;   // Default search radius
 //$_GEO_DEFAULT['google_api_key'] = '';   // User must supply their own
 $_GEO_DEFAULT['autofill_coord'] = false; // Set false since it won't work without a Google key
-$_GEO_DEFAULT['show_map'] = false;      // Google map won't work w/o key
+$_GEO_DEFAULT['show_map'] = true;      // Key no longer required for map
 //$_GEO_DEFAULT['url_geocode']  = 'http://maps.google.com/maps/geo?q=%address%&output=csv&key=%google_key%';
 $_GEO_DEFAULT['distance_unit'] = 'miles';  // 'km' for kilometers, else = miles
 $_GEO_DEFAULT['submission'] = true;     // use submission queue
@@ -41,7 +41,7 @@ $_GEO_DEFAULT['purge_userlocs'] = 14;   // Days to keep user-entered origins
 $_GEO_DEFAULT['usermenu_option'] = 1;   // Show link on the user menu?
 $_GEO_DEFAULT['profile_showmap'] = 0;   // Show a map in the user profile?
 $_GEO_DEFAULT['use_weather'] = 0;       // Integrate with the Weather plugin?
-$_GEO_DEFAULT['use_directions'] = 0;    // Get directions from Google?
+$_GEO_DEFAULT['use_directions'] = 1;    // Get directions from Google?
 
 // Set the default permissions
 $_GEO_DEFAULT['default_permissions'] =  array (3, 3, 2, 2);
@@ -129,7 +129,6 @@ function plugin_initconfig_locator($group_id = 0)
 
         // Permissions
         $c->add('fs_permissions', NULL, 'fieldset', 0, 4, NULL, 0, true, $_CONF_GEO['pi_name']);
-COM_errorLog("Setting default group to $group_id");
         $c->add('defgrp', $group_id,
                 'select', 0, 4, 0, 10, true, $_CONF_GEO['pi_name']);
         $c->add('default_permissions', $_GEO_DEFAULT['default_permissions'],
