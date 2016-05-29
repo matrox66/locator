@@ -28,7 +28,7 @@ $_GEO_DEFAULT= array();
 global $_CONF_GEO;
 
 $_GEO_DEFAULT['default_radius'] = 30;   // Default search radius
-//$_GEO_DEFAULT['google_api_key'] = '';   // User must supply their own
+$_GEO_DEFAULT['google_api_key'] = '';   // User must supply their own
 $_GEO_DEFAULT['autofill_coord'] = false; // Set false since it won't work without a Google key
 $_GEO_DEFAULT['show_map'] = true;      // Key no longer required for map
 //$_GEO_DEFAULT['url_geocode']  = 'http://maps.google.com/maps/geo?q=%address%&output=csv&key=%google_key%';
@@ -121,7 +121,7 @@ function plugin_initconfig_locator($group_id = 0)
         $c->add('autofill_coord', $_GEO_DEFAULT['autofill_coord'], 
                 'select', 0, 1, 3, 10, true, $_CONF_GEO['pi_name']);
 
-        /*$c->add('google_api_key', $_GEO_DEFAULT['google_api_key'], 
+        $c->add('google_api_key', $_GEO_DEFAULT['google_api_key'], 
                 'text', 0, 1, 0, 20, true, $_CONF_GEO['pi_name']);
 
         $c->add('url_geocode', $_GEO_DEFAULT['url_geocode'], 
