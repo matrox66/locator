@@ -79,3 +79,12 @@ div.markerform submit input button {
   z-index: 100;
 }
 
+.map_dimension {
+    position: relative;
+    padding-bottom: 75%; // This is the aspect ratio
+    overflow: hidden;
+    top: 0;
+    left: 0;
+    width: 100% !important;
+    height: 100% !important;
+}
