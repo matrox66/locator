@@ -981,7 +981,7 @@ function GEO_getCoords($address, &$lat, &$lng)
         return 0;
 
     $address = urlencode($address);
-    $url = GEO_GOOG_URL . $address;
+    $url = GEO_GOOG_URL . $address . '&key=' . $_CONF_GEO['google_api_key'];
 
     $json = GEO_file_get_contents($url);
     if ($json == '') {
@@ -1053,7 +1053,9 @@ function GEO_MapJS()
     $canvas_id = rand(1,999);   // Create a random id for the canvas
     if (!defined('GEO_HAVE_MAP_JS')) {
         define('GEO_HAVE_MAP_JS', 1);
-        $url = '<script src="' . GEO_MAP_URL . '"></script>';
+        $url = '<script src="' .
+            sprintf(GEO_MAP_URL, $_CONF_GEO['google_api_key']) .
+            '"></script>';
     } else {
         $url = '';
     }

@@ -215,7 +215,6 @@ function locator_upgrade_1_1_0()
     $c = config::get_instance();
     if ($c->group_exists($_CONF_GEO['pi_name'])) {
         $c->del('url_geocode', $_CONF_GEO['pi_name']);
-        $c->del('google_api_key', $_CONF_GEO['pi_name']);
     }
 
     return 0;
