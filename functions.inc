@@ -952,15 +952,20 @@ function LOCATOR_getDocURL($file='', $doclang='english')
 */
 function plugin_getconfigelementhelp_locator($option, $doclang='english')
 {
-    $doc_url = LOCATOR_getDocURL('config.html', $doclang);
+    if (version_compare(GVERSION, '1.6.0', '<')) {
+        $file = 'config.legacy.html';
+    } else {
+        $file = 'config.html';
+    }
+    $doc_url = LOCATOR_getDocURL($file, $doclang);
     if (empty($doc_url))
         return false;
 
     if (!empty($option)) {
-        $file .= '#desc_' . $option;
+        $doc_url .= '#desc_' . $option;
     }
 
-    return array($doc_url . $file, 0);
+    return array($doc_url, 0);
 }
 
 
