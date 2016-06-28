@@ -242,7 +242,7 @@ class Marker
         // from Google
         $lat = $this->lat;      // convert to "real" variables
         $lng = $this->lng;      // so the pointer can be passed
-        if ( (empty($lat) == '' || empty($lng))
+        if ( (empty($lat) || empty($lng))
                 && $this->address != '' 
                 && $_CONF_GEO['autofill_coord'] == true ) {
             if (GEO_getCoords($this->address, $lat, $lng) == 0) {
