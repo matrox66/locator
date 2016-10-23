@@ -1,11 +1,11 @@
 <?php
 /**
-*   User location class for the Locator plugin
+*   Marker class for the Locator plugin
 *
 *   @author     Lee Garner <lee@leegarner.com>
-*   @copyright  Copyright (c) 2009-2011 Lee Garner <lee@leegarner.com>
+*   @copyright  Copyright (c) 2009-2016 Lee Garner <lee@leegarner.com>
 *   @package    locator
-*   @version    1.0.2
+*   @version    1.1.0
 *   @license    http://opensource.org/licenses/gpl-2.0.php 
 *               GNU Public License v2 or later
 *   @filesource
@@ -308,7 +308,6 @@ class Marker
         //echo $sql;die;
         DB_query($sql, 1);
         if (DB_error())
-            //return DB_error();
             return 99;
         else 
             return 0;
@@ -333,7 +332,11 @@ class Marker
 
         //displays the add quote form for single quotations
         $T = new Template(LOCATOR_PI_PATH . '/templates');
-        $T->set_file('page', "markerform.thtml");
+        if ($_CONF_GEO['_is_uikit']) {
+            $T->set_file('page', 'markerform.uikit.thtml');
+        } else {
+            $T->set_file('page', 'markerform.thtml');
+        }
 
         // Set up the wysiwyg editor, if available
         switch (PLG_getEditorType()) {
@@ -382,6 +385,7 @@ class Marker
             'pi_name'       => $_CONF_GEO['pi_name'],
             'action'        => $mode,
             'mootools' => $_SYSTEM['disable_mootools'] ? '' : 'true',
+            'saveaction'     => $saveaction,
         ) );
 
         if ($_CONF_GEO['autofill_coord'] != '') {
@@ -412,17 +416,6 @@ class Marker
 
         $T->parse('output','page');
         $retval .= $T->finish($T->get_var('output'));
-
-        $T->set_file('page', 'closemarkerform.thtml');
-        $T->set_var(array(
-            //'submission_option' => $sub_type,
-            'saveaction'     => $saveaction,
-            //'cancel_url'    => $cancel_url,
-        ) );
-
-        $T->parse('output','page');
-        $retval .= $T->finish($T->get_var('output'));
-
         return $retval;
     }
 
@@ -430,16 +423,11 @@ class Marker
     /**
     *   Increment the hit counter for a marker
     *
-    *   @param  string  $id     Optional marker ID, current marker if empty
+    *   @param  string  $id     Marker ID
     */
-    public function Hit($id = '')
+    public static function Hit($id)
     {
         global $_TABLES;
-
-        if ($id == '' && is_object($this))
-            $id = $this->id;
-
-        if (empty($id)) return;     // Still empty? Nothing to do
 
         DB_Query("UPDATE {$_TABLES['locator_markers']} 
             SET views = views + 1
@@ -465,7 +453,7 @@ class Marker
         //$origin= COM_sanitizeID($origin);
         $srchval = isset($_GET['query']) ? trim($_GET['query']) : '';
 
-        $this->Hit();
+        self::Hit($this->id);
 
         // Highlight search terms, if any
         if ($srchval != '') {
@@ -542,6 +530,45 @@ class Marker
         $T->parse('output', 'page');
         $retval .= $T->finish($T->get_var('output')); 
 
+        return $retval;
+    }
+
+
+    /**
+    *   Toggles a boolean field based on the current value.
+    *   Current value must be provided.
+    *
+    *   @param  string  $id     ID number of element to modify
+    *   @param  string  $field  Field to modify
+    *   @param  integer $value  New value to set
+    *   @return         New value, or old value upon failure
+    */
+    public static function Toggle($id, $field, $oldvalue)
+    {
+        global $_TABLES;
+
+        // Sanitize the current value
+        $oldvalue = $oldvalue == 1 ? 1 : 0;
+        $retval = $oldval;
+
+        // Only act on valid fields
+        switch ($field) {
+        case 'is_origin':
+        case 'enabled':
+            // Set the new value
+            $newvalue = $oldvalue == 1 ? 0 : 1;
+            $id = COM_sanitizeID($id);
+            $sql = "UPDATE {$_TABLES['locator_markers']}
+                    SET $field = $newvalue
+                    WHERE id='$id'";
+            DB_query($sql, 1);
+            if (DB_error()) {
+                COM_errorLog("Marker::Toggle() failed. SQL: $sql");
+                $retval = $oldvalue;
+            } else {
+                $retval = $newvalue;
+            }
+        }
         return $retval;
     }
 

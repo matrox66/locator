@@ -29,6 +29,7 @@ if (!isset($_CONF_GEO['default_radius'])) {
     $geo_config = config::get_instance();
     $_CONF_GEO = $geo_config->get_config('locator');
 }
+$_CONF_GEO['_is_uikit'] = $_SYSTEM['framework'] == 'uikit' ? true : false;
 
 define('LOCATOR_PI_PATH', $_CONF['path'] . 'plugins/locator');
 define('LOCATOR_URL', $_CONF['site_url'] . '/locator');
@@ -242,7 +243,6 @@ function plugin_submit_locator()
     USES_locator_class_marker();
     $M = new Marker();
     return $M->Edit();
-
 }
 
 
