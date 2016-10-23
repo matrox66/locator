@@ -70,67 +70,46 @@ function plugin_getListField_marker($fieldname, $fieldvalue, $A, $icon_arr)
 
     switch($fieldname) {
     case 'edit':
-        $retval = COM_createLink(
-            $icon_arr['edit'],
-            LOCATOR_ADMIN_URL . '/index.php?edit=x&amp;id=' .$A['id']
+        if ($_CONF_GEO['_is_uikit']) {
+            $retval = COM_createLink('',
+                LOCATOR_ADMIN_URL . '/index.php?edit=x&amp;id=' .$A['id'],
+                array(
+                    'class' => 'uk-icon uk-icon-edit'
+                )
             );
+        } else {
+            $retval = COM_createLink(
+                $icon_arr['edit'],
+                LOCATOR_ADMIN_URL . '/index.php?edit=x&amp;id=' .$A['id']);
+        }
         break;
 
     case 'delete':
-        $retval = COM_createLink(
-            $icon_arr['delete'],
-            LOCATOR_ADMIN_URL . '/index.php?deletemarker=x&amp;id=' . $A['id'],
-            array('title' => $LANG_ADMIN['delete'],
-                    'onclick'=>"return confirm('{$LANG_GEO['confirm_delitem']}');")
-        );
+        if ($_CONF_GEO['_is_uikit']) {
+            $retval = COM_createLink('',
+                LOCATOR_ADMIN_URL . '/index.php?deletemarker=x&amp;id=' . $A['id'],
+                array(
+                    'title' => $LANG_ADMIN['delete'],
+                    'onclick'=>"return confirm('{$LANG_GEO['confirm_delitem']}');",
+                    'class' => 'uk-icon uk-icon-trash loc-icon-danger'
+                )
+            );
+        } else {
+            $retval = COM_createLink(
+                $icon_arr['delete'],
+                LOCATOR_ADMIN_URL . '/index.php?deletemarker=x&amp;id=' . $A['id'],
+                array('title' => $LANG_ADMIN['delete'],
+                        'onclick'=>"return confirm('{$LANG_GEO['confirm_delitem']}');")
+            );
+        }
         break;
 
     case 'is_origin':
-        $retval = "<center>";
-        $base_url = LOCATOR_ADMIN_URL . '/index.php';
-
-        if ($A['is_origin'] == 1) {
-            // user-selected origin, allow user to disable
-            $checked = 'checked';
-            $parms = '&is_origin=0';
-            $is_origin = 0;     // toggle off if clicked
-            $mootip = $LANG_GEO['origin_remove'];
-        } else {
-            // user-selected origin, allow user to enable
-            $checked = '';
-            $parms = '&is_origin=1';
-            $is_origin = 1;     // toggle on if clicked
-            $mootip = $LANG_GEO['origin_add'];
-        }
-        $retval .= "<input type=\"checkbox\" 
-                    name=\"is_origin_{$A['id']}\" $checked 
-                    onclick='LOCtoggleEnabled(this, \"{$A['id']}\", \"is_origin\", \"{$_CONF['site_url']}\");'>";
- 
-        $retval .= "</center>";
-        break;
-
     case 'enabled':
-        $retval = "<center>";
-        $base_url = LOCATOR_ADMIN_URL . '/index.php';
-
-        if ($A['enabled'] == 1) {
-            // user-selected origin, allow user to disable
-            $checked = 'checked';
-            $parms = '&enabled=0';
-            $is_origin = 0;     // toggle off if clicked
-            $mootip = $LANG_GEO['ck_to_disable'];
-        } else {
-            // user-selected origin, allow user to enable
-            $checked = '';
-            $parms = '&enabled=1';
-            $is_origin = 1;     // toggle on if clicked
-            $mootip = $LANG_GEO['ck_to_enable'];
-        }
-        $retval .= "<input type=\"checkbox\" 
-                    name=\"enabled_{$A['id']}\" $checked 
-                    onclick='LOCtoggleEnabled(this, \"{$A['id']}\", \"enabled\", \"{$_CONF['site_url']}\");'>";
- 
-        $retval .= "</center>";
+        $checked = $fieldvalue == 1 ? 'checked="checked"' : '';
+        $retval .= "<input type=\"checkbox\" id=\"{$fieldname}_{$A['id']}\"
+                    name=\"{$fieldname}_{$A['id']}\" $checked 
+                    onclick='LOCtoggleEnabled(this, \"{$A['id']}\", \"$fieldname\", \"{$_CONF['site_url']}\");'>";
         break;
 
     case 'title':
@@ -167,21 +146,21 @@ function GEO_adminList()
     $retval = '';
 
     $header_arr = array(      # display 'text' and use table field 'field'
-        array('text' => $LANG_ADMIN['edit'], 'field' => 'edit', 'sort' => false),
+        array('text' => $LANG_ADMIN['edit'], 'field' => 'edit', 'sort' => false, 'align' => 'center'),
         array('text' => 'ID', 'field' => 'id', 'sort' => true),
         array('text' => $LANG_GEO['title'], 'field' => 'title', 'sort' => true),
         array('text' => $LANG_GEO['address'], 'field' => 'address', 
                 'sort' => true),
         array('text' => $LANG_GEO['origin'], 'field' => 'is_origin', 
-                'sort' => true),
+                'sort' => true, 'align' => 'center'),
         array('text' => $LANG_GEO['enabled'], 'field' => 'enabled', 
-                'sort' => true),
+                'sort' => true, 'align' => 'center'),
         array('text' => $LANG_GEO['latitude'], 'field' => 'lat', 
                 'sort' => true),
         array('text' => $LANG_GEO['longitude'], 'field' => 'lng', 
                 'sort' => true),
         array('text' => $LANG_ADMIN['delete'], 'field' => 'delete', 
-                'sort' => false),
+                'sort' => false, 'align' => 'center'),
     );
 
 

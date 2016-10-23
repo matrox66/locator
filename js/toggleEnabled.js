@@ -3,12 +3,14 @@
 */
 var LOCxmlHttp;
 
-function LOCtoggleEnabled(ck, id, type, base_url)
+function LOCtoggleEnabled(ck, id, type)
 {
   if (ck.checked) {
     newval=1;
+    oldval=0;
   } else {
     newval=0;
+    oldval=1;
   }
 
   LOCxmlHttp=LOCGetXmlHttpObject();
@@ -16,10 +18,10 @@ function LOCtoggleEnabled(ck, id, type, base_url)
     alert ("Browser does not support HTTP Request")
     return
   }
-  var url=base_url + "/admin/plugins/locator/ajax.php?action=toggleEnabled";
+  var url=glfusionSiteUrl + "/admin/plugins/locator/ajax.php?action=toggle";
   url=url+"&id="+id;
   url=url+"&type="+type;
-  url=url+"&newval="+newval;
+  url=url+"&oldval="+oldval;
   url=url+"&sid="+Math.random();
   LOCxmlHttp.onreadystatechange=LOCsc_toggleEnabled;
   LOCxmlHttp.open("GET",url,true);
@@ -30,35 +32,22 @@ function LOCsc_toggleEnabled()
 {
   var newstate;
 
-  if (LOCxmlHttp.readyState==4 || LOCxmlHttp.readyState=="complete")
-  {
-    xmlDoc=LOCxmlHttp.responseXML;
-    id = xmlDoc.getElementsByTagName("id")[0].childNodes[0].nodeValue;
-    //imgurl = xmlDoc.getElementsByTagName("imgurl")[0].childNodes[0].nodeValue;
-    baseurl = xmlDoc.getElementsByTagName("baseurl")[0].childNodes[0].nodeValue;
-    type = xmlDoc.getElementsByTagName("type")[0].childNodes[0].nodeValue;
-    if (xmlDoc.getElementsByTagName("newval")[0].childNodes[0].nodeValue == 1) {
-        checked = "checked";
-        newval = 0;
-    } else {
-        checked = "";
-        newval = 1;
-    }
-    document.getElementsByName(type+"_"+id).checked = checked;
-    
+  if (LOCxmlHttp.readyState==4 || LOCxmlHttp.readyState=="complete") {
+    jsonObj = JSON.parse(LOCxmlHttp.responseText);
+    id = jsonObj.id;
+    baseurl = jsonObj.baseurl;
+    type = jsonObj.type;
+    newval = jsonObj.newval;
+    document.getElementById(type+"_"+id).checked = jsonObj.newval == 1 ? true : false;
   }
-
 }
 
 function LOCGetXmlHttpObject()
 {
   var objXMLHttp=null
-  if (window.XMLHttpRequest)
-  {
+  if (window.XMLHttpRequest) {
     objXMLHttp=new XMLHttpRequest()
-  }
-  else if (window.ActiveXObject)
-  {
+  } else if (window.ActiveXObject) {
     objXMLHttp=new ActiveXObject("Microsoft.XMLHTTP")
   }
   return objXMLHttp

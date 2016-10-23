@@ -91,3 +91,6 @@ div.markerform submit input button {
     width: 100% !important;
     height: 100% !important;
 }
+.loc-icon-danger {
+    color: red;
+}

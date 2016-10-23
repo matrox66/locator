@@ -25,46 +25,30 @@ if (!SEC_hasRights('locator.admin')) {
     exit;
 }
 
-$base_url = $_CONF['site_url'];
-
 switch ($_GET['action']) {
-case 'toggleEnabled':
-    $newval = $_REQUEST['newval'] == 1 ? 1 : 0;
-
+case 'toggle':
     switch ($_GET['type']) {
     case 'is_origin':
-        // Toggle the is_origin flag between 0 and 1
-        DB_query("UPDATE {$_TABLES['locator_markers']}
-                SET is_origin=$newval
-                WHERE id='" . DB_escapeString($_REQUEST['id']). "'");
+    case 'enabled':
+        USES_locator_class_marker();
+        $newval = Marker::Toggle($_GET['id'], $_GET['type'], $_GET['oldval']);
         break;
 
-    case 'enabled':
-        // Toggle the marker on or off for searching
-        DB_query("UPDATE {$_TABLES['locator_markers']}
-                SET enabled=$newval
-                WHERE id='" . DB_escapeString($_REQUEST['id']). "'");
-        break;
      default:
         exit;
     }
 
-    header('Content-Type: text/xml');
-    header("Cache-Control: no-cache, must-revalidate");
-    //A date in the past
-    header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
-
-    echo '<?xml version="1.0" encoding="ISO-8859-1"?>
-    <info>'. "\n";
-    echo "<newval>$newval</newval>\n";
-    echo "<id>{$_REQUEST['id']}</id>\n";
-    echo "<type>{$_REQUEST['type']}</type>\n";
-    echo "<baseurl>{$base_url}</baseurl>\n";
-    echo "</info>\n";
+    header('Content-Type: application/json; charset=utf-8');
+    header('Cache-Control: no-cache, must-revalidate');
+    // A date in the past to disable caching
+    header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+    $values = array(
+        'newval' => $newval,
+        'id'    => $_GET['id'],
+        'type'  => $_GET['type'],
+    );
+    echo json_encode($values);
     break;
-
-default:
-    exit;
 }
 
 ?>
