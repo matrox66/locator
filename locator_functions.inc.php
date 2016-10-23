@@ -244,7 +244,7 @@ function getLocsByCoord($lat, $lng, $radius, $units='', $keywords='')
         }
     }
     $sql .= COM_getPermSQL('AND', 0, 2, 'm');
-    $sql .= "HAVING distance < $radius 
+    $sql .= " HAVING distance < $radius 
         ORDER BY distance 
         LIMIT 0, 200";
     //echo $sql;die;
