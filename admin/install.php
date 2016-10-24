@@ -203,26 +203,26 @@ function plugin_load_configuration($group_id=0)
 * Main Function
 */
 
-$action = $_REQUEST['action'];
-switch ($action) {
-case 'install':
-    if (plugin_install_locator()) {
-        echo COM_refresh($_CONF['site_admin_url'] . '/plugins.php?msg=44');
-    } else {
-        echo COM_refresh($_CONF['site_admin_url'] . '/plugins.php?msg=72');
-    }
-    exit;
-    break;
+if (SEC_checkToken()) {
+    $action = isset($_REQUEST['action']) ? trim($_REQUEST['action']) : '';
+    switch ($action) {
+    case 'install':
+        if (PLG_install($_CONF_GEO['pi_name'])) {
+            $msg = '?msg=44';
+        } else {
+            $msg = '?msg=72';
+        }
+        break;
 
-case 'uninstall':
-   if (plugin_uninstall_locator('installed')) {
-        echo COM_refresh($_CONF['site_admin_url'] . '/plugins.php?msg=45');
-    } else {
-        echo COM_refresh($_CONF['site_admin_url'] . '/plugins.php?msg=73');
+    case 'uninstall':
+        if (PLG_uninstall($_CONF_GEO['pi_name'])) {
+            $msg = '?msg=45';
+        } else {
+            $msg = '?msg=73';
+        }
+        break;
     }
-    break;
 }
-
-echo COM_refresh($_CONF['site_admin_url'] . '/plugins.php');
+echo COM_refresh("{$_CONF['site_admin_url']}/plugins.php$msg");
 
 ?>
