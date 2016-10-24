@@ -125,7 +125,7 @@ function plugin_initconfig_locator($group_id = 0)
                 'text', 0, 1, 0, 20, true, $_CONF_GEO['pi_name']);
 
         $c->add('url_geocode', $_GEO_DEFAULT['url_geocode'], 
-                'text', 0, 1, 0, 30, true, $_CONF_GEO['pi_name']);*/
+                'text', 0, 1, 0, 30, true, $_CONF_GEO['pi_name']);
 
         // Permissions
         $c->add('fs_permissions', NULL, 'fieldset', 0, 4, NULL, 0, true, $_CONF_GEO['pi_name']);
