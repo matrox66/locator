@@ -65,31 +65,25 @@ switch($action) {
 case 'savemarker':
     USES_locator_class_marker();
     if (isset($_POST['oldid']) && !empty($_POST['oldid'])) {
+        // Editing an existing marker
         $M = new Marker($_POST['oldid']);
     } else {
         $M = new Marker();
     }
     if (SEC_hasRights($_CONF_GEO['pi_name'].'.admin')) {
         $table = 'locator_markers';
-        $success_msg = 2;
+        $success_msg = $PLG_locator_MESSAGE2;
     } else {
         $table = 'locator_submission';
-        $success_msg = 1;
+        $success_msg = $PLG_locator_MESSAGE1;
     }
     $msg = $M->Save($_POST, $table);
     if (empty($msg)) {
-        $msg = $success_msg;
+        LGLIB_storeMessage($success_msg);
     } else {
-        $msg = 99;
+        LGLIB_storeMessage($PLG_locator_MESSAGE99);
     }
-
-    // Unset variables that were used in the form, otherwise we'll immediately
-    // try to search for this record, which fails if we saved to the
-    // submission table.
-    unset($_REQUEST);
-    unset($_POST);
-    unset($_GET);
-    $view = '';
+    COM_refresh(LOCATOR_URL);
     break;
 
 case 'toggleorigin':
