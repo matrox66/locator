@@ -413,8 +413,7 @@ function plugin_submissioncount_locator()
 {
     global $_TABLES;
 
-        return DB_count($_TABLES['locator_submission']);
-
+    return DB_count($_TABLES['locator_submission']);
 }
 
 
@@ -432,11 +431,10 @@ function plugin_itemlist_locator()
     if (plugin_ismoderator_locator()) {
         $plugin = new Plugin();
         $plugin->submissionlabel = $LANG_GEO['menulabel'];
-        $plugin->getsubmissionssql = "SELECT id, title, address FROM "
+        $plugin->getsubmissionssql = "SELECT id, title, address, 'n/a', owner_id as uid FROM "
                                    . $_TABLES['locator_submission'];
         $plugin->addSubmissionHeading($LANG_GEO['title']);
         $plugin->addSubmissionHeading($LANG_GEO['address']);
-
         return $plugin;
     }
 }
