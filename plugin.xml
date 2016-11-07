@@ -7,5 +7,5 @@
     <phpversion>5.3.0</phpversion>
     <url>http://www.leegarner.com</url>
     <maintainer>Lee Garner</maintainer>
-    <requires>lgllib</requires>
+    <requires>lglib</requires>
 </plugin>
