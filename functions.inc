@@ -357,7 +357,7 @@ function plugin_dopluginsearch_locator(
             a.id as id, a.title as title,
             a.description as description, a.owner_id, a.views as hits,
             a.add_date AS date,
-            CONCAT('/{$_CONF_GEO['pi_name']}/index.php?mode=locdetail&id=',a.id,'&query=$htmlquery') as url
+            CONCAT('/{$_CONF_GEO['pi_name']}/index.php?detail=x&id=',a.id) as url
         FROM
             {$_TABLES['locator_markers']} a
         WHERE
