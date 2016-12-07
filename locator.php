@@ -38,8 +38,7 @@ $_CONF_GEO['pi_url']            = 'http://www.leegarner.com';
 
 // Define Google URLs, just to have them in one place
 // Geocoding url, address will be appended to this
-define('GEO_GOOG_URL', 
-    'http://maps.googleapis.com/maps/api/geocode/json?address=');
+define('GEO_GOOG_URL','https://maps.googleapis.com/maps/api/geocode/json?address=');
 // URL to maps javascript
 define('GEO_MAP_URL', 'http://maps.google.com/maps/api/js?key=%s');
 
