@@ -77,6 +77,7 @@ class Marker
 
         case 'lat':
         case 'lng':
+            $value = str_replace(',', '.', $value);
             $this->properties[$key] = (float)$value;
             break;
 
