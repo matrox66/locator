@@ -260,8 +260,8 @@ class Marker
         }
 
         // Fix commas used as decimals
-        $lat = number_format($this->lat, 8, '.', '');
-        $lng = number_format($this->lng, 8, '.', '');
+        $lat = number_format($this->lat, 6, '.', '');
+        $lng = number_format($this->lng, 6, '.', '');
 
         $sql1 = "title = '" . DB_escapeString($this->title) . "',
             address = '" . DB_escapeString($this->address) . "',
@@ -487,8 +487,8 @@ class Marker
             'description'       => $description,
             'url'               => COM_createLink($this->url, $this->url, 
                                     array('target' => '_new')),
-            'lat'               => number_format($this->lat, 8, '.', ''),
-            'lng'               => number_format($this->lng, 8, '.', ''),
+            'lat'               => number_format($this->lat, 6, '.', ''),
+            'lng'               => number_format($this->lng, 6, '.', ''),
             'back_url'          => $back_url,
         ) );
         /*if ($origin != '')

@@ -133,8 +133,8 @@ class UserLoc
     {
         global $_TABLES;
 
-        $lat = number_format($this->lat, 8, '.', '');
-        $lng = number_format($this->lng, 8, '.', '');
+        $lat = number_format($this->lat, 6, '.', '');
+        $lng = number_format($this->lng, 6, '.', '');
 
         if ($this->id == 0) {
             $sql = "INSERT INTO {$_TABLES['locator_userloc']}

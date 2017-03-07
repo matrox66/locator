@@ -218,8 +218,8 @@ function getLocsByCoord($lat, $lng, $radius, $units='', $keywords='')
     }
 
     // Replace commas in lat & lng with decimal points
-    $lat = number_format($lat, 8, '.', '');
-    $lng = number_format($lng, 8, '.', '');
+    $lat = number_format($lat, 6, '.', '');
+    $lng = number_format($lng, 6, '.', '');
 
      // Find all the locations, excluding the origin, within the radius
     $sql = "SELECT
