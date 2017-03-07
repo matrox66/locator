@@ -260,8 +260,8 @@ class Marker
         }
 
         // Fix commas used as decimals
-        $lat = number_format($this->lat, 8, '.', '');
-        $lng = number_format($this->lng, 8, '.', '');
+        $lat = number_format($this->lat, 6, '.', '');
+        $lng = number_format($this->lng, 6, '.', '');
 
         $sql1 = "title = '" . DB_escapeString($this->title) . "',
             address = '" . DB_escapeString($this->address) . "',
@@ -487,8 +487,8 @@ class Marker
             'description'       => $description,
             'url'               => COM_createLink($this->url, $this->url, 
                                     array('target' => '_new')),
-            'lat'               => number_format($this->lat, 8, '.', ''),
-            'lng'               => number_format($this->lng, 8, '.', ''),
+            'lat'               => number_format($this->lat, 6, '.', ''),
+            'lng'               => number_format($this->lng, 6, '.', ''),
             'back_url'          => $back_url,
         ) );
         /*if ($origin != '')
@@ -514,11 +514,11 @@ class Marker
 
         // Show the location's weather if that plugin integration is enabled
         if ($_CONF_GEO['use_weather']) {
-            $args = array(
-                'loc'   => $this->address,
-                'lat'   => $this->lat,
-                'lng'   => $this->lng,
-            );
+				if ($this->lat !== '' and $this->lng !=='') {
+                    $args = array('loc'   => '"'.str_replace(',', '.', $this->lat).','.str_replace(',', '.', $this->lng).'"');
+                }else{
+					$args = array('loc'   => $this->address);
+				}
             $s = GEO_invokeService('weather', 'embed', $args, $weather, $svc_msg);
             if ($s == PLG_RET_OK) {
                 $T->set_var('weather', $weather);

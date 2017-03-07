@@ -878,8 +878,8 @@ function GEO_showMap($lat, $lng, $text='')
     $T = new Template(LOCATOR_PI_PATH . '/templates');
     $T->set_file('page', 'map.thtml');
     $T->set_var(array(
-        'lat'           => number_format($lat, 8, '.', ''),
-        'lng'           => number_format($lng, 8, '.', ''),
+        'lat'           => number_format($lat, 6, '.', ''),
+        'lng'           => number_format($lng, 6, '.', ''),
         'infowindow_text' => COM_checkHTML($text),
         'iso_lang'      => $iso_lang,
         'geo_map_js_url' => $js_url,
