@@ -514,11 +514,11 @@ class Marker
 
         // Show the location's weather if that plugin integration is enabled
         if ($_CONF_GEO['use_weather']) {
-            $args = array(
-                'loc'   => $this->address,
-                'lat'   => $this->lat,
-                'lng'   => $this->lng,
-            );
+				if ($this->lat !== '' and $this->lng !=='') {
+                    $args = array('loc'   => '"'.str_replace(',', '.', $this->lat).','.str_replace(',', '.', $this->lng).'"');
+                }else{
+					$args = array('loc'   => $this->address);
+				}
             $s = GEO_invokeService('weather', 'embed', $args, $weather, $svc_msg);
             if ($s == PLG_RET_OK) {
                 $T->set_var('weather', $weather);
