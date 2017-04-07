@@ -542,7 +542,7 @@ class Marker
             } else {
                 $args = array('loc' => $this->address);
             }
-            $s = GEO_invokeService('weather', 'embed', $args, $weather, $svc_msg);
+            $s = LGLIB_invokeService('weather', 'embed', $args, $weather, $svc_msg);
             if ($s == PLG_RET_OK) {
                 $T->set_var('weather', $weather);
             }

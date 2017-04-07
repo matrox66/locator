@@ -1278,41 +1278,6 @@ function service_getInfo_locator($args, &$output, &$svc_msg)
 
 
 /**
-*   Invoke a service in another plugin.
-*   This is our own version of PLG_invokeService() so that other plugins
-*   don't have to enable web services.
-*
-*   Service function names are formatted as "service_SERVICENAME_PLUGIN()"
-*
-*   @param  string  $type       Plugin name (PLUGIN)
-*   @param  string  $action     Plugin service (SERVICENAME)
-*   @param  array   $args       Array of arguments to pass to the plugin
-*   @param  mixed   &$output    Pointer to output values
-*   @param  mixed   &$svc_msg   Pointer to service message
-*   @return integer Return value, see lib-plugins.php
-*/
-function GEO_invokeService($type, $action, $args, &$output, &$svc_msg)
-{
-    global $_CONF;
-
-    $retval = PLG_RET_ERROR;
-
-    $output  = '';
-    $svc_msg = '';
-
-    // Check if the plugin type and action are valid
-    $function = 'service_' . $action . '_' . $type;
-    if (function_exists($function)) {
-        if (!isset($args['gl_svc'])) {
-            $args['gl_svc'] = false;
-        }
-        $retval = $function($args, $output, $svc_msg);
-    }
-    return $retval;
-}
-
-
-/**
 *   Convert an array of address elements into a string.
 *
 *   @param  array   $args   Array of address elements
