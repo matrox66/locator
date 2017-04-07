@@ -52,6 +52,27 @@ window.addEvent('domready',function() {
   </div>
 
   <div class="uk-form-row">
+    <label class="uk-form-label" for="city">{$LANG_GEO['city']}:</label>
+    <div class="uk-form-controls">
+      <input name="city" type="text" size="65" value="{city}" />
+    </div>
+  </div>
+
+  <div class="uk-form-row">
+    <label class="uk-form-label" for="state">{$LANG_GEO['state']}:</label>
+    <div class="uk-form-controls">
+      <input name="state" type="text" size="65" value="{state}" />
+    </div>
+  </div>
+
+  <div class="uk-form-row">
+    <label class="uk-form-label" for="postal">{$LANG_GEO['postal']}:</label>
+    <div class="uk-form-controls">
+      <input name="postal" type="text" size="65" value="{postal}" />
+    </div>
+  </div>
+
+  <div class="uk-form-row">
     <label class="uk-form-label" for="keywords">{$LANG_GEO['keywords']}:</label>
     <div class="uk-form-controls">
       <input name="keywords" type="text" size="65" value="{keywords}" />

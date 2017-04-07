@@ -6,7 +6,7 @@
 *   @copyright  Copyright (c) 2009-2014 Lee Garner <lee@leegarner.com>
 *   @package    locator
 *   @version    1.1.0
-*   @license    http://opensource.org/licenses/gpl-2.0.php 
+*   @license    http://opensource.org/licenses/gpl-2.0.php
 *               GNU Public License v2 or later
 *   @filesource
 */
@@ -131,14 +131,13 @@ function plugin_getadminoption_locator()
 
     if (plugin_ismoderator_locator()) {
         return array(
-            $LANG_GEO['admin_menu'], 
-            LOCATOR_ADMIN_URL . '/index.php', 
+            $LANG_GEO['admin_menu'],
+            LOCATOR_ADMIN_URL . '/index.php',
             ''
         );
     } else {
         return false;
     }
-
 }
 
 
@@ -154,7 +153,7 @@ function plugin_getuseroption_locator()
 
 
 /**
-*   Return the current version of code. 
+*   Return the current version of code.
 *   Used in the Plugin Editor to show the registered version and code version
 *
 *   @return string Plugin version
@@ -250,16 +249,14 @@ function plugin_autouninstall_locator()
                             $_CONF_GEO['pi_name']. '_userloc',
                         ),
         'groups'    => array($_CONF_GEO['pi_name'] . ' Admin'),
-        'features'  => array($_CONF_GEO['pi_name'] . '.admin', 
+        'features'  => array($_CONF_GEO['pi_name'] . '.admin',
                             $_CONF_GEO['pi_name'] . '.submit',
                             $_CONF_GEO['pi_name'] . '.view',
                         ),
         'php_blocks' => array(),
         'vars'      => array($_CONF_GEO['pi_name'] . '_gid')
     );
-
     return $out;
-
 }
 
 
@@ -271,7 +268,7 @@ function plugin_autouninstall_locator()
 *
 *   @return boolean True if moderator
 */
-function plugin_ismoderator_locator() 
+function plugin_ismoderator_locator()
 {
     global $_CONF_GEO;
     static $isMod = NULL;
@@ -289,13 +286,13 @@ function plugin_ismoderator_locator()
 *
 *   @return string  The HTML form
 */
-function plugin_submit_locator() 
+function plugin_submit_locator()
 {
     global $HTTP_POST_VARS, $LANG12, $_CONF, $_CONF_GEO, $LANG_GEO;
 
     // only valid users allowed
     if (!GEO_canSubmit()) {
-        return GEO_errorMsg($LANG_GEO['access_denied_msg1'], 'alert', 
+        return GEO_errorMsg($LANG_GEO['access_denied_msg1'], 'alert',
                 $LANG_GEO['access_denied_msg']);
     }
 
@@ -369,7 +366,8 @@ function plugin_dopluginsearch_locator(
     }
 
     $search = new SearchCriteria($_CONF_GEO['pi_name'], $LANG_GEO['menulabel']);
-    $columns = array('a.title', 'a.description', 'a.address', 'a.keywords', 'a.url');
+    $columns = array('a.title', 'a.description', 'a.address',
+        'a.city', 'a.state', 'a.postal', 'a.keywords', 'a.url');
     list($sql, $ftsql) = $search->buildSearchSQL($keyType, $query, $columns, $sql);
     //echo $sql;die;
     $search->setSQL($sql);
@@ -455,7 +453,8 @@ function plugin_moderationvalues_locator()
     return array(
         'id',
         $_TABLES['locator_markers'],
-        'id, owner_id, title, address, description, lat, lng, ' .
+        'id, owner_id, title, address, city, state, postal,
+            description, lat, lng, ' .
             'is_origin, keywords, url, add_date, group_id, ' .
             'perm_owner, perm_group, perm_members, perm_anon, enabled',
         $_TABLES['locator_submission']);
@@ -537,7 +536,7 @@ function GEO_errorMsg($msg='', $type='info', $hdr='')
 *
 *   @return boolean True on success, error code on failure
 */
-function plugin_upgrade_locator() 
+function plugin_upgrade_locator()
 {
     require_once dirname(__FILE__) . '/upgrade.inc.php';
     return locator_do_upgrade();
@@ -584,9 +583,7 @@ function GEO_getGroups($grplist='', $NOT='')
             $A[$row['grp_name']] = $row['grp_id'];
         }
     }
-
     return $A;
-
 }
 
 
@@ -598,7 +595,7 @@ function GEO_getGroups($grplist='', $NOT='')
 */
 function GEO_sendAdminNotification($A)
 {
-    global $LANG_DIRECTION, $LANG_CHARSET, $_CONF, $_TABLES, 
+    global $LANG_DIRECTION, $LANG_CHARSET, $_CONF, $_TABLES,
             $LANG_GEO, $_CONF_GEO;
 
     require_once $_CONF['path'].'lib/phpmailer/class.phpmailer.php';
@@ -622,7 +619,7 @@ function GEO_sendAdminNotification($A)
     $last = COM_checkSpeedlimit ($_CONF_GEO['pi_name'] . 'notify');
     if ( $last == 0 ) {
         $mail = new PHPMailer();
-        $mail->CharSet = $charset; 
+        $mail->CharSet = $charset;
         if ($_CONF['mail_backend'] == 'smtp' ) {
             $mail->Host     = $_CONF['mail_smtp_host'] . ':' . $_CONF['mail_smtp_port'];
             $mail->SMTPAuth = $_CONF['mail_smtp_auth'];
@@ -639,7 +636,7 @@ function GEO_sendAdminNotification($A)
         $mail->IsHTML(false);
 
         $title = $A['title'];
-        $address = $A['address'];
+        $address = "{$A['address']}\n{$A['city']}\n{$A['state']}\n{$A['postal']}";
 
         $mail->Subject = $_CONF['site_name'] . ' ' . $LANG_GEO['new_submission'];
 
@@ -700,7 +697,7 @@ function GEO_getGroupList($basegroup)
     while (sizeof($to_check) > 0) {
         $thisgroup = array_pop ($to_check);
         if ($thisgroup > 0) {
-            $result = DB_query ("SELECT ug_grp_id 
+            $result = DB_query ("SELECT ug_grp_id
                     FROM {$_TABLES['group_assignments']}
                     WHERE ug_main_grp_id = $thisgroup");
             $numGroups = DB_numRows($result);
@@ -715,7 +712,6 @@ function GEO_getGroupList($basegroup)
             $checked[] = $thisgroup;
         }
     }
-
     return $checked;
 }
 
@@ -728,14 +724,18 @@ function GEO_getGroupList($basegroup)
 function GEO_canSubmit()
 {
     global $_CONF, $_CONF_GEO, $_GROUPS;
+    static $cansubmit = NULL;
 
-    if ((COM_isAnonUser() && $_CONF_GEO['anon_submit'] == false) ||
-        (!COM_isAnonUser() && $_CONF_GEO['user_submit'] == false && 
-            !in_array($_CONF_GEO['pi_name'] . ' Admin', $_GROUPS))) {
-        return false;
-    } else {
-        return true;
+    if ($cansubmit === NULL) {
+        if ((COM_isAnonUser() && $_CONF_GEO['anon_submit'] == false) ||
+            (!COM_isAnonUser() && $_CONF_GEO['user_submit'] == false &&
+                !in_array($_CONF_GEO['pi_name'] . ' Admin', $_GROUPS))) {
+            $cansubmit = false;
+        } else {
+            $cansubmit = true;
+        }
     }
+    return $cansubmit;
 }
 
 
@@ -819,7 +819,6 @@ function plugin_autotags_locator($op, $content = '', $autotag = '')
     }   // switch ($op)
 
     return $retval;
-
 }
 
 
@@ -838,12 +837,10 @@ function plugin_runScheduledTask_locator()
     if ($purge_days > 0) {
         $purge_exp_date = time() - ($purge_days * 86400);
         DB_query("DELETE FROM {$_TABLES['locator_userloc']}
-                WHERE type = 1 
+                WHERE type = 1
                 AND add_date < DATE_SUB(NOW(), INTERVAL $purge_days DAY)
         ");
-
     }
-
 }
 
 
@@ -870,16 +867,16 @@ function GEO_showMap($lat, $lng, $text='')
         return '';
 
     USES_locator_google_lang();
-    $iso_lang = is_array($GOOG_lang) && 
-                in_array($_CONF['iso_lang'], $GOOG_lang) ? 
+    $iso_lang = is_array($GOOG_lang) &&
+                in_array($_CONF['iso_lang'], $GOOG_lang) ?
                 $_CONF['iso_lang'] : 'en';
 
     list($js_url, $canvas_id) = GEO_MapJS();
     $T = new Template(LOCATOR_PI_PATH . '/templates');
     $T->set_file('page', 'map.thtml');
     $T->set_var(array(
-        'lat'           => number_format($lat, 6, '.', ''),
-        'lng'           => number_format($lng, 6, '.', ''),
+        'lat'           => GEO_coord2str($lat, true),
+        'lng'           => GEO_coord2str($lng, true),
         'infowindow_text' => COM_checkHTML($text),
         'iso_lang'      => $iso_lang,
         'geo_map_js_url' => $js_url,
@@ -891,12 +888,12 @@ function GEO_showMap($lat, $lng, $text='')
 
 
 /**
- *  Displays a map in the user's profile.
- *
- *  @param  integer $uid    User ID whose profile is being displayed
- *  @param  object  &$T     Pointer to template object
- *  @return string          HTML to include in profile page
- */
+*   Displays a map in the user's profile.
+*
+*   @param  integer $uid    User ID whose profile is being displayed
+*   @param  object  &$T     Pointer to template object
+*   @return string          HTML to include in profile page
+*/
 function plugin_profilevariablesdisplay_locator($uid, &$T)
 {
     global $_CONF_GEO, $_TABLES;
@@ -908,13 +905,13 @@ function plugin_profilevariablesdisplay_locator($uid, &$T)
     if (!isset($_CONF_GEO['profile_showmap']) ||
         $_CONF_GEO['profile_showmap'] == 0 ||
         $uid < 2) {
-        return '';
+        return;
     }
 
     // Get the user's location if possible.  If none available, return
     $userloc = DB_getItem($_TABLES['userinfo'], 'location', "uid=$uid");
     if ($userloc == '') {
-        return '';
+        return;
     }
 
     USES_locator_class_userloc();
@@ -923,14 +920,14 @@ function plugin_profilevariablesdisplay_locator($uid, &$T)
     $LT = new Template(LOCATOR_PI_PATH . '/templates');
     $LT->set_file('page', 'profile_map.thtml');
     $LT->set_var(array(
+        'is_uikit'      => $_CONF_GEO['_is_uikit'] ? 'true' : '',
         'profile_map'   => GEO_showMap($U->lat, $U->lng, $userloc),
     ) );
     $LT->parse('output','page');
     $existingFields = $T->get_var('plugin_fields');
-    $T->set_var('plugin_fields', 
+    $T->set_var('plugin_fields',
         $existingFields . $LT->finish($LT->get_var('output'))
     );
- 
 }
 
 
@@ -944,7 +941,7 @@ function plugin_profilevariablesdisplay_locator($uid, &$T)
 */
 function LOCATOR_getDocURL($file='', $doclang='english')
 {
-    $doc_path = $_CONF['path_html'] . $_CONF_LOCATOR['pi_name'] . 
+    $doc_path = $_CONF['path_html'] . $_CONF_LOCATOR['pi_name'] .
                 "/docs/$doclang/";
     $doc_url = '';
 
@@ -963,7 +960,6 @@ function LOCATOR_getDocURL($file='', $doclang='english')
     return $doc_url;
 }
 
-    
 
 /**
 *   Get the URL to the localized configuration help file.
@@ -1008,7 +1004,7 @@ function GEO_getCoords($address, &$lat, &$lng)
     if ($_CONF_GEO['autofill_coord'] != 1)
         return 0;
 
-    $address = urlencode($address);
+    $address = urlencode(GEO_AddressToString($address));
     $url = GEO_GOOG_URL . $address . '&key=' . $_CONF_GEO['google_api_key'];
 
     $json = GEO_file_get_contents($url);
@@ -1033,9 +1029,9 @@ function GEO_getCoords($address, &$lat, &$lng)
 *
 *   @since  1.0.3
 *   @param  string  $id         Location ID to retrieve
-*   @param  string  $singleAddress  True to return a single address string,
-*                                   False to return address components
-*   @return array       Array of location information, or false on failure
+*   @param  boolean $singleAddress  True to return a single address string,
+*                                   False to return array of all info
+*   @return mixed   Array of location information, address string, or false on failure
 */
 function GEO_getInfo($id, $singleAddress = false)
 {
@@ -1044,25 +1040,20 @@ function GEO_getInfo($id, $singleAddress = false)
     // A "select *" is done since we don't know what the caller might want
     $res = DB_query("SELECT *
                 FROM {$_TABLES['locator_markers']}
-                WHERE id='" . COM_sanitizeId($id) . "' 
-                AND enabled = 1 " . 
+                WHERE id='" . COM_sanitizeId($id) . "'
+                AND enabled = 1 " .
                 COM_getPermSQL('AND'));
     $A = DB_fetchArray($res, false);
     if (empty($A)) {
         return false;   // Empty result, DB error, whatever.
     }
 
-    if (!$singleAddress) {
-        // Try to extract the address string into component parts.
-        // Obviously this is just a guess.
-        $Addr = explode(',', $A['address']);
-        $A['street'] = trim($Addr[0]);
-        $A['city'] = trim($Addr[1]);
-        $A['province'] = trim($Addr[2]);
-        $A['postal'] = trim($Addr[3]);
+    if ($singleAddress) {
+        $addr = GEO_AddressToString($A);
+    } else {
+        $addr = $A;
     }
-
-    return $A;
+    return $addr;
 }
 
 
@@ -1087,7 +1078,6 @@ function GEO_MapJS()
     } else {
         $url = '';
     }
-
     return array($url, $canvas_id);
 }
 
@@ -1132,7 +1122,6 @@ function GEO_file_get_contents($url)
         COM_errorLog('LOCATOR: Missing url_fopen and curl support');
 
     }
-
     return $result;
 }
 
@@ -1165,9 +1154,29 @@ function plugin_user_move_locator($origUID, $destUID)
             SET owner_id = $destUID WHERE owner_id = $origUID", 1);
     DB_query("UPDATE {$_TABLES['locator_submission']}
             SET owner_id = $destUID WHERE owner_id = $origUID", 1);
-    DB_query("UPDATE {$_TABLES['locator_userXloc']}
+    DB_query("UPDATE {$_TABLES['locator_userXorigin']}
             SET uid = $destUID WHERE uid = $origUID", 1);
 }
+
+/**
+*   Save the profile information when edited via Account Settings
+*/
+function plugin_profilesave_locator($uid=0)
+{
+    global $_TABLES, $_USER;
+
+    if ($uid == 0) {
+        $uid = (int)$_USER['uid'];
+    }
+
+    // Sanitize data
+    $location = isset($_POST['location']) ? DB_escapeString($_POST['location']) : '';
+
+    USES_locator_class_userloc();
+    $U = new UserLoc($_POST['location'], $_USER['uid']);
+    $U->saveToDB();
+}
+
 
 
 /**
@@ -1185,7 +1194,7 @@ function service_getMap_locator($args, &$output, &$svc_msg)
     $lng = isset($args['lng']) ? (float)$args['lng'] : 0;
     $output = GEO_showMap($lat, $lng);
     return PLG_RET_OK;
-} 
+}
 
 
 /**
@@ -1201,13 +1210,14 @@ function service_getCoords_locator($args, &$output, &$svc_msg)
     //if (!is_array($args) || empty($args['address'])) return PLG_RET_ERROR;
     $output['lat'] = 0;
     $output['lng'] = 0;
-    if (GEO_getCoords($args, $output['lat'], $output['lng']) == 0) {
+    $addr = GEO_AddressToString($args);
+    if (GEO_getCoords($addr, $output['lat'], $output['lng']) == 0) {
         return PLG_RET_OK;
     } else {
         return PLG_RET_ERROR;
     }
 }
- 
+
 
 /**
 *   Returns a selection list of locations.
@@ -1221,7 +1231,8 @@ function GEO_optionList($sel='')
 {
     global $_TABLES;
 
-    return COM_optionList($_TABLES['locator_markers'], 'id,title', $sel);
+    return COM_optionList($_TABLES['locator_markers'], 'id,title', $sel, 1,
+        'enabled = 1');
 }
 
 
@@ -1297,8 +1308,48 @@ function GEO_invokeService($type, $action, $args, &$output, &$svc_msg)
         }
         $retval = $function($args, $output, $svc_msg);
     }
-
     return $retval;
+}
+
+
+/**
+*   Convert an array of address elements into a string.
+*
+*   @param  array   $args   Array of address elements
+*   @return string      String form of address
+*/
+function GEO_AddressToString($args)
+{
+    if (is_array($args)) {
+        // Combine address elements into a comma-delimited string
+        $parts = array();
+        foreach ($args as $fld) {
+            if ($fld != '') $parts[] = $fld;
+        }
+        $addr = implode(', ', $parts);
+    } else {
+        // Already a string, just return it
+        $addr = $args;
+    }
+    return $addr;
+}
+
+
+/**
+*   Convert a latitude or longitude to a string based on the configured separators.
+*
+*   @param  float   $val    Value to convert
+*   @param  boolean $us     True to force US formatting, False for locale-based
+*   @return string      Formatted numeric string
+*/
+function GEO_coord2str($val, $us = false)
+{
+    if (!is_numeric($val)) return '';
+    if ($us) {
+        return number_format($val, 6, '.', ',');
+    } else {
+        return COM_numberFormat($val, 6);
+    }
 }
 
 ?>

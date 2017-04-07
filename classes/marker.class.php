@@ -39,6 +39,9 @@ class Marker
             $this->radius = 0;
             $this->keywords = '';
             $this->address = '';
+            $this->city = '';
+            $this->state = '';
+            $this->postal = '';
             $this->oldid = '';
             $this->enabled = 1;
             $this->is_origin = 0;
@@ -77,6 +80,7 @@ class Marker
 
         case 'lat':
         case 'lng':
+            // Convert European decimal char if coming from a form
             $value = str_replace(',', '.', $value);
             $this->properties[$key] = (float)$value;
             break;
@@ -98,6 +102,9 @@ class Marker
             break;
 
         case 'address':
+        case 'city':
+        case 'state':
+        case 'postal':
         case 'keywords':
         case 'description':
         case 'title':
@@ -164,6 +171,9 @@ class Marker
         $this->lng = $A['lng'];
         $this->keywords = $A['keywords'];
         $this->address = $A['address'];
+        $this->city = $A['city'];
+        $this->state = $A['state'];
+        $this->postal = $A['postal'];
         $this->owner_id = $A['owner_id'];
         $this->group_id = $A['group_id'];
         $this->title = $A['title'];
@@ -246,7 +256,7 @@ class Marker
         if ( (empty($lat) || empty($lng))
                 && $this->address != '' 
                 && $_CONF_GEO['autofill_coord'] == true ) {
-            if (GEO_getCoords($this->address, $lat, $lng) == 0) {
+            if (GEO_getCoords($this->AddressToString(), $lat, $lng) == 0) {
                 $this->lat = $lat;
                 $this->lng = $lng;
             }
@@ -259,15 +269,18 @@ class Marker
                 $this->id = COM_makeSid();
         }
 
-        // Fix commas used as decimals
-        $lat = number_format($this->lat, 6, '.', '');
-        $lng = number_format($this->lng, 6, '.', '');
+        // Force floating-point format to use decimal in case locale is different.
+        $lat = GEO_coord2str($this->lat, true);
+        $lng = GEO_coord2str($this->lng, true);
 
         $sql1 = "title = '" . DB_escapeString($this->title) . "',
             address = '" . DB_escapeString($this->address) . "',
+            city = '" . DB_escapeString($this->city) . "',
+            state = '" . DB_escapeString($this->state) . "',
+            postal = '" . DB_escapeString($this->postal) . "',
             description = '" . DB_escapeString($this->description) . "',
-            lat = '$lat',
-            lng = '$lng',
+            lat = {$lat},
+            lng = {$lng},
             keywords = '" . DB_escapeString($this->keywords) . "',
             url = '" . DB_escapeString($A['url']) . "',
             is_origin = '{$this->is_origin}',
@@ -373,6 +386,9 @@ class Marker
             'title'         => $this->title,
             'description'   => $this->description,
             'address'       => $this->address,
+            'city'          => $this->city,
+            'state'         => $this->state,
+            'postal'        => $this->postal,
             'lat'           => $this->lat,
             'lng'           => $this->lng,
             'keywords'      => $this->keywords,
@@ -465,7 +481,7 @@ class Marker
         } else {
             $title = $this->title;
             $description = $this->description;
-            $address = $this->address;
+            $address = $this->AddressToString('<br />');
         }
 
         $T = new Template(LOCATOR_PI_PATH . '/templates');
@@ -484,11 +500,14 @@ class Marker
             'action_url'        => $_SERVER['PHP_SELF'],
             'name'              => $title,
             'address'           => $address,
+            'city'              => $city,
+            'state'             => $state,
+            'postal'            => $postal,
             'description'       => $description,
             'url'               => COM_createLink($this->url, $this->url, 
                                     array('target' => '_new')),
-            'lat'               => number_format($this->lat, 6, '.', ''),
-            'lng'               => number_format($this->lng, 6, '.', ''),
+            'lat'               => GEO_coord2str($this->lat),
+            'lng'               => GEO_coord2str($this->lng),
             'back_url'          => $back_url,
         ) );
         /*if ($origin != '')
@@ -500,10 +519,14 @@ class Marker
         ) {
             // Try to get the Google map
             list($js_url, $canvas_id) = GEO_MapJS();
+            foreach (array('address', 'city', 'state', 'postal')
+                    as $fld) {
+                if ($this->$fld != '')
+                    $info_window .= '<br />' . htmlspecialchars($this->address);
+            }
             $T->set_var(array(
                 'show_map'          => 'true',
-                'infowindow_text'   => htmlspecialchars($this->title) . 
-                        '<br ' . XHTML . '>' . htmlspecialchars($this->address),
+                'infowindow_text'   => $info_window,
                 'geo_map_js_url'    => $js_url,
                 'canvas_id'         => $canvas_id,
              ) );
@@ -514,11 +537,11 @@ class Marker
 
         // Show the location's weather if that plugin integration is enabled
         if ($_CONF_GEO['use_weather']) {
-				if ($this->lat !== '' and $this->lng !=='') {
-                    $args = array('loc'   => '"'.str_replace(',', '.', $this->lat).','.str_replace(',', '.', $this->lng).'"');
-                }else{
-					$args = array('loc'   => $this->address);
-				}
+            if ($this->lat != 0 && $this->lng != 0) {
+                $args = array('loc' => $this->lat . ',' . $this->lng);
+            } else {
+                $args = array('loc' => $this->address);
+            }
             $s = GEO_invokeService('weather', 'embed', $args, $weather, $svc_msg);
             if ($s == PLG_RET_OK) {
                 $T->set_var('weather', $weather);
@@ -572,6 +595,25 @@ class Marker
             }
         }
         return $retval;
+    }
+
+
+    /**
+    *   Combine the address elements into a string to be used for geocoding.
+    *   Override the delimiter to create a different format.
+    *
+    *   @param  string  $delim  Delimiter, default to comma
+    *   @return string  String form of address
+    */
+    public function AddressToString($delim = ', ')
+    {
+        $parts = array();
+        foreach (array('address', 'city', 'state', 'postal') as $fld) {
+            if ($this->$fld != '') {
+                $parts[] = $this->$fld;
+            }
+        }
+        return implode($delim, $parts);
     }
 
 }
