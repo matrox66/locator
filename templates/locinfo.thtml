@@ -17,7 +17,7 @@
   {name}
   </td>
 </tr><tr>
-  <td class="locinfo">
+  <td class="locinfo" valign="top">
     <label for="address">{$LANG_GEO['address']}:</label>
   </td>
   <td>
