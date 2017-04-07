@@ -3,31 +3,40 @@
 *   Upgrade the plugin
 *
 *   @author     Lee Garner <lee@leegarner.com>
-*   @copyright  Copyright (c) 2009-2016 Lee Garner <lee@leegarner.com>
+*   @copyright  Copyright (c) 2009-2017 Lee Garner <lee@leegarner.com>
 *   @package    locator
-*   @version    1.1.0
+*   @version    1.1.1
 *   @license    http://opensource.org/licenses/gpl-2.0.php
 *               GNU Public License v2 or later
 *   @filesource
 */
 
-global $_CONF, $_CONF_GEO, $_DB_dbms;
+global $_CONF, $_CONF_GEO, $_DB_dbms, $_SQL_UPGRADE;
 
 /** Include default values for new config items */
-require_once "{$_CONF['path']}plugins/{$_CONF_GEO['pi_name']}/install_defaults.php";
+require_once dirname(__FILE__) . '/install_defaults.php';
+/** Include SQL upgrades */
+require_once dirname(__FILE__) . '/sql/mysql_install.php';
 
 /**
 *   Sequentially perform version upgrades.
-*   @param  string  $current_ver    Existing installed version to be upgraded
+*   If any step fails, immediately return False.
+*
 *   @return boolean     True on success, False on failure
 */
-function locator_do_upgrade($current_ver)
+function locator_do_upgrade()
 {
     global $_CONF_GEO, $_PLUGIN_INFO;
 
     if (isset($_PLUGIN_INFO[$_CONF_GEO['pi_name']])) {
-        $current_version = $_PLUGIN_INFO[$_CONF_GEO['pi_name']];
+        $current_ver = $_PLUGIN_INFO[$_CONF_GEO['pi_name']];
+        $code_ver = plugin_chkVersion_locator();
+        if (COM_checkVersion($current_ver, $code_ver)) {
+            // Already updated to the code version, nothing to do
+            return true;
+        }
     } else {
+        // Error determining the installed version
         return false;
     }
 
@@ -56,6 +65,12 @@ function locator_do_upgrade($current_ver)
         $current_ver = '1.1.0';
     }
 
+    if (!COM_checkVersion($current_ver, '1.1.1')) {
+        $current_ver = '1.1.1';
+        if (!locator_do_upgrade_sql($current_ver)) return false;
+        if (!locator_do_set_version($current_ver)) return false;
+    }
+
     return true;
 }
 
@@ -68,17 +83,17 @@ function locator_do_upgrade($current_ver)
 *   @param array    $sql      SQL statement to execute
 *   @return boolean     True on success, False on failure
 */
-function locator_do_upgrade_sql($version, $sql='')
+function locator_do_upgrade_sql($version)
 {
-    global $_TABLES, $_CONF_GEO;
+    global $_TABLES, $_CONF_GEO, $_SQL_UPGRADE;
 
-    // If no sql statements passed in, return success, this could be normal
-    if (!is_array($sql))
+    // If no sql statements to execute, return success. This could be normal.
+    if (!is_array($_SQL_UPGRADE[$version]))
         return true;
 
     // Execute SQL now to perform the upgrade
     COM_errorLOG("--Updating {$_CONF_GEO['pi_display_name']} to version $version");
-    foreach ($sql as $s) {
+    foreach ($_SQL_UPGRADE[$version] as $s) {
         COM_errorLOG("{$_CONF_GEO['pi_display_name']} $version update: Executing SQL => $s")
         DB_query($s,'1');
         if (DB_error()) {
@@ -114,7 +129,7 @@ function locator_do_set_version($ver)
         COM_errorLog("Error updating the {$_CONF_GEO['pi_display_name']} Plugin version",1);
         return false;
     } else {
-        COM_errorLog("Succesfully updated the {$_CONF_GEO['pi_display_name']} Plugin",1);
+        COM_errorLog("Succesfully updated the {$_CONF_GEO['pi_display_name']} Plugin version",1);
         return true;
     }
 }
@@ -126,7 +141,7 @@ function locator_do_set_version($ver)
 */
 function locator_upgrade_0_1_1()
 {
-    global $_TABLES, $_CONF_GEO, $_GEO_DEFAULT;
+    global $_CONF_GEO, $_GEO_DEFAULT;
 
     // Add new configuration items
     $c = config::get_instance();
@@ -135,7 +150,7 @@ function locator_upgrade_0_1_1()
                'select', 0, 0, 3, 70, true, $_CONF_GEO['pi_name']);
     }
 
-    return locator_do_set_version('0.1.1');
+    return locator_do_upgrade_sql('0.1.1') ? locator_do_set_version('0.1.1') : false;
 }
 
 /**
@@ -152,17 +167,7 @@ function locator_upgrade_0_1_4()
                'text', 0, 0, 3, 70, true, $_CONF_GEO['pi_name']);
     }
 
-    $sql = array(
-        "ALTER TABLE {$_TABLES['locator_userloc']}
-            ADD type TINYINT(1) DEFAULT 0 AFTER id";
-        "ALTER TABLE {$_TABLES['locator_userloc']}
-            CHANGE add_date add_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP";
-        // new "enabled" field for markers
-        "ALTER TABLE {$_TABLES['locator_markers']}
-            ADD enabled TINYINT(1) UNSIGNED NOT NULL DEFAULT '1'";
-    );
-
-    return locator_do_upgrade_sql('0.1.4', $sql) ? locator_do_set_version('0.1.4') : false;
+    return locator_do_upgrade_sql('0.1.4') ? locator_do_set_version('0.1.4') : false;
 }
 
 /**
@@ -193,11 +198,7 @@ function locator_upgrade_1_0_1()
 
     }
 
-    // Add 'enabled' field to submissions that should have been in 0.1.4
-    $sql[] = "ALTER TABLE {$_TABLES['locator_submission']}
-        ADD enabled TINYINT(1) UNSIGNED NOT NULL DEFAULT '1'";
-
-    return locator_do_upgrade_sql('1.0.1', $sql) ? locator_do_set_version('1.0.1') : false;
+    return locator_do_upgrade_sql('1.0.1') ? locator_do_set_version('1.0.1') : false;
 }
 
 
