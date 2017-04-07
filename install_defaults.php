@@ -29,7 +29,7 @@ global $_CONF_GEO;
 
 $_GEO_DEFAULT['default_radius'] = 30;   // Default search radius
 $_GEO_DEFAULT['google_api_key'] = '';   // User must supply their own
-$_GEO_DEFAULT['autofill_coord'] = false; // Set false since it won't work without a Google key
+$_GEO_DEFAULT['autofill_coord'] = true;
 $_GEO_DEFAULT['show_map'] = true;      // Key no longer required for map
 //$_GEO_DEFAULT['url_geocode']  = 'http://maps.google.com/maps/geo?q=%address%&output=csv&key=%google_key%';
 $_GEO_DEFAULT['distance_unit'] = 'miles';  // 'km' for kilometers, else = miles
@@ -135,7 +135,6 @@ function plugin_initconfig_locator($group_id = 0)
                 '@select', 0, 4, 12, 20, true, $_CONF_GEO['pi_name']);
 
     }
-
     return true;
 }
 
