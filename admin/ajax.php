@@ -25,13 +25,13 @@ if (!SEC_hasRights('locator.admin')) {
     exit;
 }
 
-switch ($_GET['action']) {
+switch ($_POST['action']) {
 case 'toggle':
-    switch ($_GET['type']) {
+    switch ($_POST['type']) {
     case 'is_origin':
     case 'enabled':
         USES_locator_class_marker();
-        $newval = Marker::Toggle($_GET['id'], $_GET['type'], $_GET['oldval']);
+        $newval = Marker::Toggle($_POST['id'], $_POST['type'], $_POST['oldval']);
         break;
 
      default:
@@ -44,8 +44,9 @@ case 'toggle':
     header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
     $values = array(
         'newval' => $newval,
-        'id'    => $_GET['id'],
-        'type'  => $_GET['type'],
+        'id'    => $_POST['id'],
+        'type'  => $_POST['type'],
+        'statusMessage' => $LANG_GEO['loc_updated'],
     );
     echo json_encode($values);
     break;

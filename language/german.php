@@ -81,6 +81,7 @@ $LANG_GEO= array(
     ),
 'back'      => 'Back',
 'location'  => 'Location',
+'loc_updated'       => 'Location has been updated',
 );
 
 

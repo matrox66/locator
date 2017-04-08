@@ -78,6 +78,7 @@ $LANG_GEO= array(
     ),
 'back'              => 'Back',
 'location'          => 'Location',
+'loc_updated'       => 'Location has been updated',
 );
 
 $PLG_locator_MESSAGE1 = 'Your location has been queued for administrator approval.';
