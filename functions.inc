@@ -1001,7 +1001,7 @@ function GEO_getCoords($address, &$lat, &$lng)
 {
     global $_CONF_GEO;
 
-    if ($_CONF_GEO['autofill_coord'] != 1)
+    if ($_CONF_GEO['autofill_coord'] != 1 || empty($address))
         return 0;
 
     $address = urlencode(GEO_AddressToString($address));
@@ -1017,7 +1017,6 @@ function GEO_getCoords($address, &$lat, &$lng)
     }
     $lat = $data['results'][0]['geometry']['location']['lat'];
     $lng = $data['results'][0]['geometry']['location']['lng'];
-
     return 0;
 }
 
@@ -1093,11 +1092,8 @@ function GEO_MapJS()
 function GEO_file_get_contents($url)
 {
     if (ini_get('allow_url_fopen') == 1) {
-
         $result = file_get_contents($url, 0);
-
     } elseif (in_array('curl', get_loaded_extensions())) {
-
         $agent = 'Mozilla/5.0 (Windows; U; Windows NT 6.1; en-GB; ' .
                 'rv:1.9.1) Gecko/20090624 Firefox/3.5 (.NET CLR ' .
                 '3.5.30729)';
@@ -1117,10 +1113,8 @@ function GEO_file_get_contents($url)
         curl_close($ch);
 
     } else {
-
         $result = '';
         COM_errorLog('LOCATOR: Missing url_fopen and curl support');
-
     }
     return $result;
 }
