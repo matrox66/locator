@@ -1172,6 +1172,133 @@ function plugin_profilesave_locator($uid=0)
 }
 
 
+/**
+*   Provides the getItemInfo function for locations
+*
+*   @param  string  $id         Location ID
+*   @param  string  $fields     Comma-separated list of fields to return
+*   @param  integer $uid        User ID
+*   @param  array   $options    Not used
+*   @return array           Array of product information
+*/
+function plugin_getiteminfo_locator($id, $what, $uid=0, $options=array())
+{
+    global $_TABLES, $_CONF;
+
+    $properties = explode(',', $what);
+    $fields = array();
+    $retval = array();
+    $buildingSearchIndex = false;
+    foreach ($properties as $p) {
+        switch ($p) {
+        case 'search_index':
+            $buildingSearchIndex = true;
+            break;
+        case 'id':
+            $fields[] = 'id';
+            break;
+        case 'title':
+            $fields[] = 'title';
+            break;
+        case 'content':
+        case 'description':
+            $fields[] = 'description';
+            break;
+        case 'searchidx':
+            $fields[] = 'title';
+            $fields[] = 'address';
+            $fields[] = 'city';
+            $fields[] = 'state';
+            $fields[] = 'postal';
+            $fields[] = 'description';
+            break;
+        case 'author':
+            $fields[] = 'owner_id';
+            break;
+        case 'date':
+            $fields[] = 'add_date';
+            break;
+        }
+    }
+    if (count($fields) == 0) {
+        return $retval;
+    }
+    $fields = array_unique($fields);
+    $fields = implode(',', $fields);
+    $retval = array();
+    $sql = "SELECT $fields
+            FROM {$_TABLES['locator_markers']} ";
+    if ($id == '*') {
+        $where = ' ';
+    } else {
+        $where = " WHERE (id = '" . DB_escapeString($id) . "')";
+    }
+    //echo $sql;die;
+    $res = DB_query($sql . $where);
+    while ($A = DB_fetchArray($res, false)) {
+        foreach ($properties as $p) {
+            switch ($p) {
+            case 'id':
+                $props[$p] = $A['id'];
+                break;
+            case 'excerpt':
+            case 'description':
+            case 'content':
+                $props[$p] = $A['description'];
+                break;
+            case 'title':
+                $props[$p] = $A['title'];
+                break;
+            case 'author':
+                $props[$p] = $A['owner_id'];
+                break;
+            case 'date':
+                $props[$p] = $A['add_date'];
+                break;
+            case 'searchidx':
+                $props[$p] = $A['title'] . ' ' . $A['address'] . ' ' .
+                        $A['city'] . ' ' . $A['state'] . ' ' . $A['postal'] . ' ' .
+                        $A['description'];
+                break;
+            case 'url':
+                $props[$p] = $_CONF['site_url'] .
+                    '/locator/index.php?detail=x&id=' . urlencode($A['id']);
+                break;
+            default:
+                $props[$p] = isset($A[$p]) ? $A[$p] : NULL;
+                break;
+            }
+        }
+        $mapped = array();
+        foreach ($props as $key => $value) {
+            if ($id == '*') {
+                if ($value != '') {
+                    $mapped[$key] = $value;
+                }
+            } else {
+                $mapped[$key] = $value;
+            }
+        }
+
+        if ($id == '*') {
+            $retval[] = $mapped;
+        } else {
+            $retval = $mapped;
+            break;
+        }
+    }
+
+    if (($id != '*') && (count($retval) == 1)) {
+        $tRet = array_values($retval);
+        $retval = $tRet[0];
+    }
+    if ($retval === '' || (is_array($retval) && count($retval) == 0)) {
+        return NULL;
+    } else {
+        return $retval;
+    }
+}
+
 
 /**
 *   Get a map given a pair of coordinates
