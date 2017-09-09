@@ -75,9 +75,6 @@ function USES_locator_functions()
 function USES_locator_editmarker()
 {   require_once LOCATOR_PI_PATH . '/editmarker.php';   }
 
-function USES_locator_upgrade()
-{   require_once LOCATOR_PI_PATH . '/upgrade.inc.php';  }
-
 function USES_locator_google_lang()
 {   require_once LOCATOR_PI_PATH . '/google_lang.inc.php';  }
 
