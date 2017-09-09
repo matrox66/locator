@@ -10,6 +10,7 @@
 *               GNU Public License v2 or later
 *   @filesource
 */
+namespace Locator;
 
 /**
 *   Class to handle the general location markers
@@ -345,7 +346,7 @@ class Marker
         }
 
         //displays the add quote form for single quotations
-        $T = new Template(LOCATOR_PI_PATH . '/templates');
+        $T = new \Template(LOCATOR_PI_PATH . '/templates');
         if ($_CONF_GEO['_is_uikit']) {
             $T->set_file('page', 'markerform.uikit.thtml');
         } else {
@@ -484,7 +485,7 @@ class Marker
             $address = $this->AddressToString('<br />');
         }
 
-        $T = new Template(LOCATOR_PI_PATH . '/templates');
+        $T = new \Template(LOCATOR_PI_PATH . '/templates');
         $T->set_file('page', 'locinfo.thtml');
 
         if ($this->isAdmin) {

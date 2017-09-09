@@ -3,10 +3,10 @@
 *   Plugin-specific functions for the Locator plugin.
 *
 *   @author     Lee Garner <lee@leegarner.com>
-*   @copyright  Copyright (c) 2009 Lee Garner <lee@leegarner.com>
+*   @copyright  Copyright (c) 2009-2017 Lee Garner <lee@leegarner.com>
 *   @package    locator
-*   @version    1.0.1
-*   @license    http://opensource.org/licenses/gpl-2.0.php 
+*   @version    1.1.1
+*   @license    http://opensource.org/licenses/gpl-2.0.php
 *               GNU Public License v2 or later
 *   @filesource
 */
@@ -33,7 +33,7 @@ function GEO_showLocations($id, $radius=0, $units='', $keywords='', $address='')
     if ($radius == 0)
         $radius = $_CONF_GEO['default_radius'];
 
-    $url_opts = '&origin=' . urlencode($origin).
+    $url_opts = '&origin=' . urlencode($id).
         '&radius=' . (int)$radius.
         '&units=' . urlencode($units).
         '&keywords=' . urlencode($keywords).
@@ -45,7 +45,7 @@ function GEO_showLocations($id, $radius=0, $units='', $keywords='', $address='')
     $T->set_var(array(
         'action_url'    => $_SERVER['PHP_SELF'],
         'origin_select' => GEO_originSelect($id),
-        'radius_val'    => $radius == 0 ? 
+        'radius_val'    => $radius == 0 ?
                             $_CONF_GEO['default_radius'] : $radius,
         'keywords'      => $keywords,
         'units'         => $units,
@@ -68,7 +68,7 @@ function GEO_showLocations($id, $radius=0, $units='', $keywords='', $address='')
         // user-supplied address.  Check the speedlimit to avoid
         // hammering Google.
         $id = '';        // clear the id since the address is used
-        COM_clearSpeedlimit($_CONF['speedlimit'], 
+        COM_clearSpeedlimit($_CONF['speedlimit'],
                     $_CONF_GEO['pi_name'].'lookup');
         $last = COM_checkSpeedlimit($_CONF_GEO['pi_name'].'lookup');
         if ($last > 0) {
@@ -81,13 +81,12 @@ function GEO_showLocations($id, $radius=0, $units='', $keywords='', $address='')
         // Get all locations within $radius
         $locations = getLocsByID($id, $radius, $units, $keywords);
     } elseif (!COM_isAnonUser()) {
-        USES_locator_class_userloc();
         // use user profile location
         $user_location = DB_getItem($_TABLES['userinfo'], 'location',
                 'uid='. $_USER['uid']);
         $userloc = new UserLoc($user_location);
         if ($userloc->lat != 0 && $userloc->lng != 0) {
-            $locations = getLocsByCoord($userloc->lat, $userloc->lng, $radius, 
+            $locations = getLocsByCoord($userloc->lat, $userloc->lng, $radius,
                     $units, $keywords);
         }
     }
@@ -99,7 +98,7 @@ function GEO_showLocations($id, $radius=0, $units='', $keywords='', $address='')
 
             $T->set_block('page', 'LocRow', 'LRow');
             if ($locations[$i]['is_origin'] == 0) {
-                $T->set_var('loc_url', LOCATOR_URL . 
+                $T->set_var('loc_url', LOCATOR_URL .
                     '/index.php?ddorigin=x&origin=' .
                     $locations[$i]['id'] . '&id=' . $locations[$i]['id'] .
                     '&radius=' . $radius);
@@ -111,26 +110,26 @@ function GEO_showLocations($id, $radius=0, $units='', $keywords='', $address='')
                 'loc_name'  => $locations[$i]['title'],
                 'loc_address' => $locations[$i]['address'],
                 'loc_distance' => sprintf("%4.2f", $locations[$i]['distance']),
-                'loc_info_url' => LOCATOR_URL . 
-                                '/index.php?detail=x&id=' . 
+                'loc_info_url' => LOCATOR_URL .
+                                '/index.php?detail=x&id=' .
                                 $locations[$i]['id'] . $url_opts,
                 'loc_lat'   => $locations[$i]['lat'],
                 'loc_lng'   => $locations[$i]['lng'],
                 'url_opts'  => $url_opts,
             ) );
-            if ($locations[$i]['is_origin'] == 1 || 
+            if ($locations[$i]['is_origin'] == 1 ||
                     $locations[$i]['userOrigin'] != NULL) {
                 $T->set_var(array(
                     'ck_origin' => 'checked="checked"',
                     'img_origin' => 'on.png',
-                    'img_origin_title' => 
+                    'img_origin_title' =>
                             'This location is already an available origin',
                 ) );
             } else {
                 $T->set_var(array(
                     'ck_origin' => 'checked=""',
                     'img_origin' => 'off.png',
-                    'img_origin_title' => 
+                    'img_origin_title' =>
                         'Click to add this location as an available origin',
                 ) );
             }
@@ -168,10 +167,10 @@ function getLocsByID($id, $radius=0, $units='', $keywords='')
         return $values;
 
     // Get the origin coordinates, or call Google to get
-    // the coordinates of the supplied address.  
+    // the coordinates of the supplied address.
     // Return an error if either is empty.
-    $sql = "SELECT lat, lng 
-                FROM {$_TABLES['locator_markers']} 
+    $sql = "SELECT lat, lng
+                FROM {$_TABLES['locator_markers']}
                 WHERE id='$id'";
     //echo $sql;
     list($lat,$lng) = DB_fetchArray(DB_query($sql));
@@ -218,18 +217,18 @@ function getLocsByCoord($lat, $lng, $radius, $units='', $keywords='')
     }
 
     // Replace commas in lat & lng with decimal points
-    $lat = number_format($lat, 6, '.', '');
-    $lng = number_format($lng, 6, '.', '');
+    $lat = GEO_coord2str($lat, true);
+    $lng = GEO_coord2str($lng, true);
 
      // Find all the locations, excluding the origin, within the radius
     $sql = "SELECT
             m.*,
-            ( $factor * acos( 
-                cos( radians($lat) ) * 
-                cos( radians( lat ) ) * 
-                cos( radians( lng ) - radians($lng) ) + 
-                sin( radians($lat) ) * 
-                sin( radians( lat ) ) 
+            ( $factor * acos(
+                cos( radians($lat) ) *
+                cos( radians( lat ) ) *
+                cos( radians( lng ) - radians($lng) ) +
+                sin( radians($lat) ) *
+                sin( radians( lat ) )
             ) ) AS distance,";
     if (!COM_isAnonUser()) {
         $sql .= " (SELECT uid FROM {$_TABLES['locator_userXorigin']} u
@@ -237,8 +236,8 @@ function getLocsByCoord($lat, $lng, $radius, $units='', $keywords='')
     } else {
         $sql .= " NULL as userOrigin ";
     }
-    $sql .= " FROM {$_TABLES['locator_markers']} m 
-            WHERE id <> '$id' 
+    $sql .= " FROM {$_TABLES['locator_markers']} m
+            WHERE id <> '$id'
             AND enabled = 1 ";
     if ($keywords != '') {
         $kw_esc = explode(' ', DB_escapeString(trim($keywords)));
@@ -251,8 +250,8 @@ function getLocsByCoord($lat, $lng, $radius, $units='', $keywords='')
         }
     }
     $sql .= COM_getPermSQL('AND', 0, 2, 'm');
-    $sql .= " HAVING distance < $radius 
-        ORDER BY distance 
+    $sql .= " HAVING distance < $radius
+        ORDER BY distance
         LIMIT 0, 200";
     //echo $sql;die;
 
@@ -263,9 +262,7 @@ function getLocsByCoord($lat, $lng, $radius, $units='', $keywords='')
     while ($record = DB_fetchArray($result)) {
         $values[] = $record;
     }
-
     return $values;
-
 }
 
 
@@ -296,19 +293,18 @@ function GEO_originSelect($id)
 
         // Add the user's own location, if any, and select if it's the chosen one.
         $selected = $id == 'user' ? 'selected' : '';
-        $userloc = DB_getItem($_TABLES['userinfo'], 
+        $userloc = DB_getItem($_TABLES['userinfo'],
                 'location', "uid=".$_USER['uid']);
         if ($userloc != '')
             $retval .= "<option value=\"user\" $selected>{$userloc}</option>\n";
 
     } else {
-        // Get the systemwide origins    
-        $retval = COM_optionList($_TABLES['locator_markers'], 
+        // Get the systemwide origins
+        $retval = COM_optionList($_TABLES['locator_markers'],
             'id,title', $id, 1, "is_origin=1 or id='$id'");
     }
 
     return $retval;
-
 }
 
 
@@ -324,7 +320,7 @@ function GEO_addUserOrigin($id='')
     if (COM_isAnonUser()) return;
     // If $id is empty, or this user/origin combo is in the table, just return.
     if ($id == '') return;
-    if (DB_count($_TABLES['locator_userXorigin'], 
+    if (DB_count($_TABLES['locator_userXorigin'],
             array('uid','mid'),
             array($_USER['uid'], $id)) > 0)
         return;
@@ -350,15 +346,14 @@ function GEO_delUserOrigin($id='')
     if (COM_isAnonUser()) return;
     if ($id == '') return;
 
-    DB_delete($_TABLES['locator_userXorigin'], 
+    DB_delete($_TABLES['locator_userXorigin'],
         array('uid', 'mid'),
         array($_USER['uid'], $id));
-
 }
 
 
 /**
-*   Creates an administrator list to allow users to add origins to 
+*   Creates an administrator list to allow users to add origins to
 *   their preferences.
 *   @return string HTML of origin list
 */
@@ -373,20 +368,20 @@ function GEO_showOrigins()
     $retval = '';
 
     $header_arr = array(      # display 'text' and use table field 'field'
-        array('text' => $LANG_GEO['origin'].'?', 'field' => 'is_origin', 
+        array('text' => $LANG_GEO['origin'].'?', 'field' => 'is_origin',
                 'sort' => true, 'align' => 'center'),
         array('text' => 'ID', 'field' => 'id', 'sort' => true),
         array('text' => $LANG_GEO['title'], 'field' => 'title', 'sort' => true),
         array('text' => $LANG_GEO['address'], 'field' => 'address', 'sort' => true),
-        array('text' => $LANG_GEO['latitude'], 'field' => 'lat', 
+        array('text' => $LANG_GEO['latitude'], 'field' => 'lat',
                 'sort' => true, 'align' => 'right'),
-        array('text' => $LANG_GEO['longitude'], 'field' => 'lng', 
+        array('text' => $LANG_GEO['longitude'], 'field' => 'lng',
                 'sort' => true, 'align' => 'right'),
     );
 
-    $defsort_arr = array('field' => 'title', 'direction' => 'asc');
+    $defsort_arr = array('field' => 'location', 'direction' => 'asc');
 
-    $retval .= COM_startBlock($_CONF_GEO['admin_header'], '', 
+    $retval .= COM_startBlock($_CONF_GEO['admin_header'], '',
                 COM_getBlockTemplate('_admin_block', 'header'));
 
     $text_arr = array(
@@ -394,23 +389,17 @@ function GEO_showOrigins()
         'form_url' => LOCATOR_URL . '/index.php?page=myorigins',
     );
 
-    $query_arr = array('table' => 'locator_markers',
-        'sql' => "SELECT m.*, 
-            (SELECT uid FROM {$_TABLES['locator_userXorigin']} 
-                WHERE uid={$_USER['uid']} AND mid=m.id) AS userOrigin 
-            FROM {$_TABLES['locator_markers']} m",
-        'query_fields' => array('title', 'address'),
-        'default_filter' => 'WHERE 1=1'
-        //'default_filter' => COM_getPermSql ()
+    $query_arr = array('table' => 'locator_userloc',
+        'sql' => "SELECT * FROM {$_TABLES['locator_userloc']}",
+        'query_fields' => array('location'),
+        'default_filter' => "WHERE uid={$_USER['uid']}",
     );
 
     $retval .= ADMIN_list('locator', 'GEO_getAdminListField', $header_arr,
                     $text_arr, $query_arr, $defsort_arr, '', '', '', $form_arr);
     $retval .= COM_endBlock(COM_getBlockTemplate('_admin_block', 'footer'));
-
     return $retval;
 }
-
 
 
 /**
@@ -462,7 +451,6 @@ function GEO_getAdminListField($fieldname, $fieldvalue, $A, $icon_arr)
                 <input type=\"hidden\" name=\"mode\" value=\"toggleorigin\">\n
                 <input type=\"checkbox\" name=\"cbox[{$A['id']}]\" $checked onclick=\"submit()\">
                 </form>\n";
-            
         }
         break;
 
@@ -481,7 +469,6 @@ function GEO_getAdminListField($fieldname, $fieldvalue, $A, $icon_arr)
     }
 
     return $retval;
-
 }
 
 
@@ -499,8 +486,6 @@ function GEO_getAdminListField($fieldname, $fieldvalue, $A, $icon_arr)
 */
 function GEO_getCoordsUserAddress($address, &$lat, &$lng)
 {
-    USES_locator_class_userloc();
-
     $rec = new UserOrigin($address);
     $lat = $rec->lat;
     $lng = $rec->lng;
@@ -508,7 +493,6 @@ function GEO_getCoordsUserAddress($address, &$lat, &$lng)
         return 200;
     else
         return 0;
-
 }
 
 
@@ -545,7 +529,6 @@ function GEO_siteHeader($subject='', $meta='')
     }
 
     return $retval;
-
 }
 
 
@@ -574,9 +557,7 @@ function GEO_siteFooter()
         $retval .= COM_siteFooter();
         break;
     }
-
     return $retval;
-
 }
 
 ?>

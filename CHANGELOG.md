@@ -1,9 +1,13 @@
 # glLocator - Change Log
 
 ## 1.1.1 (Release TBD)
+- Implement Locator namespace and class autoloader
 - Use HTTPS for Google map api
 - Change lookup form to use "get" to allow back button to work
 - Change address to multiple fields
+- Change to Jquery AJAX in admin screen, enable notifications.
+- Add sitemap v2 driver
+- Add plugin_getiteminfo() function to support Searcher plugin
 
 ## 1.1.0 (Released 2011-04-06)
 - 0000451: [Lookup] Update to Google API V3 (lee) - resolved.

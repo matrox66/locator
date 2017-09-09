@@ -57,6 +57,18 @@ if (file_exists("$langpath/custom/$langfile")) {
     include_once "$langpath/custom/$langfile";
 }
 
+spl_autoload_register(function ($class)
+{
+    if (strpos($class, 'Locator\\') === 0) {
+        $class = str_replace('Locator\\', '', $class);
+        $path = __DIR__ . '/classes/' . $class . '.class.php';
+        if (file_exists($path)) {
+            include $path;
+        }
+    }
+});
+
+
 function USES_locator_functions()
 {   require_once LOCATOR_PI_PATH . '/locator_functions.inc.php';    }
 
@@ -65,14 +77,6 @@ function USES_locator_editmarker()
 
 function USES_locator_upgrade()
 {   require_once LOCATOR_PI_PATH . '/upgrade.inc.php';  }
-
-/** Include the user location class */
-function USES_locator_class_userloc()
-{   require_once LOCATOR_CLASSPATH . '/userloc.class.php';  }
-
-/** Include the user location class */
-function USES_locator_class_marker()
-{   require_once LOCATOR_CLASSPATH . '/marker.class.php';  }
 
 function USES_locator_google_lang()
 {   require_once LOCATOR_PI_PATH . '/google_lang.inc.php';  }
@@ -304,8 +308,7 @@ function plugin_submit_locator()
         $A = array();
     }
 
-    USES_locator_class_marker();
-    $M = new Marker();
+    $M = new Locator\Marker();
     return $M->Edit();
 }
 
@@ -794,8 +797,7 @@ function plugin_autotags_locator($op, $content = '', $autotag = '')
             case 'addr':
             case 'address':
                 if (!empty($parm3)) {
-                    USES_locator_class_userloc();
-                    $U = new UserLoc($parm3, 1);
+                    $U = new Locator\UserLoc($parm3, 1);
                     $lat = $U->lat;
                     $lng = $U->lng;
                     $title = $parm3;
@@ -914,8 +916,7 @@ function plugin_profilevariablesdisplay_locator($uid, &$T)
         return;
     }
 
-    USES_locator_class_userloc();
-    $U = new UserLoc($userloc);
+    $U = new Locator\UserLoc($userloc);
 
     $LT = new Template(LOCATOR_PI_PATH . '/templates');
     $LT->set_file('page', 'profile_map.thtml');
@@ -1166,8 +1167,7 @@ function plugin_profilesave_locator($uid=0)
     // Sanitize data
     $location = isset($_POST['location']) ? DB_escapeString($_POST['location']) : '';
 
-    USES_locator_class_userloc();
-    $U = new UserLoc($_POST['location'], $_USER['uid']);
+    $U = new Locator\UserLoc($_POST['location'], $_USER['uid']);
     $U->saveToDB();
 }
 

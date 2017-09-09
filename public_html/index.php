@@ -73,12 +73,11 @@ $content = '';
 
 switch($action) {
 case 'savemarker':
-    USES_locator_class_marker();
     if (isset($_POST['oldid']) && !empty($_POST['oldid'])) {
         // Editing an existing marker
-        $M = new Marker($_POST['oldid']);
+        $M = new Locator\Marker($_POST['oldid']);
     } else {
-        $M = new Marker();
+        $M = new Locator\Marker();
     }
     if (SEC_hasRights($_CONF_GEO['pi_name'].'.admin')) {
         $table = 'locator_markers';
@@ -117,9 +116,8 @@ case 'myorigins':
     break;
 
 case 'detail':
-    USES_locator_class_marker();
-    $M = new Marker($id);
-    $back_url = LOCATOR_URL . '/index.php?localist=x' .
+    $M = new Locator\Marker($id);
+    $back_url = LOCATOR_URL . '/index.php?loclist=x' .
             '&origin=' . urlencode($origin) .
             '&radius=' . (int)$radius .
             '&units=' . urlencode($units) .

@@ -349,12 +349,10 @@ case 'toggleorigin':
 
 case 'deletemarker':
 //case $LANG_ADMIN['delete']:
-    USES_locator_class_marker();
     if ($id != '') {
         if ($action == 'moderate') {
             // Deleting from the submission queue
-            //GEO_deleteMarker($id, 'locator_submission');
-            Marker::Delete($id, 'locator_submission');
+            Locator\Marker::Delete($id, 'locator_submission');
             echo COM_refresh($_CONF['site_url'] . '/admin/moderation.php');
         } else {
             // Deleting a production marker
@@ -367,9 +365,8 @@ case 'deletemarker':
 
 case 'delitem':
     if (is_array($_POST['delitem'])) {
-        USES_locator_class_marker();
         foreach($_POST['delitem'] as $key=>$id) {
-            Marker::Delete($id);
+            Locator\Marker::Delete($id);
         }
     }
     $view = '';
@@ -377,11 +374,10 @@ case 'delitem':
 
 case 'approve':
     // Approve the submission.  Remove the oldid so it'll be treated as new
-    USES_locator_class_marker();
     $_POST['oldid'] = '';
-    $M = new Marker();
+    $M = new Locator\Marker();
     if ($M->Save($_POST) == '') {
-        Marker::Delete($_POST['id'], 'locator_submission');
+        Locator\Marker::Delete($_POST['id'], 'locator_submission');
     } else {
         $msg = 7;
     }
@@ -389,12 +385,11 @@ case 'approve':
     break;
 
 case 'savemarker':
-    USES_locator_class_marker();
     if (isset($_POST['oldid']) && !empty($_POST['oldid'])) {
         // Updateing an existing marker
-        $M = new Marker($_POST['oldid']);
+        $M = new Locator\Marker($_POST['oldid']);
     } else {
-        $M = new Marker();
+        $M = new Locator\Marker();
         /*GEO_insertSubmission($_POST, $action);
         if ($action == 'moderate') {
             // return to moderation screen
@@ -450,8 +445,7 @@ case 'userloc':
 
 case 'edit':
 case 'editloc':
-    USES_locator_class_marker();
-    $M = new Marker($id);
+    $M = new Locator\Marker($id);
     $content .= $M->Edit();
     break;
 
@@ -462,8 +456,7 @@ case 'moderate':
                 WHERE id='$id'");
         if ($result && DB_numRows($result) == 1) {
             $A = DB_fetchArray($result);
-            USES_locator_class_marker();
-            $M = new Marker();
+            $M = new Locator\Marker();
             $M->SetVars($A, true);
             $content .= $M->Edit('', $action);
          }

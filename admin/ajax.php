@@ -30,8 +30,7 @@ case 'toggle':
     switch ($_POST['type']) {
     case 'is_origin':
     case 'enabled':
-        USES_locator_class_marker();
-        $newval = Marker::Toggle($_POST['id'], $_POST['type'], $_POST['oldval']);
+        $newval = Locator\Marker::Toggle($_POST['id'], $_POST['type'], $_POST['oldval']);
         break;
 
      default:

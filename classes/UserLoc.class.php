@@ -1,6 +1,9 @@
 <?php
 /**
-*   User location class for the Locator plugin
+*   User location class for the Locator plugin.
+*   The UserLoc class handles user locations based on each user's profile.
+*   The UserOrigin class is for addresses entered by users as search origins,
+*   and are subject to being purged after some time.
 *
 *   @author     Lee Garner <lee@leegarner.com>
 *   @copyright  Copyright (c) 2009-2011 Lee Garner <lee@leegarner.com>
@@ -10,6 +13,7 @@
 *               GNU Public License v2 or later
 *   @filesource
 */
+namespace Locator;
 
 /**
 *   Class to handle the user's location from the glFusion profile
@@ -33,21 +37,24 @@ class UserLoc
     *   @param  integer $location   Location ID to read from DB (optional)
     *   @param  integer $type       Type of record. 0=user profile, 1=ad-hoc
     */
-    public function __construct($location='', $type=0)
+    public function __construct($location = '', $uid = 0)
     {
-        $this->location = $location;
+        if ($uid == 0) $uid = (int)$_USER['uid'];
         $this->id = 0;
         $this->lat = 0;
         $this->lng = 0;
-        $this->type = (int)$type;
+        $this->type = 0;
 
-        // If a location is supplied (it should be), try to read it
-        // from the DB.  If it doesn't exist, get its coordinates and
-        // save it for future use
-        if ($this->location != '') {
-            if (!$this->readFromDB()) {
+        // Get the user's location from the DB. If it doesn't exist, get its
+        // coordinates.
+        if (!$this->readFromDB()) {
+            $this->location = $location;
+            $this->getCoords();
+        } else {
+            // Found a record, see if it's the same location
+            if ($location != $this->location) {
+                $this->location = $location;
                 $this->getCoords();
-                $this->saveToDB();
             }
         }
     }
@@ -99,17 +106,18 @@ class UserLoc
 
 
     /**
-    *   Read the current location from the database
+    *   Read the current user's location from the database.
+    *   There is only one profile location per user.
     *
     *   @return boolean     True on success, False on failure or not found
     */
     public function readFromDB()
     {
-        global $_TABLES;
+        global $_TABLES, $_USER;
 
         $sql = "SELECT * from {$_TABLES['locator_userloc']}
-                WHERE location='" . DB_escapeString($this->location). "'";
-                //AND type={$this->type}";
+                WHERE uid = " . (int)$_USER['uid'] .
+                " AND type = {$this->type}";
         //echo $sql;die;
         $result = DB_query($sql);
         if ($result && DB_numRows($result) > 0) {
@@ -117,6 +125,7 @@ class UserLoc
             $this->id = $row['id'];
             $this->lat = $row['lat'];
             $this->lng = $row['lng'];
+            $this->location = $row['location'];
             return true;
         } else {
             return false;
@@ -131,29 +140,36 @@ class UserLoc
     */
     public function saveToDB()
     {
-        global $_TABLES;
-
-        $lat = number_format($this->lat, 6, '.', '');
-        $lng = number_format($this->lng, 6, '.', '');
+        global $_TABLES, $_USER;
 
         if ($this->id == 0) {
-            $sql = "INSERT INTO {$_TABLES['locator_userloc']}
-                        (type, location, lat, lng)
-                    VALUES (" .
-                        $this->type . ", 
-                        '" . DB_escapeString($this->location) . "', 
-                        '{$lat}',
-                        '{$lng}'
-                    )";
+            $sql1 = "INSERT INTO {$_TABLES['locator_userloc']} SET
+                    type = {$this->type},
+                    uid = " . (int)$_USER['uid'] . ", ";
+            $sql3 = '';
         } else {    // For completeness, shouldn't be called.
-            $sql = "UPDATE {$_TABLES['locator_userloc']} SET
-                    location = '" . DB_escapeString($this->location) . "',
-                    lat = '{$lat}',
-                    lng = '{$lng}',
-                    WHERE id={$this->id}";
+            $sql1 = "UPDATE {$_TABLES['locator_userloc']} SET ";
+            $sql3 = " WHERE id={$this->id}";
         }
-        //echo $sql;die;
-        DB_query($sql);
+
+        // Force decimal formatting in case locale is different
+        $lat = GEO_coord2str($this->lat, true);
+        $lng = GEO_coord2str($this->lng, true);
+
+        $sql2 = "location = '" . DB_escapeString($this->location) . "',
+                lat = '{$lat}',
+                lng = '{$lng}'";
+        //COM_errorLog($sql1.$sql2.$sql3);
+        DB_query($sql1.$sql2.$sql3, 1);
+        if (!DB_error()) {
+            if ($this->id == 0) {
+                $this->id = DB_insertId();
+            }
+            return true;
+        } else {
+            COM_errorLog("Error updating userloc table: $sql");
+            return false;
+        }
     }
 
 
@@ -184,24 +200,5 @@ class UserLoc
     }
 
 }   // class UserLoc
-
-
-/**
-*   Class to handle the user-entered strings used as search origins.
-*   @package locator
-*/
-class UserOrigin extends UserLoc
-{
-    /**
-     *  Constructor
-     *  Calls the parent constructor and sets the record type to '1'
-     */
-    public function __construct($location='')
-    {
-        parent::__construct($location, 1);
-    }
-
-}
-
 
 ?>
