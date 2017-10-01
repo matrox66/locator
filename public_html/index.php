@@ -145,7 +145,7 @@ if (!COM_isAnonUser()) {
             "<a href=\"{$_SERVER['PHP_SELF']}?myorigins=x\">" .
                 $LANG_GEO['my_origins']. '</a>');
 }
-if (!COM_isAnonUser() || $_CONF_GEO['anon_submit'] == 1) {
+if (!COM_isAnonUser() || $_CONF_GEO['submit'] > 0) {
     $T->set_var('url_contrib', 
             '<a href="' . $_CONF['site_url'] . '/submit.php?type=' .
             $_CONF_GEO['pi_name'] . '">' .$LANG_GEO['contrib_origin'] . 

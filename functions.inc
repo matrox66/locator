@@ -31,7 +31,7 @@ if (!isset($_CONF_GEO['default_radius'])) {
 }
 $_CONF_GEO['_is_uikit'] = $_SYSTEM['framework'] == 'uikit' ? true : false;
 
-define('LOCATOR_PI_PATH', $_CONF['path'] . 'plugins/locator');
+define('LOCATOR_PI_PATH', __DIR__);
 define('LOCATOR_URL', $_CONF['site_url'] . '/locator');
 define('LOCATOR_ADMIN_URL', $_CONF['site_admin_url'] . '/plugins/locator');
 define('LOCATOR_CLASSPATH', LOCATOR_PI_PATH . '/classes');
@@ -593,7 +593,7 @@ function GEO_getGroups($grplist='', $NOT='')
 *   @param  array   $A  Array of form or database fields
 *   @return boolean True on success
 */
-function GEO_sendAdminNotification($A)
+function XXX_GEO_sendAdminNotification($A)
 {
     global $LANG_DIRECTION, $LANG_CHARSET, $_CONF, $_TABLES,
             $LANG_GEO, $_CONF_GEO;
@@ -723,16 +723,18 @@ function GEO_getGroupList($basegroup)
 */
 function GEO_canSubmit()
 {
-    global $_CONF, $_CONF_GEO, $_GROUPS;
+    global $_CONF, $_CONF_GEO;
     static $cansubmit = NULL;
 
     if ($cansubmit === NULL) {
-        if ((COM_isAnonUser() && $_CONF_GEO['anon_submit'] == false) ||
-            (!COM_isAnonUser() && $_CONF_GEO['user_submit'] == false &&
-                !in_array($_CONF_GEO['pi_name'] . ' Admin', $_GROUPS))) {
-            $cansubmit = false;
-        } else {
+        if (plugin_ismoderator_locator()) {
             $cansubmit = true;
+        } elseif (
+            (COM_isAnonUser() && $_CONF_GEO['submit'] == 2) ||
+            (!COM_isAnonUser() && $_CONF_GEO['submit'] > 0) ) {
+            $cansubmit = true;
+        } else {
+            $cansubmit = false;
         }
     }
     return $cansubmit;
