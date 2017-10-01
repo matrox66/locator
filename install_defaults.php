@@ -34,8 +34,7 @@ $_GEO_DEFAULT['show_map'] = true;      // Key no longer required for map
 //$_GEO_DEFAULT['url_geocode']  = 'http://maps.google.com/maps/geo?q=%address%&output=csv&key=%google_key%';
 $_GEO_DEFAULT['distance_unit'] = 'miles';  // 'km' for kilometers, else = miles
 $_GEO_DEFAULT['submission'] = true;     // use submission queue
-$_GEO_DEFAULT['anon_submit'] = false;   // allow anon submissions
-$_GEO_DEFAULT['user_submit'] = true;    // allow non-admin submissions
+$_GEO_DEFAULT['submit'] = 1;            // 0 = nobody, 1 = logged-in, 2 = logged-in + anon
 $_GEO_DEFAULT['displayblocks'] = 3;     // show left & right blocks
 $_GEO_DEFAULT['purge_userlocs'] = 14;   // Days to keep user-entered origins
 $_GEO_DEFAULT['usermenu_option'] = 1;   // Show link on the user menu?
@@ -91,11 +90,8 @@ function plugin_initconfig_locator($group_id = 0)
         $c->add('submission', $_GEO_DEFAULT['submission'], 
                 'select', 0, 0, 3, 40, true, $_CONF_GEO['pi_name']);
 
-        $c->add('anon_submit', $_GEO_DEFAULT['anon_submit'], 
-                'select', 0, 0, 3, 50, true, $_CONF_GEO['pi_name']);
-
-        $c->add('user_submit', $_GEO_DEFAULT['user_submit'], 
-                'select', 0, 0, 3, 60, true, $_CONF_GEO['pi_name']);
+        $c->add('submit', $_GEO_DEFAULT['submit'], 
+                'select', 0, 0, 15, 50, true, $_CONF_GEO['pi_name']);
 
         $c->add('displayblocks', $_GEO_DEFAULT['displayblocks'],
                 'select', 0, 0, 13, 70, true, $_CONF_GEO['pi_name']);

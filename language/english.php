@@ -79,6 +79,7 @@ $LANG_GEO= array(
 'back'              => 'Back',
 'location'          => 'Location',
 'loc_updated'       => 'Location has been updated',
+'notify_subject'    => 'Location Submission from ' . $_CONF['site_name'],
 );
 
 $PLG_locator_MESSAGE1 = 'Your location has been queued for administrator approval.';
@@ -111,8 +112,7 @@ $LANG_confignames['locator'] = array(
     'distance_unit'     => 'Distance Units:',
     'autofill_coord'    => 'Automatically fill undefined coordinates:',
     'submission'        => 'Use submission queue:',
-    'anon_submit'       => 'Allow anonymous submissions?',
-    'user_submit'       => 'Allow logged-in user submissions?',
+    'submit'            => 'Allow anonymous or member submissions?',
     'displayblocks'     => 'Display glFusion Blocks',
     'purge_userlocs'    => 'Days to cache user-entered search locations:',
     'profile_showmap'   => 'Show maps in user profiles?',
@@ -166,6 +166,7 @@ $LANG_configselects['locator'] = array(
     11 => array('Miles' => 'miles', 'Kilometres' => 'km'),
     12 => array('No access' => 0, 'Read-Only' => 2, 'Read-Write' => 3),
     13 => array('None' => 0, 'Left' => 1, 'Right' => 2, 'Both' => 3),
+    15 => array('Admins Only' => 0, 'Logged-In Users' => 1, 'Logged-In+Anon Users' => 2),
 );
 
 

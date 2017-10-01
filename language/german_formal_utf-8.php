@@ -82,6 +82,7 @@ $LANG_GEO= array(
 'back'      => 'Back',
 'location'  => 'Location',
 'loc_updated'       => 'Location has been updated',
+'notify_subject'    => 'Location Submission from ' . $_CONF['site_name'],
 );
 
 
@@ -115,8 +116,7 @@ $LANG_confignames['locator'] = array(
     'distance_unit'     => 'Entfernungs-Einheit',
     'autofill_coord'    => 'Koordinaten automatisch ausfüllen',
     'submission'        => 'Einsendungen überprüfen',
-    'anon_submit'       => 'Erlaube Gast-Einsendungen',
-    'user_submit'       => 'Erlaube Benutzer-Einsendungen',
+    'submit'            => 'Allow anonymous or member submissions?',
     'displayblocks'     => 'glFusion-Blöcke anzeigen',
     'purge_userlocs'    => 'Umkreis-Suche löschen nach Tagen',
     'profile_showmap'   => 'Karte im Benutzer-Profil',
@@ -170,6 +170,7 @@ $LANG_configselects['locator'] = array(
     11 => array('Meilen' => 'miles', 'Kilometer' => 'km'),
     12 => array('Kein Zugang' => 0, 'Nur lesen' => 2, 'Lesen-Schreiben' => 3),
     13 => array('Keine' => 0, 'Linke Blöcke' => 1, 'Rechte Blöcke' => 2, 'Linke & Rechte Blöcke' => 3),
+    15 => array('Admins Only' => 0, 'Logged-In Users' => 1, 'Logged-In+Anon Users' => 2),
 );
 
 

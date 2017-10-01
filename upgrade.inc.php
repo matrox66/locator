@@ -26,7 +26,7 @@ require_once dirname(__FILE__) . '/sql/mysql_install.php';
 */
 function locator_do_upgrade()
 {
-    global $_CONF_GEO, $_PLUGIN_INFO;
+    global $_CONF_GEO, $_PLUGIN_INFO, $_TABLES;
 
     if (isset($_PLUGIN_INFO[$_CONF_GEO['pi_name']])) {
         $current_ver = $_PLUGIN_INFO[$_CONF_GEO['pi_name']];
@@ -67,6 +67,19 @@ function locator_do_upgrade()
 
     if (!COM_checkVersion($current_ver, '1.1.1')) {
         $current_ver = '1.1.1';
+        // Consolidate user and anon submission setting into one
+        $submit = 0;
+        if ($_CONF_GEO['anon_submit']) {
+            $submit = 2;
+        } elseif ($_CONF_GEO['use_submit']) {
+            $submit = 1;
+        } else {
+            $submit = 0;
+        }
+        $c = config::get_instance();
+        $c->del('user_submit', $_CONF_GEO['pi_name']);
+        $c->del('anon_submit', $_CONF_GEO['pi_name']);
+        $c->add('submit', $submit, 'select', 0, 0, 15, 50, true, $_CONF_GEO['pi_name']);
         if (!locator_do_upgrade_sql($current_ver)) return false;
         if (!locator_do_set_version($current_ver)) return false;
     }
