@@ -149,7 +149,7 @@ window.addEvent('domready',function() {
       <button type="reset" name="reset" class="uk-button uk-button-primary">{$LANG_GEO['reset']}</button>
 {!if show_del_btn}
       <button type="submit" name="delete" class="uk-button uk-button-danger"
-      onclick="return confirm('{$LANG_GEO['confirm_delitem']}');" />$LANG_ADMIN['delete']}</button>
+      onclick="return confirm('{$LANG_GEO['confirm_delitem']}');" />{$LANG_ADMIN['delete']}</button>
 {!endif}
       <button type="reset"name="cancel" class="uk-button"
         onclick="javascript: document.location.href='{cancel_url}'">{$LANG_ADMIN['cancel']}</button>

@@ -235,7 +235,7 @@ class Marker
     */
     public function Save($A, $table='locator_markers')
     {
-        global $_TABLES, $_USER, $_CONF_GEO;
+        global $_TABLES, $_USER, $_CONF_GEO, $_CONF, $LANG_GEO;
 
         // This is a system error of some kind.  Ignore
         if (!is_array($A) || empty($A))
@@ -322,10 +322,28 @@ class Marker
         }
         //echo $sql;die;
         DB_query($sql, 1);
-        if (DB_error())
+        if (DB_error()) {
+            COM_errorLog("SQL Error: $sql");
             return 99;
-        else 
+        } else {
+            if ($table == $_TABLES['locator_submission'] &&
+                isset($_CONF['notification']) &&
+                in_array ('locator', $_CONF['notification'])) {
+                $N = new \Template(LOCATOR_PI_PATH . '/templates/notify');
+                $N->set_file('mail', 'submission.thtml');
+                $N->set_var(array(
+                    'title'     => $this->title,
+                    'summary'   => $this->address,
+                    'submitter' => COM_getDisplayName($this->owner_id),
+                ) );
+                $N->parse('output', 'mail');
+                $mailbody = $N->finish($N->get_var('output'));
+                $subject = $LANG_GEO['notify_subject'];
+                $to = COM_formatEmailAddress('', $_CONF['site_mail']);
+                COM_mail($to, $subject, $mailbody, '', true);
+            }
             return 0;
+        }
     }
 
 

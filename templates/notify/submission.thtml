@@ -1,0 +1,8 @@
+<p>{$LANG_GEO['notify_submission']}</p>
+<p>
+{$LANG_GEO['title']}: {title}<br />
+{$LANG_GEO['address']}: {address}<br />
+</p>
+<p>
+{site_admin_url}/moderation.php
+</p>
