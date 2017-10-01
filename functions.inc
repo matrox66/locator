@@ -493,7 +493,7 @@ function plugin_getheadercss_locator()
 */
 function plugin_supportadblock_locator()
 {
-    return array('locator_marker');
+    return array('locator_marker', 'locator_list');
 }
 
 
