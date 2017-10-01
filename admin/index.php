@@ -381,7 +381,7 @@ case 'approve':
     } else {
         $msg = 7;
     }
-    $content .= GEO_adminList();
+    $view = '';
     break;
 
 case 'savemarker':
