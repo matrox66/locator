@@ -528,6 +528,7 @@ class Marker
             'lat'               => GEO_coord2str($this->lat),
             'lng'               => GEO_coord2str($this->lng),
             'back_url'          => $back_url,
+            'adblock'           => PLG_displayAdBlock('locator_marker', 0),
         ) );
         /*if ($origin != '')
             $T->set_var('origin_addr', 

@@ -56,6 +56,9 @@
     <td>{loc_address}</td>
     <td align="right">{loc_distance}</td>
   </tr>
+{!if adblock}
+  <tr><td colspan="9">{adblock}</td></tr>
+{!endif}
   <!-- END LocRow -->
 </table>
 {!if no_display}

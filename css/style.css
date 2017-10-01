@@ -30,6 +30,7 @@ label {
 
 .locDisclaimer {
   font-style: italic;
+  clear: both;
 }
 
 div.locinfo {

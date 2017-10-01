@@ -3,9 +3,9 @@
 *   glFusion API functions for the Locator plugin.
 *
 *   @author     Lee Garner <lee@leegarner.com>
-*   @copyright  Copyright (c) 2009-2014 Lee Garner <lee@leegarner.com>
+*   @copyright  Copyright (c) 2009-2017 Lee Garner <lee@leegarner.com>
 *   @package    locator
-*   @version    1.1.0
+*   @version    1.1.1
 *   @license    http://opensource.org/licenses/gpl-2.0.php
 *               GNU Public License v2 or later
 *   @filesource
@@ -34,7 +34,6 @@ $_CONF_GEO['_is_uikit'] = $_SYSTEM['framework'] == 'uikit' ? true : false;
 define('LOCATOR_PI_PATH', __DIR__);
 define('LOCATOR_URL', $_CONF['site_url'] . '/locator');
 define('LOCATOR_ADMIN_URL', $_CONF['site_admin_url'] . '/plugins/locator');
-define('LOCATOR_CLASSPATH', LOCATOR_PI_PATH . '/classes');
 
 require_once LOCATOR_PI_PATH . '/locator.php';
 
@@ -486,6 +485,15 @@ function plugin_getheadercss_locator()
         LOCATOR_PI_PATH . '/css/style.css',
     );
     return $styles;
+}
+
+
+/**
+*   Return the template names that support ad blocks
+*/
+function plugin_supportadblock_locator()
+{
+    return array('locator_marker');
 }
 
 

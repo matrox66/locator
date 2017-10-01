@@ -99,12 +99,18 @@
 {!endif}
 {# End check for google api key #}
 
+{!if adblock}
+<div style="clear:both;">{adblock}</div>
+{!endif}
+
 {!if weather}
 <div id="weather">
   {weather}
 </div>
 {!endif}
 
+<div class="locDisclaimer">
 <hr />
-<span class="locDisclaimer">{$LANG_GEO['disclaimer']}</span>
+  {$LANG_GEO['disclaimer']}
+</div>
 {# end {templatelocation} #}

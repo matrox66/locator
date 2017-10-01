@@ -116,6 +116,7 @@ function GEO_showLocations($id, $radius=0, $units='', $keywords='', $address='')
                 'loc_lat'   => $locations[$i]['lat'],
                 'loc_lng'   => $locations[$i]['lng'],
                 'url_opts'  => $url_opts,
+                'adblock'   => PLG_displayAdBlock('locator_list', $i+1),
             ) );
             if ($locations[$i]['is_origin'] == 1 ||
                     $locations[$i]['userOrigin'] != NULL) {
