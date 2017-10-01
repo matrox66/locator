@@ -96,9 +96,9 @@ $_SQL['locator_userloc'] =
 $_SQL_UPGRADE = array(
 '0.1.4' => array(
         "ALTER TABLE {$_TABLES['locator_userloc']}
-            ADD type TINYINT(1) DEFAULT 0 AFTER id";
+            ADD type TINYINT(1) DEFAULT 0 AFTER id",
         "ALTER TABLE {$_TABLES['locator_userloc']}
-            CHANGE add_date add_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP";
+            CHANGE add_date add_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP",
         // new "enabled" field for markers
         "ALTER TABLE {$_TABLES['locator_markers']}
             ADD enabled TINYINT(1) UNSIGNED NOT NULL DEFAULT '1'",
