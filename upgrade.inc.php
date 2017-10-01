@@ -88,8 +88,6 @@ function locator_do_upgrade()
     // any of the update functions, e.g. code-only updates
     if (!COM_checkVersion($current_ver, $installed_ver)) {
         if (!locator_do_set_version($installed_ver)) {
-            COM_errorLog($_CONF_GEO['pi_display_name'] .
-                    " Error performing final update $current_ver to $installed_ver");
             return false;
         }
     }
