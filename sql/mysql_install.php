@@ -17,47 +17,55 @@
 */
 $_SQL['locator_markers'] = 
 "CREATE TABLE {$_TABLES['locator_markers']} (
-  `id` varchar(20) NOT NULL default '',
-  `owner_id` mediumint(8) unsigned default NULL,
-  `title` varchar(60) NOT NULL default '',
+  `id` varchar(20) NOT NULL DEFAULT '',
+  `owner_id` mediumint(8) unsigned DEFAULT NULL,
+  `title` varchar(60) NOT NULL DEFAULT '',
   `address` varchar(80) NOT NULL,
+  `city` varchar(80) DEFAULT NULL,
+  `state` varchar(80) DEFAULT NULL,
+  `postal` varchar(80) DEFAULT NULL,
   `description` text,
-  `lat` float(10,6),
-  `lng` float(10,6),
-  `is_origin` tinyint(1) default '0',
-  `keywords` varchar(255) default NULL,
-  `url` varchar(255) default NULL,
-  `views` mediumint(8) NOT NULL default '0',
-  `add_date` int(11) NOT NULL default '0',
-  `group_id` mediumint(8) unsigned default NULL,
-  `perm_owner` tinyint(1) unsigned NOT NULL default '3',
-  `perm_group` tinyint(1) unsigned NOT NULL default '3',
-  `perm_members` tinyint(1) unsigned NOT NULL default '2',
-  `perm_anon` tinyint(1) unsigned NOT NULL default '2',
-  `enabled` tinyint(1) unsigned NOT NULL default '1',
-  PRIMARY KEY  (`id`)
+  `lat` float(10,6) NOT NULL,
+  `lng` float(10,6) NOT NULL,
+  `is_origin` tinyint(1) DEFAULT '0',
+  `keywords` varchar(255) DEFAULT NULL,
+  `url` varchar(255) DEFAULT NULL,
+  `views` mediumint(8) NOT NULL DEFAULT '0',
+  `add_date` int(11) NOT NULL DEFAULT '0',
+  `group_id` mediumint(8) unsigned DEFAULT NULL,
+  `perm_owner` tinyint(1) unsigned NOT NULL DEFAULT '3',
+  `perm_group` tinyint(1) unsigned NOT NULL DEFAULT '3',
+  `perm_members` tinyint(1) unsigned NOT NULL DEFAULT '2',
+  `perm_anon` tinyint(1) unsigned NOT NULL DEFAULT '2',
+  `enabled` tinyint(1) unsigned NOT NULL DEFAULT '1',
+  PRIMARY KEY (`id`)
 )";
 
 /** Marker submission table */
 $_SQL['locator_submission'] = 
 "CREATE TABLE `{$_TABLES['locator_submission']}` (
-  `id` varchar(20) NOT NULL default '',
-  `owner_id` mediumint(8) unsigned default NULL,
-  `title` varchar(60) NOT NULL default '',
+  `id` varchar(20) NOT NULL DEFAULT '',
+  `owner_id` mediumint(8) unsigned DEFAULT NULL,
+  `title` varchar(60) NOT NULL DEFAULT '',
   `address` varchar(80) NOT NULL,
+  `city` varchar(80) DEFAULT NULL,
+  `state` varchar(80) DEFAULT NULL,
+  `postal` varchar(80) DEFAULT NULL,
   `description` text,
-  `lat` float(10,6),
-  `lng` float(10,6),
-  `is_origin` tinyint(1) default '0',
-  `keywords` varchar(255) default NULL,
-  `url` varchar(255) default NULL,
-  `add_date` int(11) NOT NULL default '0',
-  `group_id` mediumint(8) unsigned default NULL,
-  `perm_owner` tinyint(1) unsigned NOT NULL default '3',
-  `perm_group` tinyint(1) unsigned NOT NULL default '3',
-  `perm_members` tinyint(1) unsigned NOT NULL default '2',
-  `perm_anon` tinyint(1) unsigned NOT NULL default '2',
-  `enabled` tinyint(1) unsigned NOT NULL default '1'
+  `lat` float(10,6) NOT NULL,
+  `lng` float(10,6) NOT NULL,
+  `is_origin` tinyint(1) DEFAULT '0',
+  `keywords` varchar(255) DEFAULT NULL,
+  `url` varchar(255) DEFAULT NULL,
+  `views` mediumint(8) NOT NULL DEFAULT '0',
+  `add_date` int(11) NOT NULL DEFAULT '0',
+  `group_id` mediumint(8) unsigned DEFAULT NULL,
+  `perm_owner` tinyint(1) unsigned NOT NULL DEFAULT '3',
+  `perm_group` tinyint(1) unsigned NOT NULL DEFAULT '3',
+  `perm_members` tinyint(1) unsigned NOT NULL DEFAULT '2',
+  `perm_anon` tinyint(1) unsigned NOT NULL DEFAULT '2',
+  `enabled` tinyint(1) unsigned NOT NULL DEFAULT '1',
+  PRIMARY KEY (`id`)
 )";
 
 /** Table to hold user's selected origins. */
@@ -107,6 +115,10 @@ $_SQL_UPGRADE = array(
             ADD uid INT(11) UNSIGNED NOT NULL DEFAULT '0' AFTER `id`,
             ADD UNIQUE `location` (`uid`, `location`)",
         "ALTER TABLE {$_TABLES['locator_markers']}
+            ADD city varchar(80) AFTER address,
+            ADD state varchar(80) AFTER city,
+            ADD postal varchar(80) AFTER state",
+        "ALTER TABLE {$_TABLES['locator_submission']}
             ADD city varchar(80) AFTER address,
             ADD state varchar(80) AFTER city,
             ADD postal varchar(80) AFTER state",
