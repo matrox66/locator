@@ -80,6 +80,9 @@ function locator_do_upgrade()
         $c->del('user_submit', $_CONF_GEO['pi_name']);
         $c->del('anon_submit', $_CONF_GEO['pi_name']);
         $c->add('submit', $submit, 'select', 0, 0, 15, 50, true, $_CONF_GEO['pi_name']);
+        // Drop this key with error checking off since it may not exist
+        DB_query("ALTER TABLE {$_TABLES['locator_userloc']}
+                DROP KEY `location`", 1);
         if (!locator_do_upgrade_sql($current_ver)) return false;
         if (!locator_do_set_version($current_ver)) return false;
     }
@@ -115,7 +118,7 @@ function locator_do_upgrade_sql($version)
     // Execute SQL now to perform the upgrade
     COM_errorLOG("--Updating {$_CONF_GEO['pi_display_name']} to version $version");
     foreach ($_SQL_UPGRADE[$version] as $s) {
-        COM_errorLOG("{$_CONF_GEO['pi_display_name']} $version update: Executing SQL => $s")
+        COM_errorLOG("{$_CONF_GEO['pi_display_name']} $version update: Executing SQL => $s");
         DB_query($s,'1');
         if (DB_error()) {
             COM_errorLog("SQL Error during {$_CONF_GEO['pi_display_name']} plugin update",1);

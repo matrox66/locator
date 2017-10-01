@@ -11,6 +11,7 @@
 *   @filesource
 */
 
+global $_SQL, $_TABLES, $_SQL_UPGRADE;
 /**
 *   Define tables used by the Locator plugin
 *   @global array $_SQL
@@ -111,7 +112,6 @@ $_SQL_UPGRADE = array(
 '1.1.1' => array(
         // Add 'enabled' field to submissions that should have been in 0.1.4
         "ALTER TABLE {$_TABLES['locator_userloc']}
-            DROP KEY `location`,
             ADD uid INT(11) UNSIGNED NOT NULL DEFAULT '0' AFTER `id`,
             ADD UNIQUE `location` (`uid`, `location`)",
         "ALTER TABLE {$_TABLES['locator_markers']}
