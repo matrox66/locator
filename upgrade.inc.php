@@ -29,16 +29,17 @@ function locator_do_upgrade()
     global $_CONF_GEO, $_PLUGIN_INFO, $_TABLES;
 
     if (isset($_PLUGIN_INFO[$_CONF_GEO['pi_name']])) {
-        $current_ver = $_PLUGIN_INFO[$_CONF_GEO['pi_name']];
-        $code_ver = plugin_chkVersion_locator();
-        if (COM_checkVersion($current_ver, $code_ver)) {
-            // Already updated to the code version, nothing to do
-            return true;
+        if (is_array($_PLUGIN_INFO[$_CONF_GEO['pi_name']])) {
+            // glFusion > 1.6.5
+            $current_ver = $_PLUGIN_INFO[$_CONF_GEO['pi_name']]['pi_version'];
+        } else {
+            // legacy
+            $current_ver = $_PLUGIN_INFO[$_CONF_GEO['pi_name']];
         }
     } else {
-        // Error determining the installed version
         return false;
     }
+    $code_ver = plugin_chkVersion_locator();
 
     if (!COM_checkVersion($current_ver, '0.1.1')) {
         if (!locator_upgrade_0_1_1()) return false;
@@ -89,8 +90,8 @@ function locator_do_upgrade()
 
     // Final version update to catch updates that don't go through
     // any of the update functions, e.g. code-only updates
-    if (!COM_checkVersion($current_ver, $installed_ver)) {
-        if (!locator_do_set_version($installed_ver)) {
+    if (!COM_checkVersion($current_ver, $code_ver)) {
+        if (!locator_do_set_version($code_ver)) {
             return false;
         }
     }
