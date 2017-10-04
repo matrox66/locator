@@ -40,7 +40,7 @@ $_SQL['locator_markers'] =
   `perm_anon` tinyint(1) unsigned NOT NULL DEFAULT '2',
   `enabled` tinyint(1) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`)
-)";
+) ENGINE=MyISAM";
 
 /** Marker submission table */
 $_SQL['locator_submission'] = 
@@ -67,7 +67,7 @@ $_SQL['locator_submission'] =
   `perm_anon` tinyint(1) unsigned NOT NULL DEFAULT '2',
   `enabled` tinyint(1) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`)
-)";
+) ENGINE=MyISAM";
 
 /** Table to hold user's selected origins. */
 $_SQL['locator_userXorigin'] = 
@@ -77,7 +77,7 @@ $_SQL['locator_userXorigin'] =
   `mid` varchar(20) default NULL,
   PRIMARY KEY  (`id`),
   KEY `idxUID` (`uid`)
-)";
+) ENGINE=MyISAM";
 
 /** Cache table to hold coordinates of user locations */
 $_SQL['locator_userloc'] = 
@@ -91,7 +91,7 @@ $_SQL['locator_userloc'] =
   `lng` float(10,6),
   PRIMARY KEY  (`id`),
   UNIQUE KEY `location` (`uid`,`location`)
-)";
+) ENGINE=MyISAM";
 
 
 $_SQL_UPGRADE = array(
@@ -123,7 +123,6 @@ $_SQL_UPGRADE = array(
             ADD state varchar(80) AFTER city,
             ADD postal varchar(80) AFTER state",
     ),
-
 );
 
 ?>
