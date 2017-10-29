@@ -84,7 +84,7 @@ function GEO_showLocations($id, $radius=0, $units='', $keywords='', $address='')
         // use user profile location
         $user_location = DB_getItem($_TABLES['userinfo'], 'location',
                 'uid='. $_USER['uid']);
-        $userloc = new UserLoc($user_location);
+        $userloc = new Locator\UserLoc($user_location);
         if ($userloc->lat != 0 && $userloc->lng != 0) {
             $locations = getLocsByCoord($userloc->lat, $userloc->lng, $radius,
                     $units, $keywords);
@@ -487,7 +487,7 @@ function GEO_getAdminListField($fieldname, $fieldvalue, $A, $icon_arr)
 */
 function GEO_getCoordsUserAddress($address, &$lat, &$lng)
 {
-    $rec = new UserOrigin($address);
+    $rec = new Locator\UserOrigin($address);
     $lat = $rec->lat;
     $lng = $rec->lng;
     if ($lat != 0 && $lng != 0)

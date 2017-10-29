@@ -1,6 +1,10 @@
 # glLocator - Change Log
 
-## 1.1.1 (Release TBD)
+## 1.1.2 (2017-10-29)
+- Fix namespace when getting user locations
+
+## 1.1.1 (Release 2017-10-01)
+- Implement PLG_displayAdBlock()
 - Implement Locator namespace and class autoloader
 - Use HTTPS for Google map api
 - Change lookup form to use "get" to allow back button to work
