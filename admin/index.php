@@ -356,8 +356,7 @@ case 'deletemarker':
             echo COM_refresh($_CONF['site_url'] . '/admin/moderation.php');
         } else {
             // Deleting a production marker
-            //GEO_deleteMarker($id);
-            Marker::Delete($id);
+            Locator\Marker::Delete($id);
         }
     }
     $view = '';

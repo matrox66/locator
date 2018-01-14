@@ -1,5 +1,8 @@
 # glLocator - Change Log
 
+## 1.1.3 (2018-01-14)
+- Fix missing namespace in admin
+
 ## 1.1.2 (2017-10-29)
 - Fix namespace when getting user locations
 
