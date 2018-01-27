@@ -207,9 +207,7 @@ function getLocsByCoord($lat, $lng, $radius, $units='', $keywords='')
     }
 
     $radius = (int)$radius;
-
     $values = array();
-
     $lat = (float)$lat;
     $lng = (float)$lng;
     if ($lat == 0 || $lng == 0) {
@@ -238,8 +236,10 @@ function getLocsByCoord($lat, $lng, $radius, $units='', $keywords='')
         $sql .= " NULL as userOrigin ";
     }
     $sql .= " FROM {$_TABLES['locator_markers']} m
-            WHERE id <> '$id'
-            AND enabled = 1 ";
+            WHERE enabled = 1 ";
+    if (isset($_GET['origin'])) {
+        $sql .= " AND id <> '" . DB_escapeString($_GET['origin']) . "' ";
+    }
     if ($keywords != '') {
         $kw_esc = explode(' ', DB_escapeString(trim($keywords)));
         foreach ($kw_esc as $kw) {
@@ -277,6 +277,8 @@ function getLocsByCoord($lat, $lng, $radius, $units='', $keywords='')
 function GEO_originSelect($id)
 {
     global $_USER, $_TABLES;
+
+    $retval = '';
 
     // Find the user-specific origins, if any.
     if (!COM_isAnonUser()) {
@@ -369,8 +371,8 @@ function GEO_showOrigins()
     $retval = '';
 
     $header_arr = array(      # display 'text' and use table field 'field'
-        array('text' => $LANG_GEO['origin'].'?', 'field' => 'is_origin',
-                'sort' => true, 'align' => 'center'),
+//        array('text' => $LANG_GEO['origin'].'?', 'field' => 'is_origin',
+//                'sort' => true, 'align' => 'center'),
         array('text' => 'ID', 'field' => 'id', 'sort' => true),
         array('text' => $LANG_GEO['title'], 'field' => 'title', 'sort' => true),
         array('text' => $LANG_GEO['address'], 'field' => 'address', 'sort' => true),
@@ -382,13 +384,14 @@ function GEO_showOrigins()
 
     $defsort_arr = array('field' => 'location', 'direction' => 'asc');
 
-    $retval .= COM_startBlock($_CONF_GEO['admin_header'], '',
+    $retval .= COM_startBlock($LANG_GEO['admin_menu'], '',
                 COM_getBlockTemplate('_admin_block', 'header'));
 
     $text_arr = array(
         'has_extras' => true,
         'form_url' => LOCATOR_URL . '/index.php?page=myorigins',
     );
+    $form_arr = array();
 
     $query_arr = array('table' => 'locator_userloc',
         'sql' => "SELECT * FROM {$_TABLES['locator_userloc']}",
@@ -512,7 +515,7 @@ function GEO_siteHeader($subject='', $meta='')
 
     $retval = '';
 
-    $title = $LANG_GEO['blocktitle'];
+    $title = $LANG_GEO['pi_title'];
     if ($subject != '')
         $title = $subject . ' : ' . $title;
 

@@ -28,7 +28,8 @@ function GEO_adminMenu($view = '')
 {
     global $LANG_ADMIN, $LANG_GEO, $_CONF, $_CONF_GEO;
 
-    if (!empty($view)) {
+    $retval = '';
+    if (!empty($view) && isset($LANG_GEO['menu_hlp'][$view])) {
         $desc_text = $LANG_GEO['menu_hlp'][$view];
     }
 
@@ -46,9 +47,7 @@ function GEO_adminMenu($view = '')
     $header_str = $LANG_GEO['plugin_name'] . ' ' . $LANG_GEO['version'] . 
         ' ' . $_CONF_GEO['pi_version'];
 
-    //$retval .= COM_startBlock($header_str, '', COM_getBlockTemplate('_admin_block', 'header'));
-    $retval .= ADMIN_createMenu($menu_arr, $desc_text, '');
-
+    $retval .= ADMIN_createMenu($menu_arr, $view, '');
     return $retval;
 }
 
@@ -64,7 +63,7 @@ function GEO_adminMenu($view = '')
 */
 function plugin_getListField_marker($fieldname, $fieldvalue, $A, $icon_arr)
 {
-    global $_CONF, $_CONF_GEO, $LANG24, $LANG_GEO;
+    global $_CONF, $_CONF_GEO, $LANG24, $LANG_GEO, $LANG_ADMIN;
 
     $retval = '';
 
@@ -143,8 +142,6 @@ function GEO_adminList()
 
     USES_lib_admin();
 
-    $retval = '';
-
     $header_arr = array(      # display 'text' and use table field 'field'
         array('text' => $LANG_ADMIN['edit'], 'field' => 'edit', 'sort' => false, 'align' => 'center'),
         array('text' => 'ID', 'field' => 'id', 'sort' => true),
@@ -182,12 +179,10 @@ function GEO_adminList()
         'chkdelete' => true,
         'chkfield'  => 'id',
     );
-
-    $retval .= ADMIN_list('locator', 'plugin_getListField_marker', $header_arr,
+    $form_arr = array();
+    return ADMIN_list('locator', 'plugin_getListField_marker', $header_arr,
                     $text_arr, $query_arr, $defsort_arr, '', '', 
                     $options_arr, $form_arr);
-
-    return $retval;
 }
 
 
@@ -202,7 +197,7 @@ function GEO_adminList()
 */
 function GEO_getListField_userloc($fieldname, $fieldvalue, $A, $icon_arr)
 {
-    global $_CONF, $_CONF_GEO, $LANG24, $LANG_GEO;
+    global $_CONF, $_CONF_GEO, $LANG24, $LANG_GEO, $LANG_ADMIN;
 
     switch($fieldname) {
     case 'edit':
@@ -241,9 +236,6 @@ function GEO_adminUserloc()
 {
     global $_CONF, $_TABLES, $LANG_ADMIN, $LANG_ACCESS, $_CONF_GEO, $LANG_GEO;
 
-
-    $retval = '';
-
     $header_arr = array(
         array('text' => $LANG_ADMIN['edit'], 'field' => 'edit', 
                 'sort' => false),
@@ -269,11 +261,9 @@ function GEO_adminUserloc()
         'query_fields' => array(),
         'default_filter' => ''
     );
-
-    $retval .= ADMIN_list('locator', 'GEO_getListField_userloc', $header_arr,
+    $form_arr = array();
+    return ADMIN_list('locator', 'GEO_getListField_userloc', $header_arr,
                     $text_arr, $query_arr, $defsort_arr, '', '', '', $form_arr);
-
-    return $retval;
 }
 
 

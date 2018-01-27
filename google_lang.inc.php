@@ -11,7 +11,7 @@
 *               GNU Public License v2 or later
 *   @filesource
 */
-
+global $GOOG_lang;
 $GOOG_lang = array(
 'ar',
 'bg', 'bn', 

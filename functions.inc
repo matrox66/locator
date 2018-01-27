@@ -713,7 +713,7 @@ function plugin_runScheduledTask_locator()
     // Only user-entered origin strings (type 1) are deleted.  Origins
     // associated with the location in the user's account settings are
     // left alone.
-    $purge_days = (int)$_CONF_GEO['purge_userlocs'];
+    $purge_days = 90;
     if ($purge_days > 0) {
         $purge_exp_date = time() - ($purge_days * 86400);
         DB_query("DELETE FROM {$_TABLES['locator_userloc']}
@@ -734,7 +734,7 @@ function plugin_runScheduledTask_locator()
 */
 function GEO_showMap($lat, $lng, $text='')
 {
-    global $_CONF_GEO, $_CONF;
+    global $_CONF_GEO, $_CONF, $GOOG_lang;
 
     // Insert a google map, if configured correctly
     if ($_CONF_GEO['show_map'] == 0) {
@@ -747,7 +747,7 @@ function GEO_showMap($lat, $lng, $text='')
         return '';
 
     USES_locator_google_lang();
-    $iso_lang = is_array($GOOG_lang) &&
+    $iso_lang = isset($GOOG_lang) && is_array($GOOG_lang) &&
                 in_array($_CONF['iso_lang'], $GOOG_lang) ?
                 $_CONF['iso_lang'] : 'en';
 

@@ -75,6 +75,7 @@ $LANG_GEO= array(
 'select_origin'     => 'Select Origin',
 'menu_hlp'  => array(
     'userloc' => 'Edit or delete user locations.  These are origins that were entered as addresses in the query form, or are derived from the user profile "location" field.',
+    'edit' => '',
     ),
 'back'              => 'Back',
 'location'          => 'Location',

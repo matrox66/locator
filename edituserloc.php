@@ -48,7 +48,6 @@ function GEO_userlocForm($A='')
         'location'  => $A['location'],
         'lat'       => $A['lat'],
         'lng'       => $A['lng'],
-        'latlng'    => $latlng,
         'frm_id'    => $A['id'],
         'goog_map_instr' => $_CONF_GEO['autofill_coord'] != '' ? 
                     $LANG_GEO['coord_instr2'] : '',

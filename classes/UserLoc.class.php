@@ -39,6 +39,8 @@ class UserLoc
     */
     public function __construct($location = '', $uid = 0)
     {
+        global $_USER;
+
         if ($uid == 0) $uid = (int)$_USER['uid'];
         $this->id = 0;
         $this->lat = 0;

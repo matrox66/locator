@@ -355,8 +355,10 @@ class Marker
     */
     public function Edit($id = '', $mode='submit')
     {
-        global $_CONF_GEO, $_TABLES, $_CONF, $LANG24, $LANG_postmodes, $_SYSTEM;
+        global $_CONF_GEO, $_TABLES, $_CONF, $LANG24, $LANG_postmodes, $_SYSTEM,
+                $LANG_GEO;
 
+        $retval = '';
         if ($id != '') {
             $this->Read($id);
         } elseif ($this->id == '') {
@@ -414,7 +416,7 @@ class Marker
             'url'           => $this->url,
             'origin_chk'    => $this->is_origin == 1 ? 'checked="checked"' : '',
             'enabled_chk'   => $this->enabled == 1 ? 'checked="checked"' : '',
-            'post_options'  => $post_options,
+            //'post_options'  => $post_options,
             'permissions_editor' => SEC_getPermissionsHTML(
                             $this->perm_owner, $this->perm_group,
                             $this->perm_members, $this->perm_anon),
@@ -486,6 +488,7 @@ class Marker
         if ($this->id == '')
             return 'Error : ID is empty';
 
+        $retval = '';
         //$origin= COM_sanitizeID($origin);
         $srchval = isset($_GET['query']) ? trim($_GET['query']) : '';
 
@@ -517,23 +520,24 @@ class Marker
         $T->set_var(array(
             'admin_options'     => $admin_options,
             'action_url'        => $_SERVER['PHP_SELF'],
-            'name'              => $title,
-            'address'           => $address,
-            'city'              => $city,
-            'state'             => $state,
-            'postal'            => $postal,
-            'description'       => $description,
+            'name'              => $this->title,
+            'address'           => $this->address,
+            'city'              => $this->city,
+            'state'             => $this->state,
+            'postal'            => $this->postal,
+            'description'       => $this->description,
             'url'               => COM_createLink($this->url, $this->url, 
                                     array('target' => '_new')),
             'lat'               => GEO_coord2str($this->lat),
             'lng'               => GEO_coord2str($this->lng),
-            'back_url'          => $back_url,
+            //'back_url'          => $back_url,
             'adblock'           => PLG_displayAdBlock('locator_marker', 0),
         ) );
         /*if ($origin != '')
             $T->set_var('origin_addr', 
             DB_getItem($_TABLES['locator_markers'], 'address', "id='$origin'"));
         */
+        $info_window = '';
         if (    $_CONF_GEO['show_map']
                 && $this->lat != 0 && $this->lng != 0
         ) {
@@ -594,7 +598,7 @@ class Marker
 
         // Sanitize the current value
         $oldvalue = $oldvalue == 1 ? 1 : 0;
-        $retval = $oldval;
+        $retval = $oldvalue;
 
         // Only act on valid fields
         switch ($field) {
