@@ -26,6 +26,8 @@ function GEO_showLocations($id, $radius=0, $units='', $keywords='', $address='')
     global $_TABLES, $_CONF_GEO, $_CONF, $_USER, $LANG_GEO;
 
     $content = '';
+    $locations = '';
+    $errmsg = '';
 
     if ($units == '')
         $units = $_CONF_GEO['distance_unit'];
@@ -41,7 +43,6 @@ function GEO_showLocations($id, $radius=0, $units='', $keywords='', $address='')
 
     $T = new Template($_CONF['path'] . 'plugins/locator/templates');
     $T->set_file('page', 'loclist.thtml');
-
     $T->set_var(array(
         'action_url'    => $_SERVER['PHP_SELF'],
         'origin_select' => GEO_originSelect($id),
@@ -73,7 +74,7 @@ function GEO_showLocations($id, $radius=0, $units='', $keywords='', $address='')
         $last = COM_checkSpeedlimit($_CONF_GEO['pi_name'].'lookup');
         if ($last > 0) {
             $errmsg = $LANG_GEO['speedlimit_exceeded'];
-        } elseif (GEO_getCoordsUserAddress($address, $lat, $lng) != 0) {
+        } elseif (GEO_getCoords($address, $lat, $lng) == 0) {
             $locations = getLocsByCoord($lat, $lng, $radius, $units, $keywords);
             COM_updateSpeedlimit($_CONF_GEO['pi_name'].'lookup');
         }
@@ -254,7 +255,6 @@ function getLocsByCoord($lat, $lng, $radius, $units='', $keywords='')
     $sql .= " HAVING distance < $radius
         ORDER BY distance
         LIMIT 0, 200";
-    //echo $sql;die;
 
     $result = DB_query($sql);
     if (!$result)
