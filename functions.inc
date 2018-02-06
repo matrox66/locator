@@ -256,6 +256,9 @@ function plugin_autouninstall_locator()
         'php_blocks' => array(),
         'vars'      => array($_CONF_GEO['pi_name'] . '_gid')
     );
+    if (version_compare(GVERSION, '1.8.0', '>=')) {
+        \glFusion\Cache::getInstance()->deleteItemsByTag('locator');
+    }
     return $out;
 }
 
@@ -909,7 +912,7 @@ function GEO_getCoords($address, &$lat, &$lng)
     $lng = $data['results'][0]['geometry']['location']['lng'];
     if (version_compare(GVERSION, '1.8.0', '>=')) {
         $c = \glFusion\Cache::getInstance();
-        $c->set($key, array('lat'=>$lat, 'lng'=>$lng));
+        $c->set($key, array('lat'=>$lat, 'lng'=>$lng), 'locator');
     }
     return 0;
 }
