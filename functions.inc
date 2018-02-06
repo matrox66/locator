@@ -885,6 +885,16 @@ function GEO_getCoords($address, &$lat, &$lng)
         return 0;
 
     $address = urlencode(GEO_AddressToString($address));
+    if (version_compare(GVERSION, '1.8.0', '>=')) {
+        $c = \glFusion\Cache::getInstance();
+        $key = md5($address);
+        if ($c->has($key)) {
+            $coords = $c->get($key);
+            $lat = $coords['lat'];
+            $lng = $coords['lng'];
+            return 0;
+        }
+    }
     $url = GEO_GOOG_URL . $address . '&key=' . $_CONF_GEO['google_api_key'];
 
     $json = GEO_file_get_contents($url);
@@ -897,6 +907,10 @@ function GEO_getCoords($address, &$lat, &$lng)
     }
     $lat = $data['results'][0]['geometry']['location']['lat'];
     $lng = $data['results'][0]['geometry']['location']['lng'];
+    if (version_compare(GVERSION, '1.8.0', '>=')) {
+        $c = \glFusion\Cache::getInstance();
+        $c->set($key, array('lat'=>$lat, 'lng'=>$lng));
+    }
     return 0;
 }
 

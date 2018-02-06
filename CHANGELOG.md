@@ -1,5 +1,8 @@
 # glLocator - Change Log
 
+## 1.1.4 (Unreleased)
+- Add cache support for glFusion 1.8.0+
+
 ## 1.1.3 (2018-01-14)
 - Fix missing namespace in admin
 
