@@ -20,7 +20,7 @@ class Marker
 {
     private $isAdmin = false;
     private $properties = array();
-
+    public $isNew = true;
 
     /**
     *   Constructor
@@ -32,8 +32,11 @@ class Marker
         global $_CONF_GEO, $_USER;
 
         $this->id = $id;
+        $this->isNew = true;
         if ($this->id != '') {
-            $this->Read();
+            if ($this->Read()) {
+                $this->isNew = false;
+            };
         } else {
             $this->title = '';
             $this->description = '';
@@ -142,6 +145,7 @@ class Marker
     *   Read a marker from the database into variables
     *
     *   @param  string  $id     Optional ID of marker, or current is used
+    *   @return boolean         True if found and read, False on error or not found
     */
     public function Read($id = '')
     {
@@ -153,7 +157,9 @@ class Marker
         $res = DB_query($sql, 1);
         if (!$res || DB_error()) return false;
         $A = DB_fetchArray($res, false);
+        if (!$A) return false;
         $this->SetVars($A, true);
+        return true;
     }
 
 
