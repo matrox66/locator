@@ -632,13 +632,16 @@ function plugin_autotags_locator($op, $content = '', $autotag = '')
 {
     global $_CONF, $_TABLES, $_CONF_GEO;
 
+    $lat = '';
+    $lng = '';
+    $title = '';
     switch ($op) {
     case 'tagname':
         $retval = 'locator';
         break;
     case 'parse':
         $HTML = '';
-        $option = COM_applyFilter($autotag['parm1']);
+        $option = trim(COM_applyFilter($autotag['parm1']));
         switch ($option) {
         case 'map':
             // Insert a google map, if configured correctly.  We check this
@@ -653,22 +656,20 @@ function plugin_autotags_locator($op, $content = '', $autotag = '')
             }
 
             $parm2 = $autotag['parm2'];
-            list($opt, $parm3) = explode(':', $parm2);
+            $A = explode(':', $parm2);
+            $opt = $A[0];
+            $parm3 = isset($A[1]) ? $A[1] : '';
             if (empty($parm3)) {
                 $opt = 'id';
                 $parm3 = $parm2;
             }
-
             switch($opt) {
             case 'id':
-                $A = DB_fetchArray(DB_query(
-                    "SELECT lat, lng, title
-                    FROM {$_TABLES['locator_markers']}
-                    WHERE id='" . DB_escapeString($parm3) . "'", 1), false);
-                if (!empty($A)) {
-                    $lat = $A['lat'];
-                    $lng = $A['lng'];
-                    $title = $A['title'];
+                $M = new Locator\Marker($parm3);
+                if (!$M->isNew) {
+                    $lat = $M->lat;
+                    $lng = $M->lng;
+                    $title = $M->lng;
                 }
                 break;
 
@@ -1207,8 +1208,10 @@ function service_getMap_locator($args, &$output, &$svc_msg)
 function service_getCoords_locator($args, &$output, &$svc_msg)
 {
     //if (!is_array($args) || empty($args['address'])) return PLG_RET_ERROR;
-    $output['lat'] = 0;
-    $output['lng'] = 0;
+    $output = array(
+        'lat' => 0,
+        'lng' => 0,
+    );
     $addr = GEO_AddressToString($args);
     if (GEO_getCoords($addr, $output['lat'], $output['lng']) == 0) {
         return PLG_RET_OK;
