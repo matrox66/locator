@@ -338,10 +338,7 @@ function plugin_dopluginsearch_locator(
     $perpage)
 {
     global $_CONF, $_TABLES, $LANG_GEO, $_CONF_GEO;
-
-    if (COM_isAnonUser() &&
-    (($_CONF['loginrequired'] == 1) ||
-    ($_CONF_GEO['loginrequired'] == 1))) {
+    if (COM_isAnonUser() && $_CONF['loginrequired'] == 1) {
         return '';
     }
 
@@ -351,17 +348,13 @@ function plugin_dopluginsearch_locator(
     $query = trim(DB_escapeString(htmlspecialchars($query)));
 
     // Start the SQL query by selecting desired fields.
-    $sql = "
-        SELECT
+    $sql = "SELECT
             a.id as id, a.title as title,
             a.description as description, a.owner_id, a.views as hits,
             a.add_date AS date,
             CONCAT('/{$_CONF_GEO['pi_name']}/index.php?detail=x&id=',a.id) as url
-        FROM
-            {$_TABLES['locator_markers']} a
-        WHERE
-            1=1
-    " . COM_getPermSQL('AND', 0, 2, 'a'). ' ';
+        FROM {$_TABLES['locator_markers']} a
+        WHERE 1=1 " . COM_getPermSQL('AND', 0, 2, 'a'). ' ';
 
     if (!empty($author)) {
         $sql .= " AND (a.owner_id = '$author') ";
@@ -390,15 +383,11 @@ function plugin_searchtypes_locator()
 {
     global $LANG_GEO, $_CONF, $_CONF_GEO;
 
-    if (COM_isAnonUser() &&
-    (($_CONF['loginrequired'] == 1) ||
-    ($_CONF_GEO['loginrequired'] == 1))) {
+    if (!COM_isAnonUser() || $_CONF['loginrequired'] != 1) {
+        return array($_CONF_GEO['pi_name'] => $LANG_GEO['menulabel']);
+    } else {
         return '';
     }
-
-    $tmp[$_CONF_GEO['pi_name']] = $LANG_GEO['menulabel'];
-
-    return $tmp;
 }
 
 
