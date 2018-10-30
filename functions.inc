@@ -813,7 +813,9 @@ function plugin_profilevariablesdisplay_locator($uid, &$T)
 */
 function LOCATOR_getDocURL($file='', $doclang='english')
 {
-    $doc_path = $_CONF['path_html'] . $_CONF_LOCATOR['pi_name'] .
+    global $_CONF, $_CONF_GEO;
+
+    $doc_path = $_CONF['path_html'] . $_CONF_GEO['pi_name'] .
                 "/docs/$doclang/";
     $doc_url = '';
 
