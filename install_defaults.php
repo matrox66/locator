@@ -184,7 +184,7 @@ $locatorConfigData = array(
         'group' => 'locator',
     ),
     array(
-        'name' => 'google_api_keyu',
+        'name' => 'google_api_key',
         'default_value' => '',
         'type' => 'text',
         'subgroup' => 0,
@@ -197,7 +197,7 @@ $locatorConfigData = array(
 
     // Permissions fieldset
     array(
-        'name' => 'fs_perms',
+        'name' => 'fs_permissions',
         'default_value' => NULL,
         'type' => 'fieldset',
         'subgroup' => 0,
