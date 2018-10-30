@@ -132,7 +132,8 @@ $LANG_confignames['locator'] = array(
 
     'defgrp'            => 'Standard-Gruppe',
     'default_permissions' => 'Standard-Berechtigungen',
-
+    'mapper'            => 'Map Provider',
+    'mapquest_key'      => 'Mapquest Client Key',
 );
 
 /**
@@ -149,7 +150,7 @@ $LANG_configsubgroups['locator'] = array(
 */
 $LANG_fs['locator'] = array(
     'fs_main' => 'Allgemeine-Einstellungen',
-    'fs_google' => 'Google API-Einstellungen',
+    'fs_mappers' => 'Map Providers',
     'fs_permissions' => 'Standard-Berechtigungen',
  );
 

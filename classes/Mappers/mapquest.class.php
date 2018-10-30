@@ -20,7 +20,6 @@ namespace Locator\Mappers;
 class mapquest extends \Locator\Mapper
 {
     private $client_key = NULL;
-    private $client_secret = NULL;
     const GEOCODE_URL = 'http://www.mapquestapi.com/geocoding/v1/address?inFormat=kvp&outFormat=json&key=%s&location=%s';
 
     /**
@@ -33,9 +32,6 @@ class mapquest extends \Locator\Mapper
         global $_CONF_GEO;
         if (isset($_CONF_GEO['mapquest_key'])) {
             $this->client_key = $_CONF_GEO['mapquest_key'];
-        }
-        if (isset($_CONF_GEO['mapquest_secret'])) {
-            $this->client_secret = $_CONF_GEO['mapquest_secret'];
         }
     }
 
@@ -56,7 +52,7 @@ class mapquest extends \Locator\Mapper
         if ($_CONF_GEO['show_map'] == 0) {
             return '';
         }
-        if ($this->client_key === NULL || $this->client_secret === NULL) {
+        if ($this->client_key === NULL) {
             return '';
         }
 
