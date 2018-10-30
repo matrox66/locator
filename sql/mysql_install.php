@@ -3,9 +3,9 @@
 *   SQL Commands for the GeoLoc Plugin.
 *
 *   @author     Lee Garner <lee@leegarner.com>
-*   @copyright  Copyright (c) 2009-2017 Lee Garner <lee@leegarner.com>
+*   @copyright  Copyright (c) 2009-2018 Lee Garner <lee@leegarner.com>
 *   @package    locator
-*   @version    1.1.1
+*   @version    1.1.4
 *   @license    http://opensource.org/licenses/gpl-2.0.php 
 *               GNU Public License v2 or later
 *   @filesource
@@ -95,33 +95,26 @@ $_SQL['locator_userloc'] =
 
 
 $_SQL_UPGRADE = array(
-'0.1.4' => array(
-        "ALTER TABLE {$_TABLES['locator_userloc']}
-            ADD type TINYINT(1) DEFAULT 0 AFTER id",
-        "ALTER TABLE {$_TABLES['locator_userloc']}
-            CHANGE add_date add_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP",
+    '0.1.4' => array(
+        "ALTER TABLE {$_TABLES['locator_userloc']} ADD type TINYINT(1) DEFAULT 0 AFTER id",
+        "ALTER TABLE {$_TABLES['locator_userloc']} CHANGE add_date add_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP",
         // new "enabled" field for markers
-        "ALTER TABLE {$_TABLES['locator_markers']}
-            ADD enabled TINYINT(1) UNSIGNED NOT NULL DEFAULT '1'",
+        "ALTER TABLE {$_TABLES['locator_markers']} ADD enabled TINYINT(1) UNSIGNED NOT NULL DEFAULT '1'",
     ),
-'1.0.1' => array(
+    '1.0.1' => array(
         // Add 'enabled' field to submissions that should have been in 0.1.4
-        "ALTER TABLE {$_TABLES['locator_submission']}
-            ADD enabled TINYINT(1) UNSIGNED NOT NULL DEFAULT '1'",
+        "ALTER TABLE {$_TABLES['locator_submission']} ADD enabled TINYINT(1) UNSIGNED NOT NULL DEFAULT '1'",
     ),
-'1.1.1' => array(
+    '1.1.1' => array(
         // Add 'enabled' field to submissions that should have been in 0.1.4
-        "ALTER TABLE {$_TABLES['locator_userloc']}
-            ADD uid INT(11) UNSIGNED NOT NULL DEFAULT '0' AFTER `id`,
-            ADD UNIQUE `location` (`uid`, `location`)",
-        "ALTER TABLE {$_TABLES['locator_markers']}
-            ADD city varchar(80) AFTER address,
-            ADD state varchar(80) AFTER city,
-            ADD postal varchar(80) AFTER state",
-        "ALTER TABLE {$_TABLES['locator_submission']}
-            ADD city varchar(80) AFTER address,
-            ADD state varchar(80) AFTER city,
-            ADD postal varchar(80) AFTER state",
+        "ALTER TABLE {$_TABLES['locator_userloc']} ADD uid INT(11) UNSIGNED NOT NULL DEFAULT '0' AFTER `id`",
+        "ALTER TABLE {$_TABLES['locator_userloc']} ADD UNIQUE `location` (`uid`, `location`)",
+        "ALTER TABLE {$_TABLES['locator_markers']} ADD city varchar(80) AFTER address",
+        "ALTER TABLE {$_TABLES['locator_markers']} ADD state varchar(80) AFTER city",
+        "ALTER TABLE {$_TABLES['locator_markers']} ADD postal varchar(80) AFTER state",
+        "ALTER TABLE {$_TABLES['locator_submission']} ADD city varchar(80) AFTER address",
+        "ALTER TABLE {$_TABLES['locator_submission']} ADD state varchar(80) AFTER city",
+        "ALTER TABLE {$_TABLES['locator_submission']} ADD postal varchar(80) AFTER state",
     ),
 );
 
