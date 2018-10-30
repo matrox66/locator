@@ -3,9 +3,9 @@
 *   glFusion API functions for the Locator plugin.
 *
 *   @author     Lee Garner <lee@leegarner.com>
-*   @copyright  Copyright (c) 2009-2017 Lee Garner <lee@leegarner.com>
+*   @copyright  Copyright (c) 2009-2018 Lee Garner <lee@leegarner.com>
 *   @package    locator
-*   @version    1.1.1
+*   @version    1.2.0
 *   @license    http://opensource.org/licenses/gpl-2.0.php
 *               GNU Public License v2 or later
 *   @filesource
@@ -58,12 +58,30 @@ if (file_exists("$langpath/custom/$langfile")) {
 
 spl_autoload_register(function ($class)
 {
-    if (strpos($class, 'Locator\\') === 0) {
-        $class = str_replace('Locator\\', '', $class);
-        $path = __DIR__ . '/classes/' . $class . '.class.php';
-        if (file_exists($path)) {
-            include $path;
-        }
+    // project-specific namespace prefix
+    $prefix = 'Locator\\';
+
+    // does the class use the namespace prefix?
+    $len = strlen($prefix);
+    if (strncmp($prefix, $class, $len) !== 0) {
+        // no, move to the next registered autoloader
+        return;
+    }
+
+    // base directory for the namespace prefix
+    $base_dir = __DIR__ . '/classes/';
+
+    // get the relative class name
+    $relative_class = substr($class, $len);
+
+    // replace the namespace prefix with the base directory, replace namespace
+    // separators with directory separators in the relative class name, append
+    // with .php
+    $file = $base_dir . str_replace('\\', '/', $relative_class) . '.class.php';
+
+    // if the file exists, require it
+    if (file_exists($file)) {
+        require $file;
     }
 });
 
@@ -727,36 +745,14 @@ function plugin_runScheduledTask_locator()
 */
 function GEO_showMap($lat, $lng, $text='')
 {
-    global $_CONF_GEO, $_CONF, $GOOG_lang;
+    global $_CONF_GEO;
 
-    // Insert a google map, if configured correctly
+    // Insert a map, if configured correctly
     if ($_CONF_GEO['show_map'] == 0) {
         return '';
     }
 
-    $lat = (float)$lat;
-    $lng = (float)$lng;
-    if ($lat == 0 || $lng == 0)
-        return '';
-
-    USES_locator_google_lang();
-    $iso_lang = isset($GOOG_lang) && is_array($GOOG_lang) &&
-                in_array($_CONF['iso_lang'], $GOOG_lang) ?
-                $_CONF['iso_lang'] : 'en';
-
-    list($js_url, $canvas_id) = GEO_MapJS();
-    $T = new Template(LOCATOR_PI_PATH . '/templates');
-    $T->set_file('page', 'map.thtml');
-    $T->set_var(array(
-        'lat'           => GEO_coord2str($lat, true),
-        'lng'           => GEO_coord2str($lng, true),
-        'infowindow_text' => COM_checkHTML($text),
-        'iso_lang'      => $iso_lang,
-        'geo_map_js_url' => $js_url,
-        'canvas_id'     => $canvas_id,
-    ) );
-    $T->parse('output','page');
-    return $T->finish($T->get_var('output'));
+    return \Locator\Mapper::getInstance()->showMap($lat, $lng, $text);
 }
 
 
@@ -793,7 +789,7 @@ function plugin_profilevariablesdisplay_locator($uid, &$T)
     $LT->set_file('page', 'profile_map.thtml');
     $LT->set_var(array(
         'is_uikit'      => $_CONF_GEO['_is_uikit'] ? 'true' : '',
-        'profile_map'   => GEO_showMap($U->lat, $U->lng, $userloc),
+        'profile_map'   => \Locator\Mapper::getInstance()->showMap($U->lat, $U->lng, $userloc, 'small'),
     ) );
     $LT->parse('output','page');
     $existingFields = $T->get_var('plugin_fields');
@@ -873,39 +869,7 @@ function plugin_getconfigelementhelp_locator($option, $doclang='english')
 */
 function GEO_getCoords($address, &$lat, &$lng)
 {
-    global $_CONF_GEO;
-
-    if ($_CONF_GEO['autofill_coord'] != 1 || empty($address))
-        return 0;
-
-    $address = urlencode(GEO_AddressToString($address));
-    if (version_compare(GVERSION, '1.8.0', '>=')) {
-        $c = \glFusion\Cache::getInstance();
-        $key = md5($address);
-        if ($c->has($key)) {
-            $coords = $c->get($key);
-            $lat = $coords['lat'];
-            $lng = $coords['lng'];
-            return 0;
-        }
-    }
-    $url = GEO_GOOG_URL . $address . '&key=' . $_CONF_GEO['google_api_key'];
-
-    $json = GEO_file_get_contents($url);
-    if ($json == '') {
-        return 0;
-    }
-    $data = json_decode($json, true);
-    if (!is_array($data) || $data['status'] != 'OK') {
-        return -1;
-    }
-    $lat = $data['results'][0]['geometry']['location']['lat'];
-    $lng = $data['results'][0]['geometry']['location']['lng'];
-    if (version_compare(GVERSION, '1.8.0', '>=')) {
-        $c = \glFusion\Cache::getInstance();
-        $c->set($key, array('lat'=>$lat, 'lng'=>$lng), 'locator');
-    }
-    return 0;
+    return \Locator\Mapper::getInstance()->geoCode($address, $lat, $lng);
 }
 
 
@@ -950,9 +914,10 @@ function GEO_getInfo($id, $singleAddress = false)
 *   are multiple maps on the page.
 *   Returns the URL, and a random number to be used for the canvas ID.
 *
+*   @deprecated 1.2.0
 *   @return array   $url=>URL to Google Maps javascript, $canvas_id=> random ID
 */
-function GEO_MapJS()
+function XGEO_MapJS()
 {
     global $_CONF_GEO;
 
@@ -1200,7 +1165,8 @@ function service_getMap_locator($args, &$output, &$svc_msg)
     if (!is_array($args)) return PLG_RET_ERROR;
     $lat = isset($args['lat']) ? (float)$args['lat'] : 0;
     $lng = isset($args['lng']) ? (float)$args['lng'] : 0;
-    $output = GEO_showMap($lat, $lng);
+    $text = isset($args['text']) ? $args['text'] : '';
+    $output = \Locator\Mapper::getInstance()->showMap($lat, $lng, $text);
     return PLG_RET_OK;
 }
 
@@ -1325,6 +1291,25 @@ function GEO_coord2str($val, $us = false)
     } else {
         return COM_numberFormat($val, 6);
     }
+}
+
+
+/**
+ * Select the mapper to use for rendering maps.
+ * Get the class files under "Mappers" and select from the names.
+ *
+ * @return  array   option => name
+ */
+function plugin_configmanager_select_mapper_locator()
+{
+    $A = array();
+    $files = glob(__DIR__ . '/classes/Mappers/*.class.php');
+    foreach ($files as $file) {
+        $tmp = pathinfo($file, PATHINFO_FILENAME);
+        $tmp = explode('.', $tmp);
+        $A[ucfirst($tmp[0])] = $tmp[0];
+    }
+    return $A;
 }
 
 ?>

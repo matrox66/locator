@@ -159,6 +159,17 @@ $locatorConfigData = array(
         'set' => true,
         'group' => 'locator',
     ),
+    array(
+        'name' => 'mapper',
+        'default_value' => 'google',
+        'type' => 'select',
+        'subgroup' => 0,
+        'fieldset' => 0,
+        'selection_array' => 0,
+        'sort' => 120,
+        'set' => true,
+        'group' => 'locator',
+    ),
 
     // Google API settings
     array(

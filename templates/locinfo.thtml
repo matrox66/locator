@@ -51,50 +51,8 @@
 
 {# Check for google api key #}
 {!if show_map}
-{geo_map_js_url}
-<script type="text/javascript">
-    
-    function initializeGMap() {
-        var point = new google.maps.LatLng({lat}, {lng});
-        var gOptions = {
-            zoom:15,
-            center:point,
-            mapTypeId: google.maps.MapTypeId.ROADMAP
-        }
-        var map = new google.maps.Map(document.getElementById("map_canvas{canvas_id}"), gOptions);
-        var marker = new google.maps.Marker( {
-            position: point,
-            map: map
-        } );
-
-    }
-
-    if( window.addEventListener ) {
-        window.addEventListener( 'load', initializeGMap, false );
-    } else if( document.addEventListener ) {
-        document.addEventListener('load' , initializeGMap, false );
-    } else if( window.attachEvent ) {
-        window.attachEvent( 'onload', initializeGMap );
-    } else {
-        if( window.onload ) { window.XTRonload = window.onload; }
-        if( window.onunload ) { window.XTRonunload = window.onunload; }
-        window.onload = initializeGMap;
-    }
-
-</script>
 <center>
-<div class="map_dimension" id="map_canvas{canvas_id}"></div>
-{!if directions}
-<div id="directions">
-  <form action="https://maps.google.com/maps" method="get" target="_blank">
-    <input onfocus="this.value='';" type="text" size="40" maxlength="40"
-        name="saddr" id="saddr" value="{$LANG_GEO['start_addr']}" />
-    <input class="lgButton green" value="{$LANG_GEO['get_directions']}" type="submit"/>
-    <input type="hidden" name="daddr" value="{lat},{lng}" />
-  </form>
-</div>
-{!endif}
-
+{map}
 </center>
 {!endif}
 {# End check for google api key #}

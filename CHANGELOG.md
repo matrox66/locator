@@ -1,6 +1,7 @@
 # glLocator - Change Log
 
-## 1.1.4 (Unreleased)
+## 1.2.0 (Unreleased)
+- Add Mapquest map provider
 - Fix output var in service_getCoords function, caused 500 errors
 - Add cache support for glFusion 1.8.0+
 

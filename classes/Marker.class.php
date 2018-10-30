@@ -3,9 +3,9 @@
 *   Marker class for the Locator plugin
 *
 *   @author     Lee Garner <lee@leegarner.com>
-*   @copyright  Copyright (c) 2009-2016 Lee Garner <lee@leegarner.com>
+*   @copyright  Copyright (c) 2009-2018 Lee Garner <lee@leegarner.com>
 *   @package    locator
-*   @version    1.1.0
+*   @version    1.2.0
 *   @license    http://opensource.org/licenses/gpl-2.0.php 
 *               GNU Public License v2 or later
 *   @filesource
@@ -523,6 +523,13 @@ class Marker
             $admin_options = '';
         }
 
+        $info_window = $this->title;
+        foreach (array('address', 'city', 'state', 'postal') as $fld) {
+            if ($this->$fld != '') {
+                $info_window .= '<br />' . htmlspecialchars($this->address);
+            }
+        }
+
         $T->set_var(array(
             'admin_options'     => $admin_options,
             'action_url'        => $_SERVER['PHP_SELF'],
@@ -537,33 +544,10 @@ class Marker
             'lat'               => GEO_coord2str($this->lat),
             'lng'               => GEO_coord2str($this->lng),
             //'back_url'          => $back_url,
+            'map'               => \Locator\Mapper::getInstance()->showMap($this->lat, $this->lng, $info_window, 'large'),
             'adblock'           => PLG_displayAdBlock('locator_marker', 0),
+            'show_map'          => true,
         ) );
-        /*if ($origin != '')
-            $T->set_var('origin_addr', 
-            DB_getItem($_TABLES['locator_markers'], 'address', "id='$origin'"));
-        */
-        $info_window = '';
-        if (    $_CONF_GEO['show_map']
-                && $this->lat != 0 && $this->lng != 0
-        ) {
-            // Try to get the Google map
-            list($js_url, $canvas_id) = GEO_MapJS();
-            foreach (array('address', 'city', 'state', 'postal')
-                    as $fld) {
-                if ($this->$fld != '')
-                    $info_window .= '<br />' . htmlspecialchars($this->address);
-            }
-            $T->set_var(array(
-                'show_map'          => 'true',
-                'infowindow_text'   => $info_window,
-                'geo_map_js_url'    => $js_url,
-                'canvas_id'         => $canvas_id,
-             ) );
-        } else {
-            // Can't show the map if either coordinate is empty
-            $T->clear_var('show_map');
-        }
 
         // Show the location's weather if that plugin integration is enabled
         if ($_CONF_GEO['use_weather']) {
@@ -578,9 +562,9 @@ class Marker
             }
         }
  
-        if ($_CONF_GEO['use_directions']) {
+        /*if ($_CONF_GEO['use_directions']) {
             $T->set_var('directions', 'true');
-        }
+        }*/
  
         $T->parse('output', 'page');
         $retval .= $T->finish($T->get_var('output')); 
