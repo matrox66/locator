@@ -27,7 +27,7 @@
 
     <div class="uk-container uk-container-center uk-margin-bottom">
       <h1>glFusion Locator Plugin Configuration</h1>
-      <p>The Locator Plugin allows your site to provide a locator function, such as a store locator or points of interest.  Visitors can search for locations within a selected radius of some  predefined locations, or within a given radius from their home location.</p>
+      <p>The Locator Plugin allows your site to provide a locator function, such as a store locator or points of interest. Visitors can search for locations within a selected radius of some  predefined locations, or within a given radius from their home location.</p>
 <p>This version requires GLFusion 1.4.0 or higher.</p>
 
       <h2>Main Locator Options</h2>
@@ -39,17 +39,17 @@
 
       <dl id="desc_distance_unit">
         <dt>Default Distance Unit</dt>
-        <dd>The default distance unit used in searches.  Users may override this for each search.</dd>
+        <dd>The default distance unit used in searches. Users may override this for each search.</dd>
       </dl>
 
       <dl id="desc_show_map">
         <dt>Show Map?</dt>
-        <dd>Selects whether a Google map will be shown in the location information view.</dd>
+        <dd>Selects whether a map will be shown in the location information view.</dd>
       </dl>
 
       <dl id="desc_submission">
         <dt>Use submission queue</dt>
-        <dd>Set this to "Yes" if user submissions should be moderated.  If this is "No", user-submitted locations will be publically available as soon as they are submitted.</dd>
+        <dd>Set this to "Yes" if user submissions should be moderated. If this is "No", user-submitted locations will be publically available as soon as they are submitted.</dd>
       </dl>
 
       <dl id="desc_submit">
@@ -59,13 +59,13 @@
 
       <dl id="desc_show_right_blk">
         <dt>Show Right Blocks?</dt>
-        <dd>Set this to "Yes" to display the right blocks when this plugin is active.  Setting this to "No" prevents the right blocks from being displayed, giving more space to the plugin.</dd>
+        <dd>Set this to "Yes" to display the right blocks when this plugin is active. Setting this to "No" prevents the right blocks from being displayed, giving more space to the plugin.</dd>
       </dl>
 
       <dl id="desc_purge_userlocs">
         <dt>Days after which user-entered locations are purged</dt>
         <dd>User-entered search origins are cached in a database table. This value indicates the number of days after which these free-form user entries are removed.<p />
-Note that the database entries associated with the &quot;Location&quot; field in the user account settings are not purged.  This refers only to the free-form entries created on the Locator home page.</dd>
+Note that the database entries associated with the &quot;Location&quot; field in the user account settings are not purged. This refers only to the free-form entries created on the Locator home page.</dd>
       </dl>
 
       <dl id="desc_profile_showmap">
@@ -80,12 +80,12 @@ Note that the database entries associated with the &quot;Location&quot; field in
 
       <dl id="desc_use_weather">
         <dt>Integrate with the Weather plugin?</dt>
-        <dd>If this value is "Yes", and the Weather plugin is installed and enabled, then local weather for locations will be displayed when the location is viewed.  If the Weather plugin is not installed or is not enabled, this setting has no effect.</dd>
+        <dd>If this value is "Yes", and the Weather plugin is installed and enabled, then local weather for locations will be displayed when the location is viewed. If the Weather plugin is not installed or is not enabled, this setting has no effect.</dd>
       </dl>
 
       <dl id="desc_use_directions">
         <dt>Add a form to get directions?</dt>
-        <dd>If this value is "Yes", then a form will be included on the Location Detail page to allow the user to enter a starting address and get directions from Google Maps.  If this is "No", then the directions form is suppressed.</dd>
+        <dd>If this value is "Yes", then a form will be included on the Location Detail page to allow the user to enter a starting address and get directions from Google Maps. If this is "No", then the directions form is suppressed.</dd>
       </dl>
 
       <dl id="desc_api_only">
@@ -93,36 +93,34 @@ Note that the database entries associated with the &quot;Location&quot; field in
         <dd>If this value is "Yes", then the plugin will not be available as a guest-facing page but only as a provider to other plugins, e.g. Evlist. Set this to "No" if you wish to make the plugin available to your site visitors.</dd>
       </dl>
 
+      <h2>Geocoding Section</h2>
+
+      <dl id="desc_autofill_coord">
+        <dt>Auto-Fill Location Coordinates?</dt>
+        <dd>If this is "Yes", then the plugin will attempt to determine the location for newly-submitted locations using the configured map provider&apos;s API. Otherwise, the coordinates must be entered manually.</dd>
+      </dl>
+
       <dl id="desc_mapper">
         <dt>Select Map Provider</dt>
         <dd>Select the map provider that you wish to use. Generally you need to set up a developer account and get API credentials, and there may be a fee charged for use.</dd>
       </dl>
 
-      <h2>Geocoding Section</h2>
-
-      <dl id="desc_autofill_coord">
-        <dt>Auto-Fill Location Coordinates?</dt>
-        <dd>If this is "Yes", then the plugin will attempt to determine the location for newly-submitted locations using the Google Map API.  Otherwise, the coordinates must be entered manually.</dd>
-      </dl>
-
       <dl id="desc_google_api_key">
         <dt>Google API Key</dt>
-        <dd>Enter your own Google Map API key here.  This is required in order to use Google to automatically determine the geographic coordinates for locations.<p />
+        <dd>Enter your own Google Map API key here. This is required in order to use Google to automatically determine the geographic coordinates for locations.<p />
 visit <a href="http://code.google.com/apis/maps/">http://code.google.com/apis/maps/</a> to get started.</dd>
       </dl>
 
-      <dl id="desc_url_geocode">
-        <dt>URL for Geocoding</dt>
-        <dd>This is the URL to the geocoding function of Google Maps.  The plugin will substitute the actuall data in place of these placeholders:<br />
-%address% - The address of the location<br />
-%google_key% - Your Google Maps API key</dd>
+      <dl id="desc_mapquest_key">
+        <dt>Mapquest Client Key</dt>
+        <dd>Enter your Mapquest Consumer Key here if Mapquest will be used. The Consumer Secret is not used.</dd>
       </dl>
 
       <h2>Permissions</h2>
 
       <dl id="desc_defgrpad">
         <dt>Default Group</dt>
-        <dd>This is the default group which will be assigned to the "group_id" value for newly-submitted locations.  The "Default Permission[1]" selected will be applied as well to give read and edit permission to the location.</dd>
+        <dd>This is the default group which will be assigned to the "group_id" value for newly-submitted locations. The "Default Permission[1]" selected will be applied as well to give read and edit permission to the location.</dd>
       </dl>
     </div>
   </div>
