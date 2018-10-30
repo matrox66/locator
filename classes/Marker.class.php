@@ -526,10 +526,9 @@ class Marker
         $info_window = $this->title;
         foreach (array('address', 'city', 'state', 'postal') as $fld) {
             if ($this->$fld != '') {
-                $info_window .= '<br />' . htmlspecialchars($this->address);
+                $info_window .= '<br />' . htmlspecialchars($this->$fld);
             }
         }
-
         $T->set_var(array(
             'admin_options'     => $admin_options,
             'action_url'        => $_SERVER['PHP_SELF'],
