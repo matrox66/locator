@@ -10,6 +10,5 @@ and an API for other plugins such as Evlist.
 Requires the "lglib" plugin for some internal functions such as message handling.
 
 ## API Key
-There is a plugin configuration item where you can enter a Google Maps API key.
-At this time Google does not appear to require a key for the Maps API, but if this
-changes in the future you can enter your key in the space proviced.
+You will need to create an API key for Google Maps and enter it in the plugin configuration.
+See https://developers.google.com/maps/documentation/javascript/get-api-key#get-an-api-key for information on getting an API key.
