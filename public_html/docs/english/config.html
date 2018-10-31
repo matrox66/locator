@@ -107,8 +107,12 @@ Note that the database entries associated with the &quot;Location&quot; field in
 
       <dl id="desc_google_api_key">
         <dt>Google API Key</dt>
-        <dd>Enter your own Google Map API key here. This is required in order to use Google to automatically determine the geographic coordinates for locations.<p />
-visit <a href="http://code.google.com/apis/maps/">http://code.google.com/apis/maps/</a> to get started.</dd>
+        <dd>Enter your own Google Map API key here. This is required in order to use Google to automatically determine the geographic coordinates for locations. This can be restricted to the public address of your server.</dd>
+      </dl>
+
+      <dl id="desc_google_js_key">
+        <dt>Google JS Key</dt>
+        <dd>Enter your own Google Map API key here for Maps Javascript. If this is empty then the Google API Key will be used. This should be a different key, restricted by HTTP Referer to protect against quota theft.</dd>
       </dl>
 
       <dl id="desc_mapquest_key">

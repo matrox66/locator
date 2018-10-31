@@ -2,6 +2,7 @@
 
 ## 1.2.0 (Unreleased)
 - Add Mapquest map provider
+- Add separate Google API key for Javascript
 - Fix output var in service_getCoords function, caused 500 errors
 - Add cache support for glFusion 1.8.0+
 

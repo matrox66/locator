@@ -125,7 +125,7 @@ $LANG_confignames['locator'] = array(
     'geocode_profile'   => 'Geocode profile locations?',
     'show_map'          => 'Show Map?',
     'google_api_key'    => 'Google Maps API Key:',
-    //'url_geocode'       => 'URL to Google Geocoding Service:',
+    'google_js_key'     => 'Google Maps JS Key',
 
     'defgrp'            => 'Default Group:',
     'default_permissions' => 'Default Permissions:',
