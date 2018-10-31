@@ -94,12 +94,10 @@ class mapquest extends \Locator\Mapper
         $loc = \Locator\Cache::get($cache_key);
         if ($loc === NULL) {
             $url = sprintf(self::GEOCODE_URL, $this->client_key, urlencode($address));
-            $json = GEO_file_get_contents($url);
-            if ($json == false) {
-                return 0;
-            }
+            $json = self::getUrl($url);
             $data = json_decode($json, true);
             if (!is_array($data) || !isset($data['info']['statuscode']) || $data['info']['statuscode'] != 0) {
+                COM_errorLog(__CLASS__ . '::' . __FUNCTION__ . '(): Error - ' . $json);
                 return -1;
             }
             if (!isset($data['results'][0]['locations']) || !is_array($data['results'][0]['locations'])) {

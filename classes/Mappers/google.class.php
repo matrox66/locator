@@ -129,12 +129,15 @@ class google extends \Locator\Mapper
         if ($data === NULL) {
             $address = urlencode(GEO_AddressToString($address));
             $url = self::GEO_GOOG_URL . $address . '&key=' . $this->geocode_key;
-            $json = GEO_file_get_contents($url);
+            $json = self::getUrl($url);
             if ($json == '') {
                 return 0;
             }
             $data = json_decode($json, true);
-            if (!is_array($data) || $data['status'] != 'OK') {
+            if (!is_array($data)) {
+                return -1;
+            } elseif ($data['status'] != 'OK') {
+                COM_errorLog(__CLASS__ . '::' . __FUNCTION__ . '(): ' . $data['status'] . ' - ' . $data['error_message']);
                 return -1;
             }
             \Locator\Cache::set($cache_key, $data);
