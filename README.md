@@ -12,6 +12,7 @@ Requires the "lglib" plugin for some internal functions such as message handling
 ## API Key
 You will need to create an API key for the map provider of your choice and enter it in the plugin configuration.
   * https://developers.google.com/maps/documentation/javascript/get-api-key#get-an-api-key
+    - Enable Billing on your Google Account. There is a charge for using the Google APIs.
     * Enable Maps JavaScript API and Geocoding API
     * Create two API Keys
       * Geocoding API key can be restricted to the public IP of your server
