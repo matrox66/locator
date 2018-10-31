@@ -129,7 +129,8 @@ class Cache
         $key = self::makeKey($key);
         if (version_compare(GVERSION, self::MIN_GVERSION, '<')) {
             $data = DB_getItem($_TABLES['locator_cache'], 'data', "cache_id = '$key'");
-            return @unserialize($data);
+            $data = @unserialize($data);
+            return $data ? $data : NULL;
         } else {
             if (\glFusion\Cache::getInstance()->has($key)) {
                 return \glFusion\Cache::getInstance()->get($key);
