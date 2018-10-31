@@ -74,6 +74,7 @@ class mapquest extends \Locator\Mapper
             'client_key'    => $this->client_key,
             'directions'    => $_CONF_GEO['use_directions'] ? true : false,
             'text'          => $text,
+            'is_uikit'      => $_CONF_GEO['_is_uikit'],
         ) );
         $T->parse('output','page');
         return $T->finish($T->get_var('output'));
@@ -105,10 +106,12 @@ class mapquest extends \Locator\Mapper
             if (!isset($data['results'][0]['locations']) || !is_array($data['results'][0]['locations'])) {
                 return -1;
             }
-            $conf_code = 'ZZZ';     // Initilalize
+            $conf_code = 'ZZZ';     // Initialize
             $loc = NULL;
             foreach ($data['results'][0]['locations'] as $loc_data) {
-                $loc_conf_code = substr($loc_data['geocodeQualityCode'], -3);
+                // Rearrange the quality code to prioritize postal, admin area, then address
+                $qcode = $loc_data['geocodeQualityCode'];
+                $loc_conf_code = $qcode[4] . $qcode[3] . $qcode[2];
                 if ($loc_conf_code < $conf_code) {
                     $conf_code = $loc_conf_code;
                     $loc = $loc_data;
