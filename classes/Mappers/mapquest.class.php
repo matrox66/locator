@@ -63,7 +63,6 @@ class mapquest extends \Locator\Mapper
         }
 
         list($js_url, $canvas_id) = $this->getMapJS();
-        COM_errorLog("$lat --- $lng");
         $T = new \Template(LOCATOR_PI_PATH . '/templates/mapquest');
         $T->set_file('page', $tpl . '_map.thtml');
         $T->set_var(array(
