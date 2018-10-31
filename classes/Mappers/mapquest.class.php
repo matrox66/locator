@@ -102,16 +102,30 @@ class mapquest extends \Locator\Mapper
             if (!is_array($data) || !isset($data['info']['statuscode']) || $data['info']['statuscode'] != 0) {
                 return -1;
             }
-            if (!isset($data['results'][0]['locations'][0]['latLng'])) {
+            if (!isset($data['results'][0]['locations']) || !is_array($data['results'][0]['locations'])) {
                 return -1;
             }
-            $loc = $data['results'][0]['locations'][0]['latLng'];
+            $conf_code = 'ZZZ';     // Initilalize
+            $loc = NULL;
+            foreach ($data['results'][0]['locations'] as $loc_data) {
+                $loc_conf_code = substr($loc_data['geocodeQualityCode'], -3);
+                if ($loc_conf_code < $conf_code) {
+                    $conf_code = $loc_conf_code;
+                    $loc = $loc_data;
+                }
+            }
             \Locator\Cache::set($cache_key, $loc);
         }
 
-        $lat = $loc['lat'];
-        $lng = $loc['lng'];
-        return 0;
+        if (!isset($loc['latLng']) || !is_array($loc['latLng'])) {
+            $lat = 0;
+            $lng = 0;
+            return -1;
+        } else {
+            $lat = $loc['latLng']['lat'];
+            $lng = $loc['latLng']['lng'];
+            return 0;
+        }
     }
 
 
