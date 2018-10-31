@@ -39,6 +39,8 @@ function locator_do_upgrade($dvlp=false)
     }
     $code_ver = plugin_chkVersion_locator();
 
+    $map_provider = NULL;   // change if the map provider must be set
+
     if (!COM_checkVersion($current_ver, '0.1.1')) {
         $current_ver = '0.1.1';
         if (!locator_do_upgrade_sql($current_ver, $dvlp)) return false;
@@ -78,6 +80,13 @@ function locator_do_upgrade($dvlp=false)
         if (!locator_do_set_version($current_ver)) return false;
     }
 
+    if (!COM_checkVersion($current_ver, '1.2.0')) {
+        // This is a config-only update, but the map provider value
+        // should be reset to "google" since that was the only option
+        // prior to this version.
+        $map_provider = 'google';
+    }
+
     // Final version update to catch updates that don't go through
     // any of the update functions, e.g. code-only updates
     if (!COM_checkVersion($current_ver, $code_ver)) {
@@ -90,6 +99,13 @@ function locator_do_upgrade($dvlp=false)
     USES_lib_install();
     require_once __DIR__ . '/install_defaults.php';
     _update_config('locator', $locatorConfigData);
+
+    // Prior to v1.2.0 the only map provider was Google. If upgrading from
+    // a previous version, override the new provider selection.
+    if ($map_provider !== NULL) {
+        $c = config::get_instance();
+        $c->set('mapper', $map_provider, $_CONF_GEO['pi_name']);
+    }
 
     COM_errorLog("Successfully updated the {$_CONF_GEO['pi_display_name']} Plugin", 1);
     return true;
