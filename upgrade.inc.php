@@ -81,10 +81,14 @@ function locator_do_upgrade($dvlp=false)
     }
 
     if (!COM_checkVersion($current_ver, '1.2.0')) {
-        // This is a config-only update, but the map provider value
-        // should be reset to "google" since that was the only option
-        // prior to this version.
-        $map_provider = 'google';
+        $current_ver = '1.2.0';
+        // The map provider value should be reset to "google" since that was the
+        // only option prior to this version.
+        if (!$dvlp) {
+            $map_provider = 'google';
+        }
+        if (!locator_do_upgrade_sql($current_ver, $dvlp)) return false;
+        if (!locator_do_set_version($current_ver)) return false;
     }
 
     // Final version update to catch updates that don't go through

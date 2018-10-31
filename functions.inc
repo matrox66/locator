@@ -213,6 +213,7 @@ function plugin_uninstall_locator($installCheck='')
         'locator_userXorigin',
         'locator_submission',
         'locator_userloc',
+        'locator_cache',
     );
 
     // Ok to proceed and delete plugin
