@@ -127,7 +127,7 @@ function plugin_load_configuration_locator()
 {
     global $_CONF, $_CONF_GEO, $_TABLES;
 
-    require_once $_CONF['path'].'plugins/'.$_CONF_GEO['pi_name'].'/install_defaults.php';
+    require_once __DIR__ . '/install_defaults.php';
 
     // Get the group ID that was saved previously.
     $group_id = (int)DB_getItem($_TABLES['groups'], 'grp_id', 

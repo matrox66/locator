@@ -15,6 +15,7 @@ if (!defined('GVERSION')) {
     die('This file can not be used on its own!');
 }
 
+global $locatorConfigData;
 $locatorConfigData = array(
     array(
         'name' => 'sg_main',

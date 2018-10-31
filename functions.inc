@@ -246,6 +246,9 @@ function plugin_uninstall_locator($installCheck='')
             DB_delete($_TABLES['features'], 'ft_id', $feat_id);
         }
     }
+    if (function_exists('CACHE_clear')) {
+        CACHE_clear('locator');
+    }
     COM_errorLog('...success',1);
     return true;
 }
