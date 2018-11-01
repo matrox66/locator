@@ -285,7 +285,7 @@ function plugin_autouninstall_locator()
             $_CONF_GEO['pi_name'] . '_gid',
         ),
     );
-    if (function_exists('CACHE_clear'))
+    if (function_exists('CACHE_clear')) {
         CACHE_clear('locator');
     }
     \Locator\Cache::clear();
