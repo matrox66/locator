@@ -1,15 +1,36 @@
 # locator
 Geo Locator plugin for glFusion
 
-Creates a "store locator"-type function where visitors can find locations
+## Features
+* Creates a "store locator"-type function where visitors can find locations
 within a distance range from an origin location.
-
-Also provides an autotag to allow inclusion of Google maps in stories and staticpages,
+* Provides an autotag to allow inclusion of maps in stories and staticpages,
 and an API for other plugins such as Evlist.
 
-Requires the "lglib" plugin for some internal functions such as message handling.
+## Requirements
+* glFusion 1.7.0+
+* PHP 7.0+
+* LGLib plugin
 
-## API Key
-You will need to create an API key for the map provider of your choice and enter it in the plugin configuration.
-  * https://developers.google.com/maps/documentation/javascript/get-api-key#get-an-api-key
-  * https://developer.mapquest.com/documentation/
+## Provider Configuration
+Several Geocoding and Mapping providers are included with the plugin. You can mix and match
+them to meet your needs as some have different requirements or capabilities than others.
+
+* Google (https://developers.google.com/maps/documentation/javascript/get-api-key#get-an-api-key)
+  * Requires API keys and Billing enabled on your account.
+  * You should use different API keys for Geocoding and Mapping and restrict them appropriately to your server's address and HTTP Referer, respectively, to prevent &quot;quota theft&quot;.
+  * Geocoding: Yes
+  * Mapping: Yes
+* MapQuest (https://developer.mapquest.com/documentation/)
+  * Requires an API key.
+  * Terms of service do not allow for caching or using coordinates for any purpose other than mapping. Unless you have an Enhanced plan you should not use MapQuest for geocoding.
+  * Geocoding: Yes
+  * Mapping: Yes
+* U.S. Census (https://geocoding.geo.census.gov/)
+  * Only supports locations in the United States
+  * Geocoding: Yes
+  * Mapping: No
+* Geocodio (https://www.geocod.io)
+  * API key required, free 2500 lookups per day
+  * Geocoding: Yes
+  * Mapping: No
