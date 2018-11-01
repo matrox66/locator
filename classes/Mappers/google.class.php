@@ -22,10 +22,7 @@ class google extends \Locator\Mapper
     private $_lang;
     private $js_key = NULL;
     private $geocode_key = NULL;
-    protected $display_name = 'Google';
-    protected $name = 'google';
-    protected $is_geocoder = true;
-    protected $is_mapper = true;
+
     // URL to maps javascript
     const GEO_MAP_URL = 'https://maps.google.com/maps/api/js?key=%s';
     // Geocoding url, address will be appended to this
@@ -38,6 +35,8 @@ class google extends \Locator\Mapper
     */
     public function __construct($id = '')
     {
+        global $_CONF_GEO;
+
         // Load supported languages
         $this->_lang = array(
             'ar',
@@ -61,6 +60,13 @@ class google extends \Locator\Mapper
             'vi',
             'zh-CN', 'zh-TW',
         );
+
+        $this->geocode_key = $_CONF_GEO['google_api_key'];
+        if (!empty($_CONF_GEO['google_js_key'])) {
+            $this->js_key = $_CONF_GEO['google_js_key'];
+        } else {
+            $this->js_key = $this->geocode_key;
+        }
     }
 
 
@@ -102,20 +108,13 @@ class google extends \Locator\Mapper
             'iso_lang'      => $iso_lang,
             'geo_map_js_url' => $js_url,
             'canvas_id'     => $canvas_id,
+            'is_uikit'      => $_CONF_GEO['_is_uikit'],
         ) );
         $T->parse('output','page');
         return $T->finish($T->get_var('output'));
     }
 
-
-    /**
-     * Get the coordinates from an address string.
-     *
-     * @param   string  $address    Address String
-     * @param   float   &$lat       Latitude return var
-     * @param   float   &$lng       Longitude return var
-     * @return  integer     0 for success, nonzero for failure.
-     */
+    
     public function geoCode($address, &$lat, &$lng)
     {
         global $_CONF_GEO;
@@ -123,31 +122,29 @@ class google extends \Locator\Mapper
         if ($_CONF_GEO['autofill_coord'] != 1 || empty($address))
             return 0;
 
-        $address = urlencode(GEO_AddressToString($address));
-        if (version_compare(GVERSION, '1.8.0', '>=')) {
-            $c = \glFusion\Cache::getInstance();
-            $key = md5($address);
-            if ($c->has($key)) {
-                $coords = $c->get($key);
-                $lat = $coords['lat'];
-                $lng = $coords['lng'];
+        $lat = 0;
+        $lng = 0;
+        $cache_key = $this->getName() . '_geocode_' . md5($address);
+        $data = \Locator\Cache::get($cache_key);
+        if ($data === NULL) {
+            $address = urlencode(GEO_AddressToString($address));
+            $url = self::GEO_GOOG_URL . $address . '&key=' . $this->geocode_key;
+            $json = self::getUrl($url);
+            if ($json == '') {
                 return 0;
             }
+            $data = json_decode($json, true);
+            if (!is_array($data)) {
+                return -1;
+            } elseif ($data['status'] != 'OK') {
+                COM_errorLog(__CLASS__ . '::' . __FUNCTION__ . '(): ' . $data['status'] . ' - ' . $data['error_message']);
+                return -1;
+            }
+            \Locator\Cache::set($cache_key, $data);
         }
-        $url = self::GEO_GOOG_URL . $address . '&key=' . $_CONF_GEO['google_api_key'];
-        $json = GEO_file_get_contents($url);
-        if ($json == '') {
-            return 0;
-        }
-        $data = json_decode($json, true);
-        if (!is_array($data) || $data['status'] != 'OK') {
-            return -1;
-        }
-        $lat = $data['results'][0]['geometry']['location']['lat'];
-        $lng = $data['results'][0]['geometry']['location']['lng'];
-        if (version_compare(GVERSION, '1.8.0', '>=')) {
-            $c = \glFusion\Cache::getInstance();
-            $c->set($key, array('lat'=>$lat, 'lng'=>$lng), 'locator');
+        if (isset($data['results'][0]['geometry']['location']) && is_array($data['results'][0]['geometry']['location'])) {
+            $lat = $data['results'][0]['geometry']['location']['lat'];
+            $lng = $data['results'][0]['geometry']['location']['lng'];
         }
         return 0;
     }
@@ -170,7 +167,7 @@ class google extends \Locator\Mapper
         if (!$have_map_js) {
             $have_map_js = true;
             $url = '<script src="' .
-                sprintf(self::GEO_MAP_URL, $_CONF_GEO['google_api_key']) .
+                sprintf(self::GEO_MAP_URL, $this->js_key) .
                 '"></script>';
         } else {
             $url = '';

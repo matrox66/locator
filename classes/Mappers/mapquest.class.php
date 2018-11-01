@@ -94,7 +94,7 @@ class mapquest extends \Locator\Mapper
      */
     public function geoCode($address, &$lat, &$lng)
     {
-        $cache_key = 'mapquest_geocode_' . md5($address);
+        $cache_key = $this->getName() . '_geocode_' . md5($address);
         $loc = \Locator\Cache::get($cache_key);
         if ($loc === NULL) {
             $url = sprintf(self::GEOCODE_URL, $this->client_key, urlencode($address));
