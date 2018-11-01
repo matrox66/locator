@@ -20,7 +20,6 @@ namespace Locator\Mappers;
 */
 class uscensus extends \Locator\Mapper
 {
-    private $client_key = NULL;
     protected $is_geocoder = true;
     protected $display_name = 'US Census';
     protected $name = 'uscensus';

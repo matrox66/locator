@@ -1019,7 +1019,7 @@ function plugin_profilesave_locator($uid=0)
     // Sanitize data
     $location = isset($_POST['location']) ? DB_escapeString($_POST['location']) : '';
 
-    $U = new Locator\UserLoc($_POST['location'], $_USER['uid']);
+    $U = new \Locator\UserLoc($_POST['location'], $_USER['uid']);
     $U->saveToDB();
 }
 

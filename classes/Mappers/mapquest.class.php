@@ -5,8 +5,8 @@
  * @author      Lee Garner <lee@leegarner.com>
  * @copyright   Copyright (c) 2018 Lee Garner <lee@leegarner.com>
  * @package     locator
- * @version     1.1.4
- * @since       1.1.4
+ * @version     1.2.0
+ * @since       1.2.0
  * @license     http://opensource.org/licenses/gpl-2.0.php 
  *              GNU Public License v2 or later
  * @filesource
@@ -52,7 +52,7 @@ class mapquest extends \Locator\Mapper
     {
         global $_CONF_GEO, $_CONF;
 
-        // Insert a google map, if configured correctly
+        // Insert a map, if configured correctly
         if ($_CONF_GEO['show_map'] == 0) {
             return '';
         }
@@ -98,7 +98,7 @@ class mapquest extends \Locator\Mapper
         $loc = \Locator\Cache::get($cache_key);
         if ($loc === NULL) {
             $url = sprintf(self::GEOCODE_URL, $this->client_key, urlencode($address));
-            $json = GEO_file_get_contents($url);
+            $json = self::getUrl($url);
             $data = json_decode($json, true);
             if (!is_array($data) || !isset($data['info']['statuscode']) || $data['info']['statuscode'] != 0) {
                 COM_errorLog(__CLASS__ . '::' . __FUNCTION__ . '(): Decoding Error - ' . $json);
@@ -136,12 +136,12 @@ class mapquest extends \Locator\Mapper
 
 
     /**
-     * Get the URL to Google Maps for inclusion in a template.
+     * Get the URL to map JS and CSS for inclusion in a template.
      * This makes sure the javascript is included only once even if there
      * are multiple maps on the page.
      * Returns the URL, and a random number to be used for the canvas ID.
      *
-     * @return  array   $url=>URL to Google Maps javascript, $canvas_id=> random ID
+     * @return  array   $url=>URL to javascript, $canvas_id=> random ID
      */
     private function getMapJS()
     {
