@@ -93,6 +93,13 @@ $_SQL['locator_userloc'] =
   UNIQUE KEY `location` (`uid`,`location`)
 ) ENGINE=MyISAM";
 
+/** General cache table to hold geocoding lookups */
+$_SQL['locator_cache'] =
+"CREATE TABLE `{$_TABLES['locator_cache']}` (
+  `cache_id` varchar(80) NOT NULL,
+  `data` text,
+  PRIMARY KEY (`cache_id`)
+) Engine=MyISAM";
 
 $_SQL_UPGRADE = array(
     '0.1.4' => array(
@@ -115,6 +122,13 @@ $_SQL_UPGRADE = array(
         "ALTER TABLE {$_TABLES['locator_submission']} ADD city varchar(80) AFTER address",
         "ALTER TABLE {$_TABLES['locator_submission']} ADD state varchar(80) AFTER city",
         "ALTER TABLE {$_TABLES['locator_submission']} ADD postal varchar(80) AFTER state",
+    ),
+    '1.2.0' => array(
+        "CREATE TABLE {$_TABLES['locator_cache']} (
+            `cache_id` varchar(80) NOT NULL,
+            `data` text,
+            PRIMARY KEY (`cache_id`)
+          ) Engine=MyISAM",
     ),
 );
 

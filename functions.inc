@@ -213,6 +213,7 @@ function plugin_uninstall_locator($installCheck='')
         'locator_userXorigin',
         'locator_submission',
         'locator_userloc',
+        'locator_cache',
     );
 
     // Ok to proceed and delete plugin
@@ -246,6 +247,9 @@ function plugin_uninstall_locator($installCheck='')
             DB_delete($_TABLES['features'], 'ft_id', $feat_id);
         }
     }
+    if (function_exists('CACHE_clear'))
+        CACHE_clear('locator');
+    }
     COM_errorLog('...success',1);
     return true;
 }
@@ -261,22 +265,30 @@ function plugin_autouninstall_locator()
     global $_CONF_GEO;
 
     $out = array (
-        'tables'    => array($_CONF_GEO['pi_name']. '_markers',
-                            $_CONF_GEO['pi_name']. '_submission',
-                            $_CONF_GEO['pi_name']. '_userXorigin',
-                            $_CONF_GEO['pi_name']. '_userloc',
-                        ),
-        'groups'    => array($_CONF_GEO['pi_name'] . ' Admin'),
-        'features'  => array($_CONF_GEO['pi_name'] . '.admin',
-                            $_CONF_GEO['pi_name'] . '.submit',
-                            $_CONF_GEO['pi_name'] . '.view',
-                        ),
+        'tables'    => array(
+            $_CONF_GEO['pi_name']. '_markers',
+            $_CONF_GEO['pi_name']. '_submission',
+            $_CONF_GEO['pi_name']. '_userXorigin',
+            $_CONF_GEO['pi_name']. '_userloc',
+            $_CONF_GEO['pi_name']. '_cache',
+        ),
+        'groups'    => array(
+            $_CONF_GEO['pi_name'] . ' Admin',
+        ),
+        'features'  => array(
+            $_CONF_GEO['pi_name'] . '.admin',
+            $_CONF_GEO['pi_name'] . '.submit',
+            $_CONF_GEO['pi_name'] . '.view',
+        ),
         'php_blocks' => array(),
-        'vars'      => array($_CONF_GEO['pi_name'] . '_gid')
+        'vars'      => array(
+            $_CONF_GEO['pi_name'] . '_gid',
+        ),
     );
-    if (version_compare(GVERSION, '1.8.0', '>=')) {
-        \glFusion\Cache::getInstance()->deleteItemsByTag('locator');
+    if (function_exists('CACHE_clear'))
+        CACHE_clear('locator');
     }
+    \Locator\Cache::clear();
     return $out;
 }
 
@@ -861,7 +873,6 @@ function plugin_getconfigelementhelp_locator($option, $doclang='english')
 /**
 *   Looks up coordinates from Google for the given address.
 *
-*   @uses   GEO_file_get_contents()
 *   @param  string  $address    Address to look up
 *   @param  float   &$lat       Reference to latitude value
 *   @param  float   &$lng       Reference to longitude value
@@ -931,45 +942,6 @@ function XGEO_MapJS()
         $url = '';
     }
     return array($url, $canvas_id);
-}
-
-
-/**
-*   Retrieve the contents of a remote URL into a file.
-*   Emulates file_get_contents(), but falls back to curl if the
-*   former isn't allowed.
-*
-*   @param  string  $url    URL to retrieve
-*   @return string          Raw contents from URL
-*/
-function GEO_file_get_contents($url)
-{
-    if (ini_get('allow_url_fopen') == 1) {
-        $result = file_get_contents($url, 0);
-    } elseif (in_array('curl', get_loaded_extensions())) {
-        $agent = 'Mozilla/5.0 (Windows; U; Windows NT 6.1; en-GB; ' .
-                'rv:1.9.1) Gecko/20090624 Firefox/3.5 (.NET CLR ' .
-                '3.5.30729)';
-
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL,            $url);
-        curl_setopt($ch, CURLOPT_USERAGENT,      $agent);
-        curl_setopt($ch, CURLOPT_HEADER,         0);
-        curl_setopt($ch, CURLOPT_ENCODING,       "gzip");
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
-        curl_setopt($ch, CURLOPT_FAILONERROR,    1);
-        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 8);
-        curl_setopt($ch, CURLOPT_TIMEOUT,        8);
-
-        $result = curl_exec($ch);
-        curl_close($ch);
-
-    } else {
-        $result = '';
-        COM_errorLog('LOCATOR: Missing url_fopen and curl support');
-    }
-    return $result;
 }
 
 

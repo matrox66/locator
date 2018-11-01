@@ -25,10 +25,11 @@ global $_TABLES;
 
 $_GEO_table_prefix = $_DB_table_prefix;
 
-$_TABLES['locator_markers']      = $_GEO_table_prefix . 'locator_markers';
-$_TABLES['locator_userXorigin']  = $_GEO_table_prefix . 'locator_userXorigin';
-$_TABLES['locator_submission']   = $_GEO_table_prefix . 'locator_submission';
-$_TABLES['locator_userloc']      = $_GEO_table_prefix . 'locator_userloc';
+$_TABLES['locator_markers']     = $_GEO_table_prefix . 'locator_markers';
+$_TABLES['locator_userXorigin'] = $_GEO_table_prefix . 'locator_userXorigin';
+$_TABLES['locator_submission']  = $_GEO_table_prefix . 'locator_submission';
+$_TABLES['locator_userloc']     = $_GEO_table_prefix . 'locator_userloc';
+$_TABLES['locator_cache']       = $_GEO_table_prefix . 'locator_cache';
 
 $_CONF_GEO['pi_version']        = '1.2.0';
 $_CONF_GEO['pi_name']           = 'locator';

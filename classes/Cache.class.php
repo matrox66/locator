@@ -33,20 +33,24 @@ class Cache
     */
     public static function set($key, $data, $tag='', $cache_mins=1440)
     {
-        if (version_compare(GVERSION, self::MIN_GVERSION, '<')) {
-            return;     // glFusion version doesn't support caching
-        }
+        global $_TABLES;
 
-        $ttl = (int)$cache_mins * 60;   // convert to seconds
-        // Always make sure the base tag is included
-        $tags = array(self::TAG);
-        if (!empty($tag)) {
-            if (!is_array($tag)) $tag = array($tag);
-            $tags = array_merge($tags, $tag);
-        }
         $key = self::makeKey($key);
-        \glFusion\Cache::getInstance()
-            ->set($key, $data, $tags, $ttl);
+        if (version_compare(GVERSION, self::MIN_GVERSION, '<')) {
+            $data = DB_escapeString(serialize($data));
+            $sql = "INSERT INTO {$_TABLES['locator_cache']} VALUES ('$key', '$data')
+                ON DUPLICATE KEY UPDATE data = '$data'";
+            DB_query($sql, 1);
+        } else {
+            $ttl = (int)$cache_mins * 60;   // convert to seconds
+            // Always make sure the base tag is included
+            $tags = array(self::TAG);
+            if (!empty($tag)) {
+                if (!is_array($tag)) $tag = array($tag);
+                $tags = array_merge($tags, $tag);
+            }
+            \glFusion\Cache::getInstance()->set($key, $data, $tags, $ttl);
+        }
     }
 
 
@@ -57,11 +61,14 @@ class Cache
     */
     public static function delete($key)
     {
-        if (version_compare(GVERSION, self::MIN_GVERSION, '<')) {
-            return;     // glFusion version doesn't support caching
-        }
+        global $_TABLES;
+
         $key = self::makeKey($key);
-        \glFusion\Cache::getInstance()->delete($key);
+        if (version_compare(GVERSION, self::MIN_GVERSION, '<')) {
+            DB_delete($_TABLES['locator_cache'], 'cache_id', $key);
+        } else {
+            \glFusion\Cache::getInstance()->delete($key);
+        }
     }
 
 
@@ -73,15 +80,18 @@ class Cache
     */
     public static function clear($tag = array())
     {
+        global $_TABLES;
+
         if (version_compare(GVERSION, self::MIN_GVERSION, '<')) {
-            return;     // glFusion version doesn't support caching
+            DB_query("TRUNCATE {$_TABLES['locator_cache']}");
+        } else {
+            $tags = array(self::TAG);
+            if (!empty($tag)) {
+                if (!is_array($tag)) $tag = array($tag);
+                $tags = array_merge($tags, $tag);
+            }
+            \glFusion\Cache::getInstance()->deleteItemsByTagsAll($tags);
         }
-        $tags = array(self::TAG);
-        if (!empty($tag)) {
-            if (!is_array($tag)) $tag = array($tag);
-            $tags = array_merge($tags, $tag);
-        }
-        \glFusion\Cache::getInstance()->deleteItemsByTagsAll($tags);
     }
 
 
@@ -114,27 +124,20 @@ class Cache
     */
     public static function get($key)
     {
-        if (version_compare(GVERSION, self::MIN_GVERSION, '<')) {
-            return NULL;     // glFusion version doesn't support caching
-        }
+        global $_TABLES;
+
         $key = self::makeKey($key);
-        if (\glFusion\Cache::getInstance()->has($key)) {
-            return \glFusion\Cache::getInstance()->get($key);
+        if (version_compare(GVERSION, self::MIN_GVERSION, '<')) {
+            $data = DB_getItem($_TABLES['locator_cache'], 'data', "cache_id = '$key'");
+            $data = @unserialize($data);
+            return $data ? $data : NULL;
         } else {
-            return NULL;
+            if (\glFusion\Cache::getInstance()->has($key)) {
+                return \glFusion\Cache::getInstance()->get($key);
+            } else {
+                return NULL;
+            }
         }
-    }
-
-
-    /**
-     * Wrapper function to remove an order and its related items from cache.
-     *
-     * @param   string  $order_id   ID of order to remove
-     */
-    public static function deleteOrder($order_id)
-    {
-        self::delete('order_' . $order_id);
-        self::delete('items_order_' . $order_id);
     }
 
 }   // class Locator\Cache
