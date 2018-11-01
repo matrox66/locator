@@ -1,7 +1,7 @@
 # glLocator - Change Log
 
 ## 1.2.0 (Unreleased)
-- Add Mapquest map provider
+- Add Mapquest, OpenStreetMap map providers
 - Add U.S. Census and Geocodio geocoding services
 - Fix output var in service_getCoords function, caused 500 errors
 - Add cache support for glFusion 1.8.0+
