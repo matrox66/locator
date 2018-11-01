@@ -69,11 +69,10 @@ class openstreetmap extends \Locator\Mapper
             'directions'    => $_CONF_GEO['use_directions'] ? true : false,
             'text'          => $text,
             'is_uikit'      => $_CONF_GEO['_is_uikit'],
-            'x'     => '{x}',
-            'y'     => '{y}',
-            'z'     => '{z}',
-            'id'    => '{id}',
         ) );
+        // OSM requires some URL params like {x} in the template.
+        // Make sure they're kept and not assumed to be template vars.
+        $T->set_unknowns('keep');
         $T->parse('output','page');
         return $T->finish($T->get_var('output'));
     }
