@@ -132,6 +132,7 @@ $LANG_confignames['locator'] = array(
     'mapper'            => 'Map Provider',
     'geocoder'          => 'Geocoding Provider',
     'mapquest_key'      => 'Mapquest Client Key',
+    'geocodio_api_key'  => 'Geocodio API Key',
 );
 
 /**

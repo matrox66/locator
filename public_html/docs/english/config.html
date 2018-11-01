@@ -102,18 +102,32 @@ Note that the database entries associated with the &quot;Location&quot; field in
 
       <dl id="desc_mapper">
         <dt>Select Map Provider</dt>
-        <dd>Select the map provider that you wish to use. Generally you need to set up a developer account and get API credentials, and there may be a fee charged for use.</dd>
+        <dd>Select the map provider that you wish to use. Generally you need to set up a developer account and get API credentials, and there may be a fee charged for use. Some providers to not support map creation.</dd>
+      </dl>
+
+      <dl id="desc_geocoder">
+        <dt>Select Geocoding Provider</dt>
+        <dd>Select the geocoding service that you wish to use. Generally you need to set up a developer account and get API credentials, and there may be a fee charged for use. Some providers to not support map creation. Some geocoders do not allow their data to be cached or used outside of their maps.</dd>
       </dl>
 
       <dl id="desc_google_api_key">
         <dt>Google API Key</dt>
-        <dd>Enter your own Google Map API key here. This is required in order to use Google to automatically determine the geographic coordinates for locations.<p />
-visit <a href="http://code.google.com/apis/maps/">http://code.google.com/apis/maps/</a> to get started.</dd>
+        <dd>Enter your own Google Map API key here. This is required in order to use Google to automatically determine the geographic coordinates for locations. This can be restricted to the public address of your server.</dd>
+      </dl>
+
+      <dl id="desc_google_js_key">
+        <dt>Google JS Key</dt>
+        <dd>Enter your own Google Map API key here for Maps Javascript. If this is empty then the Google API Key will be used. This should be a different key, restricted by HTTP Referer to protect against quota theft.</dd>
       </dl>
 
       <dl id="desc_mapquest_key">
         <dt>Mapquest Client Key</dt>
         <dd>Enter your Mapquest Consumer Key here if Mapquest will be used. The Consumer Secret is not used.</dd>
+      </dl>
+
+      <dl id="desc_geocodio_api_key">
+        <dt>Geocodio API Key</dt>
+        <dd>Enter your Geocodio API Key here if Geocodio will be used.</dd>
       </dl>
 
       <h2>Permissions</h2>

@@ -238,6 +238,17 @@ $locatorConfigData = array(
         'set' => true,
         'group' => 'locator',
     ),
+    array(
+        'name' => 'geocodio_api_key',
+        'default_value' => '',
+        'type' => 'text',
+        'subgroup' => 0,
+        'fieldset' => 10,
+        'selection_array' => 0,
+        'sort' => 70,
+        'set' => true,
+        'group' => 'locator',
+    ),
 
     // Permissions fieldset
     array(
