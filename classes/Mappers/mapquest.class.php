@@ -20,6 +20,10 @@ namespace Locator\Mappers;
 class mapquest extends \Locator\Mapper
 {
     private $client_key = NULL;
+    protected $is_mapper = true;
+    protected $is_geocoder = true;  // Can be used with an extended license
+    protected $display_name = 'MapQuest';
+    protected $name = 'mapquest';
     const GEOCODE_URL = 'http://www.mapquestapi.com/geocoding/v1/address?inFormat=kvp&outFormat=json&key=%s&location=%s';
 
     /**
