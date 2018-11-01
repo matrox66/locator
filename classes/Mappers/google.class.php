@@ -20,6 +20,12 @@ namespace Locator\Mappers;
 class google extends \Locator\Mapper
 {
     private $_lang;
+    private $js_key = NULL;
+    private $geocode_key = NULL;
+    protected $display_name = 'Google';
+    protected $name = 'google';
+    protected $is_geocoder = true;
+    protected $is_mapper = true;
     // URL to maps javascript
     const GEO_MAP_URL = 'https://maps.google.com/maps/api/js?key=%s';
     // Geocoding url, address will be appended to this
@@ -101,7 +107,15 @@ class google extends \Locator\Mapper
         return $T->finish($T->get_var('output'));
     }
 
-    
+
+    /**
+     * Get the coordinates from an address string.
+     *
+     * @param   string  $address    Address String
+     * @param   float   &$lat       Latitude return var
+     * @param   float   &$lng       Longitude return var
+     * @return  integer     0 for success, nonzero for failure.
+     */
     public function geoCode($address, &$lat, &$lng)
     {
         global $_CONF_GEO;

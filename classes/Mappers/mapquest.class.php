@@ -20,6 +20,9 @@ namespace Locator\Mappers;
 class mapquest extends \Locator\Mapper
 {
     private $client_key = NULL;
+    protected $is_mapper = true;
+    protected $display_name = 'MapQuest';
+    protected $name = 'mapquest';
     const GEOCODE_URL = 'http://www.mapquestapi.com/geocoding/v1/address?inFormat=kvp&outFormat=json&key=%s&location=%s';
 
     /**
@@ -116,7 +119,7 @@ class mapquest extends \Locator\Mapper
 
 
     /**
-     * Get the URL to Google Maps for inclusion in a template.
+     * Get the URL to MapQuest javascript and CSS files.
      * This makes sure the javascript is included only once even if there
      * are multiple maps on the page.
      * Returns the URL, and a random number to be used for the canvas ID.

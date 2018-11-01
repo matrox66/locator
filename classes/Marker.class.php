@@ -543,7 +543,7 @@ class Marker
             'lat'               => GEO_coord2str($this->lat),
             'lng'               => GEO_coord2str($this->lng),
             //'back_url'          => $back_url,
-            'map'               => \Locator\Mapper::getInstance()->showMap($this->lat, $this->lng, $info_window, 'large'),
+            'map'               => \Locator\Mapper::getMapper()->showMap($this->lat, $this->lng, $info_window, 'large'),
             'adblock'           => PLG_displayAdBlock('locator_marker', 0),
             'show_map'          => true,
         ) );
