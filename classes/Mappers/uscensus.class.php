@@ -33,10 +33,6 @@ class uscensus extends \Locator\Mapper
     */
     public function __construct($id = '')
     {
-        global $_CONF_GEO;
-        if (isset($_CONF_GEO['mapquest_key'])) {
-            $this->client_key = $_CONF_GEO['mapquest_key'];
-        }
     }
 
 
