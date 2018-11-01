@@ -3,9 +3,9 @@
 *   Automatic installation routine for the Locator plugin
 *
 *   @author     Lee Garner <lee@leegarner.com>
-*   @copyright  Copyright (c) 2009-2017 Lee Garner <lee@leegarner.com>
+*   @copyright  Copyright (c) 2009-2018 Lee Garner <lee@leegarner.com>
 *   @package    locator
-*   @version    1.1.1
+*   @version    1.2.0
 *   @license    http://opensource.org/licenses/gpl-2.0.php
 *               GNU Public License v2 or later
 *   @filesource
@@ -15,17 +15,11 @@ if (!defined ('GVERSION')) {
     die ('This file can not be used on its own.');
 }
 
-/**
-*   Name of database system ('mysql', 'mssql', etc.)
-*   @global string $_DB_dbms
-*/
-global $_DB_dbms;
-
 /** Include the plugin's system functions */
-require_once $_CONF['path'].'plugins/locator/functions.inc';
+require_once __DIR__ . '/functions.inc';
 
 /** Include the database statements */
-require_once $_CONF['path'].'plugins/locator/sql/'.$_DB_dbms.'_install.php';
+require_once __DIR__ . '/sql/mysql_install.php';
 
 // +--------------------------------------------------------------------------+
 // | Plugin installation options                                              |

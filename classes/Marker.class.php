@@ -6,7 +6,7 @@
 *   @copyright  Copyright (c) 2009-2018 Lee Garner <lee@leegarner.com>
 *   @package    locator
 *   @version    1.2.0
-*   @license    http://opensource.org/licenses/gpl-2.0.php 
+*   @license    http://opensource.org/licenses/gpl-2.0.php
 *               GNU Public License v2 or later
 *   @filesource
 */
@@ -118,7 +118,7 @@ class Marker
             break;
 
         case 'radius':
-            $this->properties[$key] = 
+            $this->properties[$key] =
                 $value == 0 ? $_CONF_GEO['default_radius'] : (int)$value;
             break;
         }
@@ -152,7 +152,7 @@ class Marker
         global $_TABLES;
 
         if ($id != '') $this->id = $id;
-        $sql = "SELECT * FROM {$_TABLES['locator_markers']} 
+        $sql = "SELECT * FROM {$_TABLES['locator_markers']}
                 WHERE id='{$this->id}'";
         $res = DB_query($sql, 1);
         if (!$res || DB_error()) return false;
@@ -256,14 +256,14 @@ class Marker
         }
 
         // If either coordinate is missing, AND there is an address, AND
-        // autofill_coord is configured as 'true', then get the coordinates 
-        // from Google
+        // autofill_coord is configured as 'true', then get the coordinates
+        // from the geocoder.
         $lat = $this->lat;      // convert to "real" variables
         $lng = $this->lng;      // so the pointer can be passed
         if ( (empty($lat) || empty($lng))
-                && $this->address != '' 
-                && $_CONF_GEO['autofill_coord'] == true ) {
-            if (GEO_getCoords($this->AddressToString(), $lat, $lng) == 0) {
+            && $_CONF_GEO['autofill_coord'] == true ) {
+            $address = $this->AddressToString();
+            if ($address != '' && GEO_getCoords($address, $lat, $lng) == 0) {
                 $this->lat = $lat;
                 $this->lng = $lng;
             }
@@ -307,13 +307,13 @@ class Marker
                     return 8;
                 }
             }
-            $sql = "UPDATE $table SET 
+            $sql = "UPDATE $table SET
                     id = '{$this->id}',
                     $sql1
                     WHERE id = '{$this->oldid}'";
         } else {
             // Check for duplicate IDs since it's a common error that we'd
-            // like to report accurately to the user.  Check both the 
+            // like to report accurately to the user. Check both the
             // production and submission tables, if needed.
             if ($table == $_TABLES['locator_submission'] &&
                 DB_count($table, 'id', $this->id)) {
@@ -323,7 +323,7 @@ class Marker
                 return 8;
             }
             $sql = "INSERT INTO $table SET
-                id = '{$this->id}', 
+                id = '{$this->id}',
                 $sql1";
         }
         //echo $sql;die;
@@ -440,10 +440,10 @@ class Marker
             $T->set_var(array(
                 'action_url'    => LOCATOR_ADMIN_URL . '/index.php',
                 'cancel_url'    => LOCATOR_ADMIN_URL . '/index.php',
-                'ownerselect'   => COM_optionList($_TABLES['users'], 
+                'ownerselect'   => COM_optionList($_TABLES['users'],
                             'uid,username', $this->owner_id, 1),
                 'group_dropdown' => SEC_getGroupDropdown($this->group_id, 3),
-                'show_del_btn' => $this->oldid != '' && $mode != 'submit' ? 
+                'show_del_btn' => $this->oldid != '' && $mode != 'submit' ?
                             'true' : '',
             ) );
         } else {
@@ -473,7 +473,7 @@ class Marker
     {
         global $_TABLES;
 
-        DB_Query("UPDATE {$_TABLES['locator_markers']} 
+        DB_Query("UPDATE {$_TABLES['locator_markers']}
             SET views = views + 1
             WHERE id = '" . COM_sanitizeId($id) . "'");
     }
@@ -481,7 +481,7 @@ class Marker
 
     /**
     *   Displays the location's information, along with a map.
-    *   May be expanded in the future to use $origin to create driving 
+    *   May be expanded in the future to use $origin to create driving
     *   directions.
     *
     *   @param  string  $origin Optional origin ID, used to create directions
@@ -516,7 +516,7 @@ class Marker
         $T->set_file('page', 'locinfo.thtml');
 
         if ($this->isAdmin) {
-            $admin_options = COM_createLink( 
+            $admin_options = COM_createLink(
                 COM_createImage($_CONF['layout_url'] . '/images/edit.png'),
                 LOCATOR_ADMIN_URL . '/index.php?edit=x&id=' . $this->id);
         } else {
@@ -538,12 +538,12 @@ class Marker
             'state'             => $this->state,
             'postal'            => $this->postal,
             'description'       => $this->description,
-            'url'               => COM_createLink($this->url, $this->url, 
+            'url'               => COM_createLink($this->url, $this->url,
                                     array('target' => '_new')),
             'lat'               => GEO_coord2str($this->lat),
             'lng'               => GEO_coord2str($this->lng),
             //'back_url'          => $back_url,
-            'map'               => \Locator\Mapper::getInstance()->showMap($this->lat, $this->lng, $info_window, 'large'),
+            'map'               => \Locator\Mapper::getMapper()->showMap($this->lat, $this->lng, $info_window, 'large'),
             'adblock'           => PLG_displayAdBlock('locator_marker', 0),
             'show_map'          => true,
         ) );
@@ -560,14 +560,13 @@ class Marker
                 $T->set_var('weather', $weather);
             }
         }
- 
+
         /*if ($_CONF_GEO['use_directions']) {
             $T->set_var('directions', 'true');
         }*/
- 
-        $T->parse('output', 'page');
-        $retval .= $T->finish($T->get_var('output')); 
 
+        $T->parse('output', 'page');
+        $retval .= $T->finish($T->get_var('output'));
         return $retval;
     }
 

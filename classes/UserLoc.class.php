@@ -57,6 +57,10 @@ class UserLoc
             if ($location != $this->location) {
                 $this->location = $location;
                 $this->getCoords();
+            } elseif ($this->lat == 0 || $this->lng == 0) {
+                // Record had zero coordinates, possibly due to an error.
+                // Re-geocode the address.
+                $this->getCoords();
             }
         }
     }
@@ -179,7 +183,7 @@ class UserLoc
     *   Retrieve the coordinates for the current location.
     *   Sets the local $lat and $lng variables
     *
-    *   @uses   GEO_getCoords()
+    *   @uses   Marker::geoCode()
     *   @return integer Google return code, or false for failure.
     */
     public function getCoords()
@@ -192,11 +196,10 @@ class UserLoc
             return 0;
         }
 
-        // Insert the location and Google API key into the url.
-        $address = urlencode($this->location);
+        // Use local variables to allow pass-by-reference
         $lat = 0;
         $lng = 0;
-        GEO_getCoords($address, $lat, $lng);
+        Marker::geoCode($this->location, $lat, $lng);
         $this->lat = $lat;
         $this->lng = $lng;
     }

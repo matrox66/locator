@@ -109,6 +109,7 @@ function locator_do_upgrade($dvlp=false)
     if ($map_provider !== NULL) {
         $c = config::get_instance();
         $c->set('mapper', $map_provider, $_CONF_GEO['pi_name']);
+        $c->set('geocoder', $map_provider, $_CONF_GEO['pi_name']);
     }
 
     COM_errorLog("Successfully updated the {$_CONF_GEO['pi_display_name']} Plugin", 1);

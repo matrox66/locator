@@ -283,8 +283,11 @@ function plugin_autouninstall_locator()
         'php_blocks' => array(),
         'vars'      => array(
             $_CONF_GEO['pi_name'] . '_gid',
-        )
+        ),
     );
+    if (function_exists('CACHE_clear'))
+        CACHE_clear('locator');
+    }
     \Locator\Cache::clear();
     return $out;
 }
@@ -761,7 +764,7 @@ function GEO_showMap($lat, $lng, $text='')
         return '';
     }
 
-    return \Locator\Mapper::getInstance()->showMap($lat, $lng, $text);
+    return \Locator\Mapper::getMapper()->showMap($lat, $lng, $text);
 }
 
 
@@ -798,7 +801,7 @@ function plugin_profilevariablesdisplay_locator($uid, &$T)
     $LT->set_file('page', 'profile_map.thtml');
     $LT->set_var(array(
         'is_uikit'      => $_CONF_GEO['_is_uikit'] ? 'true' : '',
-        'profile_map'   => \Locator\Mapper::getInstance()->showMap($U->lat, $U->lng, $userloc, 'small'),
+        'profile_map'   => \Locator\Mapper::getMapper()->showMap($U->lat, $U->lng, $userloc, 'small'),
     ) );
     $LT->parse('output','page');
     $existingFields = $T->get_var('plugin_fields');
@@ -877,7 +880,7 @@ function plugin_getconfigelementhelp_locator($option, $doclang='english')
 */
 function GEO_getCoords($address, &$lat, &$lng)
 {
-    return \Locator\Mapper::getInstance()->geoCode($address, $lat, $lng);
+    return \Locator\Mapper::getGeocoder()->geoCode($address, $lat, $lng);
 }
 
 
@@ -988,7 +991,7 @@ function plugin_profilesave_locator($uid=0)
     // Sanitize data
     $location = isset($_POST['location']) ? DB_escapeString($_POST['location']) : '';
 
-    $U = new Locator\UserLoc($_POST['location'], $_USER['uid']);
+    $U = new \Locator\UserLoc($_POST['location'], $_USER['uid']);
     $U->saveToDB();
 }
 
@@ -1135,7 +1138,7 @@ function service_getMap_locator($args, &$output, &$svc_msg)
     $lat = isset($args['lat']) ? (float)$args['lat'] : 0;
     $lng = isset($args['lng']) ? (float)$args['lng'] : 0;
     $text = isset($args['text']) ? $args['text'] : '';
-    $output = \Locator\Mapper::getInstance()->showMap($lat, $lng, $text);
+    $output = \Locator\Mapper::getMapper()->showMap($lat, $lng, $text);
     return PLG_RET_OK;
 }
 
@@ -1265,18 +1268,29 @@ function GEO_coord2str($val, $us = false)
 
 /**
  * Select the mapper to use for rendering maps.
- * Get the class files under "Mappers" and select from the names.
  *
  * @return  array   option => name
  */
 function plugin_configmanager_select_mapper_locator()
 {
-    $A = array();
-    $files = glob(__DIR__ . '/classes/Mappers/*.class.php');
-    foreach ($files as $file) {
-        $tmp = pathinfo($file, PATHINFO_FILENAME);
-        $tmp = explode('.', $tmp);
-        $A[ucfirst($tmp[0])] = $tmp[0];
+    $mappers = \Locator\Mapper::getMappers();
+    foreach ($mappers as $mapper) {
+        $A[$mapper->getDisplayName()] = $mapper->getName();
+    }
+    return $A;
+}
+
+
+/**
+ * Select the geocoder to use.
+ *
+ * @return  array   option => name
+ */
+function plugin_configmanager_select_geocoder_locator()
+{
+    $mappers = \Locator\Mapper::getGeocoders();
+    foreach ($mappers as $mapper) {
+        $A[$mapper->getDisplayName()] = $mapper->getName();
     }
     return $A;
 }

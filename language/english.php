@@ -131,6 +131,7 @@ $LANG_confignames['locator'] = array(
     'default_permissions' => 'Default Permissions:',
     'mapper'            => 'Map Provider',
     'mapquest_key'      => 'Mapquest Client Key',
+    'geocodio_api_key'  => 'Geocodio API Key',
 );
 
 /**

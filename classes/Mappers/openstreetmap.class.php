@@ -1,6 +1,6 @@
 <?php
 /**
- * Class for Mapquest Map provider
+ * Class for OpenStreetMap.org provider
  *
  * @author      Lee Garner <lee@leegarner.com>
  * @copyright   Copyright (c) 2018 Lee Garner <lee@leegarner.com>
@@ -17,14 +17,13 @@ namespace Locator\Mappers;
 *   Class to handle the general location markers
 *   @package    locator
 */
-class mapquest extends \Locator\Mapper
+class openstreetmap extends \Locator\Mapper
 {
-    private $client_key = NULL;
     protected $is_mapper = true;
-    protected $is_geocoder = true;  // Can be used with an extended license
-    protected $display_name = 'MapQuest';
-    protected $name = 'mapquest';
-    const GEOCODE_URL = 'http://www.mapquestapi.com/geocoding/v1/address?inFormat=kvp&outFormat=json&key=%s&location=%s';
+    protected $is_geocoder = true;
+    protected $display_name = 'OpenStreetMap';
+    protected $name = 'openstreetmap';
+    const GEOCODE_URL = 'https://nominatim.openstreetmap.org/search?format=json&q=%s';
 
     /**
     *   Constructor
@@ -33,10 +32,6 @@ class mapquest extends \Locator\Mapper
     */
     public function __construct($id = '')
     {
-        global $_CONF_GEO;
-        if (isset($_CONF_GEO['mapquest_key'])) {
-            $this->client_key = $_CONF_GEO['mapquest_key'];
-        }
     }
 
 
@@ -56,9 +51,6 @@ class mapquest extends \Locator\Mapper
         if ($_CONF_GEO['show_map'] == 0) {
             return '';
         }
-        if ($this->client_key === NULL) {
-            return '';
-        }
 
         $lat = (float)$lat;
         $lng = (float)$lng;
@@ -67,17 +59,20 @@ class mapquest extends \Locator\Mapper
         }
 
         list($js_url, $canvas_id) = $this->getMapJS();
-        $T = new \Template(LOCATOR_PI_PATH . '/templates/mapquest');
+        $T = new \Template(LOCATOR_PI_PATH . '/templates/' . $this->getName());
         $T->set_file('page', $tpl . '_map.thtml');
         $T->set_var(array(
             'lat'           => GEO_coord2str($lat, true),
             'lng'           => GEO_coord2str($lng, true),
             'geo_map_js_url' => $js_url,
             'canvas_id'     => $canvas_id,
-            'client_key'    => $this->client_key,
             'directions'    => $_CONF_GEO['use_directions'] ? true : false,
             'text'          => $text,
             'is_uikit'      => $_CONF_GEO['_is_uikit'],
+            'x'     => '{x}',
+            'y'     => '{y}',
+            'z'     => '{z}',
+            'id'    => '{id}',
         ) );
         $T->parse('output','page');
         return $T->finish($T->get_var('output'));
@@ -95,48 +90,42 @@ class mapquest extends \Locator\Mapper
     public function geoCode($address, &$lat, &$lng)
     {
         $cache_key = $this->getName() . '_geocode_' . md5($address);
-        $loc = \Locator\Cache::get($cache_key);
-        if ($loc === NULL) {
-            $url = sprintf(self::GEOCODE_URL, $this->client_key, urlencode($address));
+        $data = \Locator\Cache::get($cache_key);
+        if ($data === NULL) {
+            $url = sprintf(self::GEOCODE_URL, urlencode($address));
             $json = self::getUrl($url);
             $data = json_decode($json, true);
-            if (!is_array($data) || !isset($data['info']['statuscode']) || $data['info']['statuscode'] != 0) {
+            if (!is_array($data) || !isset($data[0]['place_id'])) {
                 COM_errorLog(__CLASS__ . '::' . __FUNCTION__ . '(): Decoding Error - ' . $json);
                 return -1;
             }
-            if (!isset($data['results'][0]['locations']) || !is_array($data['results'][0]['locations'])) {
-                return -1;
+            \Locator\Cache::set($cache_key, $data);
+        }
+        // Get the most accurate result
+        $acc_code = -1;     // Initialize accuracy code
+        $loc = array();
+        foreach ($data as $idx=>$loc_data) {
+            $loc_acc_code = (float)$loc_data['importance'];
+            if ($loc_acc_code > $acc_code) {
+                $acc_code = $loc_acc_code;
+                $loc = $loc_data;
             }
-
-            // Get the most accurate result based on the last 3 characters of the quality code
-            $conf_code = 'ZZZ';     // Initialize the quality code indicator
-            $loc = NULL;
-            foreach ($data['results'][0]['locations'] as $loc_data) {
-                // Rearrange the quality code to prioritize postal, admin area, then address
-                $qcode = $loc_data['geocodeQualityCode'];
-                $loc_conf_code = $qcode[4] . $qcode[3] . $qcode[2];
-                if ($loc_conf_code < $conf_code) {
-                    $conf_code = $loc_conf_code;
-                    $loc = $loc_data;
-                }
-            }
-            \Locator\Cache::set($cache_key, $loc);
         }
 
-        if (!isset($loc['latLng']) || !is_array($loc['latLng'])) {
+        if (!isset($loc['lat']) || !isset($loc['lon'])) {
             $lat = 0;
             $lng = 0;
             return -1;
         } else {
-            $lat = $loc['latLng']['lat'];
-            $lng = $loc['latLng']['lng'];
+            $lat = $loc['lat'];
+            $lng = $loc['lon'];
             return 0;
         }
     }
 
 
     /**
-     * Get the URL to map JS and CSS for inclusion in a template.
+     * Get the URL to JS and CSS for inclusion in a template.
      * This makes sure the javascript is included only once even if there
      * are multiple maps on the page.
      * Returns the URL, and a random number to be used for the canvas ID.
@@ -145,14 +134,18 @@ class mapquest extends \Locator\Mapper
      */
     private function getMapJS()
     {
-        global $_CONF_GEO;
         static $have_map_js = false;    // Flag to avoid duplicate loading
 
         $canvas_id = rand(1,999);   // Create a random id for the canvas
         if (!$have_map_js) {
             $have_map_js = true;
-            $url = '<script src="https://api.mqcdn.com/sdk/mapquest-js/v1.3.2/mapquest.js"></script>' . LB;
-            $url .= '<link type="text/css" rel="stylesheet" href="https://api.mqcdn.com/sdk/mapquest-js/v1.3.2/mapquest.css"/>' . LB;
+            $url = '<link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css"
+   integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
+   crossorigin=""/>' . LB;
+            // JS must be included after CSS
+            $url .= '<script src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js"
+   integrity="sha512-nMMmRyTVoLYqjP9hrbed9S+FzjZHW5gY1TWCHA5ckwXZBadntCNs8kEqAWdrb9O7rxbCaA4lKTIWjDXZxflOcA=="
+   crossorigin=""></script>' . LB;
         } else {
             $url = '';
         }

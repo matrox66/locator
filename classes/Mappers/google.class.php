@@ -65,7 +65,7 @@ class google extends \Locator\Mapper
         if (!empty($_CONF_GEO['google_js_key'])) {
             $this->js_key = $_CONF_GEO['google_js_key'];
         } else {
-            $this->geocode_key = $this->js_key;
+            $this->js_key = $this->geocode_key;
         }
     }
 
@@ -124,7 +124,7 @@ class google extends \Locator\Mapper
 
         $lat = 0;
         $lng = 0;
-        $cache_key = 'google_geocode_' . md5($address);
+        $cache_key = $this->getName() . '_geocode_' . md5($address);
         $data = \Locator\Cache::get($cache_key);
         if ($data === NULL) {
             $address = urlencode(GEO_AddressToString($address));
