@@ -20,9 +20,6 @@ namespace Locator\Mappers;
 class mapquest extends \Locator\Mapper
 {
     private $client_key = NULL;
-    protected $is_mapper = true;
-    protected $display_name = 'MapQuest';
-    protected $name = 'mapquest';
     const GEOCODE_URL = 'http://www.mapquestapi.com/geocoding/v1/address?inFormat=kvp&outFormat=json&key=%s&location=%s';
 
     /**
@@ -66,7 +63,6 @@ class mapquest extends \Locator\Mapper
         }
 
         list($js_url, $canvas_id) = $this->getMapJS();
-        COM_errorLog("$lat --- $lng");
         $T = new \Template(LOCATOR_PI_PATH . '/templates/mapquest');
         $T->set_file('page', $tpl . '_map.thtml');
         $T->set_var(array(
@@ -77,6 +73,7 @@ class mapquest extends \Locator\Mapper
             'client_key'    => $this->client_key,
             'directions'    => $_CONF_GEO['use_directions'] ? true : false,
             'text'          => $text,
+            'is_uikit'      => $_CONF_GEO['_is_uikit'],
         ) );
         $T->parse('output','page');
         return $T->finish($T->get_var('output'));
@@ -98,28 +95,44 @@ class mapquest extends \Locator\Mapper
         if ($loc === NULL) {
             $url = sprintf(self::GEOCODE_URL, $this->client_key, urlencode($address));
             $json = GEO_file_get_contents($url);
-            if ($json == false) {
-                return 0;
-            }
             $data = json_decode($json, true);
             if (!is_array($data) || !isset($data['info']['statuscode']) || $data['info']['statuscode'] != 0) {
+                COM_errorLog(__CLASS__ . '::' . __FUNCTION__ . '(): Decoding Error - ' . $json);
                 return -1;
             }
-            if (!isset($data['results'][0]['locations'][0]['latLng'])) {
+            if (!isset($data['results'][0]['locations']) || !is_array($data['results'][0]['locations'])) {
                 return -1;
             }
-            $loc = $data['results'][0]['locations'][0]['latLng'];
+
+            // Get the most accurate result based on the last 3 characters of the quality code
+            $conf_code = 'ZZZ';     // Initialize the quality code indicator
+            $loc = NULL;
+            foreach ($data['results'][0]['locations'] as $loc_data) {
+                // Rearrange the quality code to prioritize postal, admin area, then address
+                $qcode = $loc_data['geocodeQualityCode'];
+                $loc_conf_code = $qcode[4] . $qcode[3] . $qcode[2];
+                if ($loc_conf_code < $conf_code) {
+                    $conf_code = $loc_conf_code;
+                    $loc = $loc_data;
+                }
+            }
             \Locator\Cache::set($cache_key, $loc);
         }
 
-        $lat = $loc['lat'];
-        $lng = $loc['lng'];
-        return 0;
+        if (!isset($loc['latLng']) || !is_array($loc['latLng'])) {
+            $lat = 0;
+            $lng = 0;
+            return -1;
+        } else {
+            $lat = $loc['latLng']['lat'];
+            $lng = $loc['latLng']['lng'];
+            return 0;
+        }
     }
 
 
     /**
-     * Get the URL to MapQuest javascript and CSS files.
+     * Get the URL to Google Maps for inclusion in a template.
      * This makes sure the javascript is included only once even if there
      * are multiple maps on the page.
      * Returns the URL, and a random number to be used for the canvas ID.
