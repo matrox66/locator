@@ -515,14 +515,6 @@ class Marker
         $T = new \Template(LOCATOR_PI_PATH . '/templates');
         $T->set_file('page', 'locinfo.thtml');
 
-        if ($this->isAdmin) {
-            $admin_options = COM_createLink(
-                COM_createImage($_CONF['layout_url'] . '/images/edit.png'),
-                LOCATOR_ADMIN_URL . '/index.php?edit=x&id=' . $this->id);
-        } else {
-            $admin_options = '';
-        }
-
         $info_window = $this->title;
         foreach (array('address', 'city', 'state', 'postal') as $fld) {
             if ($this->$fld != '') {
@@ -530,7 +522,8 @@ class Marker
             }
         }
         $T->set_var(array(
-            'admin_options'     => $admin_options,
+            'is_admin'          => $this->isAdmin,
+            'loc_id'            => $this->id,
             'action_url'        => $_SERVER['PHP_SELF'],
             'name'              => $this->title,
             'address'           => $this->address,

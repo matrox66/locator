@@ -1,7 +1,13 @@
 {# begin {templatelocation} #}
-{!if admin_options}
+{!if is_admin}
 <div style="float:right;">
-{admin_options}
+  <a href="{site_url}/locator/index.php?edit=x&id={loc_id}">
+{!if is_uikit}
+    <i class="uk-icon uk-icon-pencil"></i>
+{!else}
+    <img src="{layout_url}/images/edit.png" width="16" height="16" />
+{!endif}
+  </a>
 </div>
 {!endif}
 {!if back_url}
