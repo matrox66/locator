@@ -1,7 +1,7 @@
 {# begin {templatelocation} #}
 {!if is_admin}
 <div style="float:right;">
-  <a href="{site_url}/locator/index.php?edit=x&id={loc_id}">
+  <a href="{site_admin_url}/plugins/locator/index.php?edit=x&id={loc_id}">
 {!if is_uikit}
     <i class="uk-icon uk-icon-pencil"></i>
 {!else}
