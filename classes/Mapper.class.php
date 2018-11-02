@@ -204,6 +204,35 @@ class Mapper
         return $this->is_geocoder;
     }
 
+
+    /**
+     * Get the form to show driving directions.
+     * Google is the only mapper currently supported but if other mappers
+     * can show directions then they can provide this function.
+     *
+     * @param   float   $lat    Destination Latitude
+     * @param   float   $lng    Destination Logitude
+     * @return  string          HTML for input form
+     */
+    public function showDirectionsForm($lat, $lng)
+    {
+        global $_CONF_GEO;
+
+        if ($_CONF_GEO['use_directions']) {
+            $T = new \Template(LOCATOR_PI_PATH . '/templates');
+            $T->set_file('form', 'def_direction_form.thtml');
+            $T->set_var(array(
+                'lat'   => $lat,
+                'lng'   => $lng,
+                'is_uikit' => $_CONF_GEO['_is_uikit'],
+            ) );
+            $T->parse('output', 'form');
+            return $T->finish($T->get_var('output'));
+        } else {
+            return '';
+        }
+    }
+
 }   // class Mapper
 
 ?>

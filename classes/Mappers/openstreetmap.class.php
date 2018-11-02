@@ -66,7 +66,6 @@ class openstreetmap extends \Locator\Mapper
             'lng'           => GEO_coord2str($lng, true),
             'geo_map_js_url' => $js_url,
             'canvas_id'     => $canvas_id,
-            'directions'    => $_CONF_GEO['use_directions'] ? true : false,
             'text'          => $text,
             'is_uikit'      => $_CONF_GEO['_is_uikit'],
         ) );

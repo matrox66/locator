@@ -546,6 +546,8 @@ class Marker
             'map'               => \Locator\Mapper::getMapper()->showMap($this->lat, $this->lng, $info_window, 'large'),
             'adblock'           => PLG_displayAdBlock('locator_marker', 0),
             'show_map'          => true,
+            'is_uikit'          => $_CONF_GEO['_is_uikit'],
+            'directions'        => \Locator\Mapper::getMapper()->showDirectionsForm($this->lat, $this->lng),
         ) );
 
         // Show the location's weather if that plugin integration is enabled
@@ -560,10 +562,6 @@ class Marker
                 $T->set_var('weather', $weather);
             }
         }
-
-        /*if ($_CONF_GEO['use_directions']) {
-            $T->set_var('directions', 'true');
-        }*/
 
         $T->parse('output', 'page');
         $retval .= $T->finish($T->get_var('output'));

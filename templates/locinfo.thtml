@@ -49,13 +49,12 @@
 </table>
 <p />
 
-{# Check for google api key #}
 {!if show_map}
 <center>
 {map}
+{directions}
 </center>
 {!endif}
-{# End check for google api key #}
 
 {!if adblock}
 <div style="clear:both;">{adblock}</div>

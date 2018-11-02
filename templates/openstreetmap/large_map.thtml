@@ -14,14 +14,4 @@
     L.marker([{lat}, {lng}]).addTo(mymap{canvas_id})
         .bindPopup("{text}");
 </script>
-{!if directions}
-<div id="directions">
-  <form action="https://maps.google.com/maps" method="get" target="_blank">
-    <input onfocus="this.value='';" type="text" size="40" maxlength="40"
-        name="saddr" id="saddr" value="{$LANG_GEO['start_addr']}" />
-    <input class="lgButton green" value="{$LANG_GEO['get_directions']}" type="submit"/>
-    <input type="hidden" name="daddr" value="{lat},{lng}" />
-  </form>
-</div>
-{!endif}
 {# end {templatelocation} #}
