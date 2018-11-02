@@ -50,10 +50,10 @@
 <p />
 
 {!if show_map}
-<center>
+<div class="large-map">
 {map}
 {directions}
-</center>
+</div>
 {!endif}
 
 {!if adblock}

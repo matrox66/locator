@@ -84,14 +84,29 @@ div.markerform submit input button {
 }
 
 .map_dimension {
+    /* Map container */
     position: relative;
-    padding-bottom: 75%; // This is the aspect ratio
     overflow: hidden;
     top: 0;
     left: 0;
     width: 100% !important;
     height: 100% !important;
+    /*padding-bottom:75%;*/
 }
+.profile-map {
+    /* Small map shown in user profile */
+    width: 400px;
+    height: 250px;
+    z-index:20;
+    float: right;
+    text-align: center;
+}
+.large-map {
+    /* Large map shown on location detail page */
+    height:500px;
+    text-align:center;
+}
+
 .loc-icon-danger {
     color: red;
 }

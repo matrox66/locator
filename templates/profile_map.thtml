@@ -10,10 +10,8 @@
   {$LANG_GEO['location']}
 </div>
 {!endif}
-<div style="float:right;">
-  <center>
+<div class="profile-map">
     {profile_map}
-  </center>
 </div>
 <div style="clear:both;"></div>
 {# end {templatelocation} #}

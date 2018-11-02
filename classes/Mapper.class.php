@@ -79,7 +79,7 @@ class Mapper
      * @param   string  $text   Optional text for marker
      * @return  string          Empty string
      */
-    public function showMap($lat, $lng, $text = '', $tpl = '')
+    public function showMap($lat, $lng, $text = '')
     {
         return '';
     }

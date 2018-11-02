@@ -48,7 +48,7 @@ class mapquest extends \Locator\Mapper
      * @param   string  $text   Optional text for marker
      * @return  string          HTML to generate the map
      */
-    public function showMap($lat, $lng, $text = '', $tpl = 'small')
+    public function showMap($lat, $lng, $text = '')
     {
         global $_CONF_GEO, $_CONF;
 
@@ -67,8 +67,8 @@ class mapquest extends \Locator\Mapper
         }
 
         list($js_url, $canvas_id) = $this->getMapJS();
-        $T = new \Template(LOCATOR_PI_PATH . '/templates/mapquest');
-        $T->set_file('page', $tpl . '_map.thtml');
+        $T = new \Template(LOCATOR_PI_PATH . '/templates/' . $this->getName());
+        $T->set_file('page', 'map.thtml');
         $T->set_var(array(
             'lat'           => GEO_coord2str($lat, true),
             'lng'           => GEO_coord2str($lng, true),

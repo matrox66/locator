@@ -801,7 +801,7 @@ function plugin_profilevariablesdisplay_locator($uid, &$T)
     $LT->set_file('page', 'profile_map.thtml');
     $LT->set_var(array(
         'is_uikit'      => $_CONF_GEO['_is_uikit'] ? 'true' : '',
-        'profile_map'   => \Locator\Mapper::getMapper()->showMap($U->lat, $U->lng, $userloc, 'small'),
+        'profile_map'   => \Locator\Mapper::getMapper()->showMap($U->lat, $U->lng, $userloc),
     ) );
     $LT->parse('output','page');
     $existingFields = $T->get_var('plugin_fields');
