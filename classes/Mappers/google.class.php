@@ -7,7 +7,7 @@
  * @package     locator
  * @version     1.1.4
  * @since       1.1.4
- * @license     http://opensource.org/licenses/gpl-2.0.php 
+ * @license     http://opensource.org/licenses/gpl-2.0.php
  *              GNU Public License v2 or later
  * @filesource
  */
@@ -22,7 +22,10 @@ class google extends \Locator\Mapper
     private $_lang;
     private $js_key = NULL;
     private $geocode_key = NULL;
-
+    protected $is_mapper = true;
+    protected $is_geocoder = true;
+    protected $display_name = 'Google';
+    protected $name = 'google';
     // URL to maps javascript
     const GEO_MAP_URL = 'https://maps.google.com/maps/api/js?key=%s';
     // Geocoding url, address will be appended to this
@@ -114,7 +117,15 @@ class google extends \Locator\Mapper
         return $T->finish($T->get_var('output'));
     }
 
-    
+
+    /**
+     * Get the coordinates from an address string.
+     *
+     * @param   string  $address    Address string
+     * @param   float   &$lat       Latitude return var
+     * @param   float   &$lng       Longitude return var
+     * @return  integer             0 for success, nonzero for failure
+     */
     public function geoCode($address, &$lat, &$lng)
     {
         global $_CONF_GEO;
@@ -128,6 +139,10 @@ class google extends \Locator\Mapper
         $data = \Locator\Cache::get($cache_key);
         if ($data === NULL) {
             $address = urlencode(GEO_AddressToString($address));
+            if (empty($this->geocode_key)) {
+                COM_errorLog(__CLASS__ . '::' . __FUNCTION__ . '():  API Key is required');
+                return -1;
+            }
             $url = self::GEO_GOOG_URL . $address . '&key=' . $this->geocode_key;
             $json = self::getUrl($url);
             if ($json == '') {
@@ -149,7 +164,7 @@ class google extends \Locator\Mapper
         return 0;
     }
 
-   
+
     /**
      * Get the URL to Google Maps for inclusion in a template.
      * This makes sure the javascript is included only once even if there
@@ -163,14 +178,17 @@ class google extends \Locator\Mapper
         global $_CONF_GEO;
         static $have_map_js = false;    // Flag to avoid duplicate loading
 
+        $url = '';
         $canvas_id = rand(1,999);   // Create a random id for the canvas
         if (!$have_map_js) {
-            $have_map_js = true;
-            $url = '<script src="' .
-                sprintf(self::GEO_MAP_URL, $this->js_key) .
-                '"></script>';
-        } else {
-            $url = '';
+            if (!empty($this->js_key)) {
+                $have_map_js = true;
+                $url = '<script src="' .
+                    sprintf(self::GEO_MAP_URL, $this->js_key) .
+                    '"></script>';
+            } else {
+                COM_errorLog(__CLASS__ . '::' . __FUNCTION__ . '():  API Key is required');
+            }
         }
         return array($url, $canvas_id);
     }

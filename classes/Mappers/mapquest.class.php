@@ -56,7 +56,8 @@ class mapquest extends \Locator\Mapper
         if ($_CONF_GEO['show_map'] == 0) {
             return '';
         }
-        if ($this->client_key === NULL) {
+        if (empty($this->client_key)) {
+            COM_errorLog(__CLASS__ . '::' . __FUNCTION__ . '():  API Key is required');
             return '';
         }
 
@@ -96,6 +97,10 @@ class mapquest extends \Locator\Mapper
         $cache_key = $this->getName() . '_geocode_' . md5($address);
         $loc = \Locator\Cache::get($cache_key);
         if ($loc === NULL) {
+            if (empty($this->client_key)) {
+                COM_errorLog(__CLASS__ . '::' . __FUNCTION__ . '():  API Key is required');
+                return -1;
+            }
             $url = sprintf(self::GEOCODE_URL, $this->client_key, urlencode($address));
             $json = self::getUrl($url);
             $data = json_decode($json, true);

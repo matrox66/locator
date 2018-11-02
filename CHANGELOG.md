@@ -5,7 +5,7 @@
 - Add Mapquest, OpenStreetMap map providers
 - Add U.S. Census and Geocodio geocoding services
 - Fix output var in service_getCoords function, caused 500 errors
-- Add cache support for glFusion 1.8.0+
+- Add caching for geocoding results
 
 ## 1.1.3 (2018-01-14)
 - Fix missing namespace in admin
