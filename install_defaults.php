@@ -186,7 +186,7 @@ $locatorConfigData = array(
     ),
     array(
         'name' => 'mapper',
-        'default_value' => 'mapquest',
+        'default_value' => 'openstreetmap',
         'type' => 'select',
         'subgroup' => 0,
         'fieldset' => 10,
@@ -197,7 +197,7 @@ $locatorConfigData = array(
     ),
     array(
         'name' => 'geocoder',
-        'default_value' => 'uscensus',
+        'default_value' => 'openstreetmap',
         'type' => 'select',
         'subgroup' => 0,
         'fieldset' => 10,
