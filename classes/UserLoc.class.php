@@ -52,6 +52,7 @@ class UserLoc
         if (!$this->readFromDB()) {
             $this->location = $location;
             $this->getCoords();
+            $this->saveToDB();
         } else {
             // Found a record, see if it's the same location
             if ($location != $this->location) {
@@ -199,7 +200,7 @@ class UserLoc
         // Use local variables to allow pass-by-reference
         $lat = 0;
         $lng = 0;
-        Marker::geoCode($this->location, $lat, $lng);
+        Mapper::getInstance()->geoCode($this->location, $lat, $lng);
         $this->lat = $lat;
         $this->lng = $lng;
     }
