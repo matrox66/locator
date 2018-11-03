@@ -1,6 +1,6 @@
 # glLocator - Change Log
 
-## 1.2.0 (Unreleased)
+## 1.2.0 (2018-11-03)
 - Add separate Google API key for Javascript
 - Add Mapquest, OpenStreetMap map providers
 - Add U.S. Census and Geocodio geocoding services
