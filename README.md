@@ -28,6 +28,8 @@ Driving directions are always provided by maps.google.com.
   * Terms of service do not allow for caching or using coordinates for any purpose other than mapping. Unless you have an Enhanced plan you should not use MapQuest for geocoding.
   * Geocoding: Yes
   * Mapping: Yes
+  * Known Issues:
+    * Map sets z-index and glFusion menus may appear behind the map controls.
 * U.S. Census (https://geocoding.geo.census.gov/)
   * Only supports locations in the United States
   * Geocoding: Yes
